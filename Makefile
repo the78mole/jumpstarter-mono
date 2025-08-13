@@ -38,7 +38,8 @@ build-go: ## Build Go components
 
 build-rust: ## Build Rust components
 	@echo "$(YELLOW)Building Rust components...$(RESET)"
-	cd hardware/dutlink-firmware && cargo build --release
+	cd hardware/dutlink-firmware/application && cargo build --release
+	cd hardware/dutlink-firmware/bootloader && cargo build --release
 
 build-web: ## Build TypeScript/Node.js components
 	@echo "$(YELLOW)Building web components...$(RESET)"

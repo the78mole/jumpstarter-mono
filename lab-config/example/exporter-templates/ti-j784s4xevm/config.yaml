@@ -1,0 +1,63 @@
+apiVersion: meta.jumpstarter.dev/v1alpha1
+kind: ExporterConfigTemplate
+metadata:
+  name: ti-j784s4xevm
+spec:
+  containerImage: quay.io/jumpstarter/jumpstarter:release-0.6
+  exporterMetadata:
+    name: "$( params.name )"
+    labels:
+      device: "$( params.name )"
+      board: ti-j784s4xevm
+      board-revision: "1.0A"
+      fleet: ti-j784s4xevm-production
+      ram: "32"
+      cpu: "8"
+      location: "$( params.location_name )"
+  configTemplate: |
+    # this is the config file installed in /etc/jumpstarter/exporters/$( name )".yaml
+    apiVersion: jumpstarter.dev/v1alpha1
+    kind: ExporterConfigTemplate
+    metadata:
+      namespace: "$( params.namespace )"
+      name: "$( params.name )"
+    endpoint: "$( params.endpoint )"
+    tls:
+      ca: $( params.tls_ca )"
+      insecure: true
+    token: "$( params.token )"
+    grpcConfig:
+      grpc.insecure: true
+      grpc.keepalive_time_ms: 20000
+    export:
+      storage:
+        type: "jumpstarter_driver_flashers.driver.TIJ784S4Flasher"
+        config:
+          log_level: "DEBUG"
+        children:
+          serial:
+            ref: "serial"
+          power:
+            ref: "power"
+      serial:
+        type: "jumpstarter_driver_pyserial.driver.PySerial"
+        config:
+          log_level: "DEBUG"
+          url: "$( params.device_console )"
+          #url: "socket://localhost:9997"
+          baudrate: 115200
+      power:
+        type: "jumpstarter_driver_snmp.driver.SNMPServer"
+        config:
+          timeout: 5
+          log_level: "DEBUG"
+          host: "$( params.pdu_host )"
+          user: "$( params.pdu_user )"
+          password: "$( params.pdu_password )"
+          plug: "$( params.pdu_plug )"
+          oid: " $( params.pdu_oid )"
+      ssh:
+        type: "jumpstarter_driver_network.driver.TcpNetwork"
+        config:
+          host: "$( params.device_address )"
+          port: 22
