@@ -4,9 +4,11 @@
 
 This document provides comprehensive instructions for integrating all Jumpstarter components into a single monorepo. The goal is to consolidate the distributed Jumpstarter ecosystem into `jumpstarter-mono` while maintaining functionality, improving developer experience, and enabling easier management.
 
-## Gereal instruction
+## General instructions
 
 - Use mermaid for diagrams (e.g. in docs/architecture/index.md)
+- Keep every change compatible to existing jumpstarter (controller, router, exporter, client,...)
+- When addign features, the default behaviour should be the same as in the upstream jumpstarter
 
 ## Current State Analysis
 
