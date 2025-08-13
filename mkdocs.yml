@@ -1,0 +1,58 @@
+site_name: Jumpstarter Monorepo Documentation
+site_description: Comprehensive documentation for the Jumpstarter monorepo
+site_author: Jumpstarter Contributors
+repo_url: https://github.com/the78mole/jumpstarter-mono
+repo_name: the78mole/jumpstarter-mono
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+nav:
+  - Home: index.md
+  - Installation:
+    - installation/index.md
+  - Development:
+    - development/index.md
+  - Architecture:
+    - architecture/index.md
+  - User Guide:
+    - user-guide/index.md
+  - Hardware:
+    - hardware/index.md
+  - Integrations:
+    - integrations/index.md
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - admonition
+  - codehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+plugins:
+  - search
+
+extra_javascript:
+  - https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js

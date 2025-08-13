@@ -4,6 +4,14 @@
 
 This document provides comprehensive instructions for integrating all Jumpstarter components into a single monorepo. The goal is to consolidate the distributed Jumpstarter ecosystem into `jumpstarter-mono` while maintaining functionality, improving developer experience, and enabling easier management.
 
+## General instructions
+
+- Use mermaid for diagrams (e.g. in docs/architecture/index.md)
+- Keep every change compatible to existing jumpstarter (controller, router, exporter, client,...)
+- When addign features, the default behaviour should be the same as in the upstream jumpstarter
+- Documentation will be published on readthedocs.io and also with GitHub Pages
+- Documentation shall also be rendered as PDF and ePUB, z.B. wit pandoc
+
 ## Current State Analysis
 
 ### Existing Jumpstarter Ecosystem (jumpstarter-dev organization)
