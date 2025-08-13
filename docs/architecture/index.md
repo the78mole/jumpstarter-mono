@@ -18,6 +18,7 @@ graph TB
         LIB[Jumpstarter Library<br/>Python]
         CTL[Kubernetes Controller<br/>Go]
         PROTO[Protocol Definitions<br/>Protocol Buffers]
+        EXPORTER[Exporter CLI<br/>Data Export Tool]
     end
     
     subgraph "Hardware Layer"
@@ -50,6 +51,9 @@ graph TB
     FW --> HW
     HW --> DUT
     
+    EXPORTER --> LIB
+    EXPORTER --> HW
+    
     TEKTON --> CTL
     VSCODE --> LIB
     DEV --> LIB
@@ -62,6 +66,7 @@ graph TB
     style CTL fill:#f3e5f5
     style FW fill:#fff3e0
     style HW fill:#ffebee
+    style EXPORTER fill:#f0f4c3
 ```
 
 ## Component Architecture
@@ -168,6 +173,7 @@ sequenceDiagram
     participant CLI
     participant Library
     participant Controller
+    participant Router
     participant Firmware
     participant Hardware
     participant DUT
@@ -176,12 +182,14 @@ sequenceDiagram
     CLI->>Library: Parse and validate
     Library->>Controller: Schedule test job
     Controller->>Library: Allocate resources
-    Library->>Firmware: Send control commands
+    Library->>Router: Route control messages
+    Router->>Firmware: Send control commands
     Firmware->>Hardware: Control hardware pins
     Hardware->>DUT: Physical interaction
     DUT-->>Hardware: Response signals
     Hardware-->>Firmware: Read status
-    Firmware-->>Library: Report results
+    Firmware-->>Router: Report results
+    Router-->>Library: Forward results
     Library-->>Controller: Update job status
     Controller-->>CLI: Return test results
     CLI-->>User: Display results
