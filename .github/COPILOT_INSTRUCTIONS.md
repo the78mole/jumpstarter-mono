@@ -4,6 +4,10 @@
 
 This document provides comprehensive instructions for integrating all Jumpstarter components into a single monorepo. The goal is to consolidate the distributed Jumpstarter ecosystem into `jumpstarter-mono` while maintaining functionality, improving developer experience, and enabling easier management.
 
+## Gereal instruction
+
+- Use mermaid for diagrams (e.g. in docs/architecture/index.md)
+
 ## Current State Analysis
 
 ### Existing Jumpstarter Ecosystem (jumpstarter-dev organization)
