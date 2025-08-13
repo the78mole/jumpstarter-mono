@@ -26,8 +26,6 @@
 ### Hardware Components
 - [x] Migrate dutlink-firmware → `hardware/dutlink-firmware/`
 - [x] Migrate dutlink-board → `hardware/dutlink-board/`
-- [ ] Validate firmware build process
-- [ ] Update hardware documentation
 
 ### Supporting Components
 - [x] Migrate jumpstarter-tekton-tasks → `integrations/tekton/`
@@ -53,10 +51,22 @@
 - [ ] Validate Go builds
 
 ### Multi-language Tooling
-- [ ] Setup pre-commit hooks
-- [ ] Configure formatters (black, gofmt, rustfmt)
-- [ ] Setup linters (ruff, golangci-lint, clippy)
+- [x] Setup pre-commit hooks
+- [x] Configure formatters (ruff, gofmt, rustfmt)
+- [x] Setup linters (ruff, golangci-lint, clippy)
 - [ ] Test unified build orchestration
+
+### Monorepo Consolidation
+- [x] Add comprehensive pre-commit configuration
+- [x] Create renovate configuration for dependency management
+- [x] Consolidate VSCode settings and extensions
+- [ ] Centralize GitHub Actions workflows (create reusable workflows)
+- [ ] Remove duplicate dependabot configurations
+- [ ] Remove duplicate devcontainer configurations
+- [ ] Consolidate license files
+- [ ] Consolidate contributing documentation
+- [ ] Add Helm ingress `none` option for custom configurations
+- [ ] Migrate remaining poetry configurations to uv
 
 ## Phase 4: CI/CD Integration
 
@@ -87,6 +97,10 @@
 - [ ] Performance benchmarking
 - [ ] Developer workflow testing
 - [ ] Documentation review
+- [ ] Validate firmware build process
+- [ ] Update hardware documentation
+- [ ] Review and update architecture diagrams
+- [ ] Validate and test consolidated documentation
 
 ### Cleanup
 - [ ] Archive old repositories (create archive branches)

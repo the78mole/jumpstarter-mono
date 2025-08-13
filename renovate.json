@@ -1,0 +1,97 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":automergeMinor",
+    "group:monorepos",
+    "group:recommended",
+    "workarounds:all"
+  ],
+  "timezone": "UTC",
+  "schedule": ["before 6am on monday"],
+  "prConcurrentLimit": 10,
+  "branchConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "stabilityDays": 3,
+  "rangeStrategy": "bump",
+  "semanticCommits": "enabled",
+  "platformAutomerge": true,
+  "packageRules": [
+    {
+      "description": "Group Python dependencies",
+      "matchManagers": ["pip_requirements", "pip_setup", "pipenv", "poetry"],
+      "groupName": "python dependencies",
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Group Go dependencies",
+      "matchManagers": ["gomod"],
+      "groupName": "go dependencies",
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Group Rust dependencies",
+      "matchManagers": ["cargo"],
+      "groupName": "rust dependencies",
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Group Node.js dependencies",
+      "matchManagers": ["npm", "pnpm"],
+      "groupName": "nodejs dependencies",
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Group Docker dependencies",
+      "matchManagers": ["dockerfile", "docker-compose"],
+      "groupName": "docker dependencies",
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Group GitHub Actions",
+      "matchManagers": ["github-actions"],
+      "groupName": "github actions",
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Group pre-commit hooks",
+      "matchManagers": ["pre-commit"],
+      "groupName": "pre-commit hooks",
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Automerge patch updates for stable packages",
+      "matchUpdateTypes": ["patch"],
+      "matchCurrentVersion": "!/^0\\./",
+      "automerge": true
+    },
+    {
+      "description": "Group major updates",
+      "matchUpdateTypes": ["major"],
+      "groupName": "major updates",
+      "schedule": ["before 6am on monday"],
+      "automerge": false
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "schedule": ["at any time"]
+  },
+  "osvVulnerabilityAlerts": true,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on monday"]
+  },
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/vendor/**",
+    "**/target/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.venv/**",
+    "**/venv/**"
+  ]
+}
