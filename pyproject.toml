@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "jumpstarter-mono"
+version = "0.1.0"
+description = "Jumpstarter monorepo containing all components"
+readme = "README.md"
+license = "Apache-2.0"
+authors = [
+    {name = "Jumpstarter Contributors"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = []
+
+[tool.uv.workspace]
+members = [
+    "core/jumpstarter",
+    "templates/driver",
+]
+
+[tool.uv.sources]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]
+ignore = []
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+
+[tool.pytest.ini_options]
+testpaths = ["core/jumpstarter/tests", "templates/driver/tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
