@@ -79,6 +79,48 @@ jumpstarter-mono/
 - UV (Python package manager)
 - Make
 
+### Development Workflow
+
+```mermaid
+flowchart LR
+    subgraph "Setup"
+        CLONE[Clone Repo]
+        SETUP[make setup]
+    end
+    
+    subgraph "Development Cycle"
+        CODE[Write Code]
+        BUILD[make build]
+        TEST[make test]
+        LINT[make lint]
+        COMMIT[Commit]
+    end
+    
+    subgraph "Multi-language Support"
+        PY[Python<br/>UV Workspace]
+        GO[Go<br/>Go Workspace]
+        RUST[Rust<br/>Cargo]
+        WEB[TypeScript<br/>NPM]
+    end
+    
+    CLONE --> SETUP
+    SETUP --> CODE
+    CODE --> BUILD
+    BUILD --> TEST
+    TEST --> LINT
+    LINT --> COMMIT
+    COMMIT --> CODE
+    
+    BUILD --> PY
+    BUILD --> GO
+    BUILD --> RUST
+    BUILD --> WEB
+    
+    style SETUP fill:#e8f5e8
+    style BUILD fill:#e1f5fe
+    style TEST fill:#fff3e0
+```
+
 ### Available Commands
 
 ```bash
@@ -159,6 +201,54 @@ make test-e2e       # End-to-end tests only
 ## 🏗️ Architecture
 
 Jumpstarter provides a unified platform for hardware-in-the-loop testing with:
+
+```mermaid
+graph TB
+    subgraph "User Interface Layer"
+        CLI[CLI Tools]
+        API[REST API]
+        WEB[Web Dashboard]
+    end
+    
+    subgraph "Core Platform"
+        LIB[Python Core Library<br/>Device Drivers & Automation]
+        CTL[Kubernetes Controller<br/>Cloud-native Orchestration]
+        PROTO[Protocol Definitions<br/>Cross-component Communication]
+    end
+    
+    subgraph "Hardware Layer"
+        FW[Rust Firmware<br/>Real-time Control]
+        BOARD[DUTLink Hardware<br/>Test Harness Board]
+        DUT[Device Under Test]
+    end
+    
+    subgraph "Integration & CI/CD"
+        TEKTON[Tekton Pipelines]
+        VSCODE[VS Code Extension]
+        GITHUB[GitHub Actions]
+    end
+    
+    CLI --> LIB
+    API --> LIB
+    WEB --> LIB
+    
+    LIB <--> CTL
+    LIB <--> PROTO
+    CTL <--> PROTO
+    
+    LIB --> FW
+    FW --> BOARD
+    BOARD <--> DUT
+    
+    TEKTON --> CTL
+    VSCODE --> LIB
+    GITHUB --> CTL
+    
+    style LIB fill:#e1f5fe
+    style CTL fill:#f3e5f5
+    style FW fill:#fff3e0
+    style BOARD fill:#ffebee
+```
 
 - **Python Core**: Main library with device drivers and automation tools
 - **Kubernetes Integration**: Cloud-native deployment and resource management

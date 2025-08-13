@@ -26,18 +26,93 @@ The Jumpstarter monorepo brings together:
 
 The monorepo is organized into logical components:
 
-```
-jumpstarter-mono/
-├── core/                      # Core Jumpstarter components
-├── hardware/                  # Hardware-related components
-├── packages/                  # Distribution packages
-├── integrations/              # CI/CD and tooling integrations
-├── templates/                 # Templates and scaffolding
-├── testing/                   # Testing infrastructure
-├── lab-config/                # Lab configuration tools
-├── docs/                      # Documentation
-├── tools/                     # Development tools
-└── scripts/                   # Build and utility scripts
+```mermaid
+graph TB
+    subgraph "Jumpstarter Monorepo"
+        ROOT[jumpstarter-mono/]
+        
+        subgraph "Core Platform"
+            CORE[core/]
+            CORE_JS[├── jumpstarter/<br/>│   Python Library & CLI]
+            CORE_CTL[├── controller/<br/>│   Kubernetes Controller Go]
+            CORE_PROTO[└── protocol/<br/>    Protocol Definitions]
+        end
+        
+        subgraph "Hardware"
+            HW[hardware/]
+            HW_BOARD[├── dutlink-board/<br/>│   PCB Design Files]
+            HW_FW[└── dutlink-firmware/<br/>    Rust Firmware]
+        end
+        
+        subgraph "Distribution"
+            PKG[packages/]
+            PKG_PY[├── python/]
+            PKG_DEB[├── debian/]
+            PKG_RPM[├── rpm/]
+            PKG_CONT[└── container/]
+        end
+        
+        subgraph "Integration & Tools"
+            INT[integrations/]
+            INT_TEK[├── tekton/]
+            INT_VS[├── vscode/]
+            INT_DEV[└── devspace/]
+            
+            TMPL[templates/]
+            TMPL_DRV[└── driver/]
+            
+            TEST[testing/]
+            TEST_E2E[├── e2e/]
+            TEST_INT[├── integration/]
+            TEST_FIX[└── fixtures/]
+        end
+        
+        subgraph "Configuration & Docs"
+            LAB[lab-config/]
+            DOCS[docs/]
+            TOOLS[tools/]
+            SCRIPTS[scripts/]
+        end
+    end
+    
+    ROOT --> CORE
+    CORE --> CORE_JS
+    CORE --> CORE_CTL
+    CORE --> CORE_PROTO
+    
+    ROOT --> HW
+    HW --> HW_BOARD
+    HW --> HW_FW
+    
+    ROOT --> PKG
+    PKG --> PKG_PY
+    PKG --> PKG_DEB
+    PKG --> PKG_RPM
+    PKG --> PKG_CONT
+    
+    ROOT --> INT
+    INT --> INT_TEK
+    INT --> INT_VS
+    INT --> INT_DEV
+    
+    ROOT --> TMPL
+    TMPL --> TMPL_DRV
+    
+    ROOT --> TEST
+    TEST --> TEST_E2E
+    TEST --> TEST_INT
+    TEST --> TEST_FIX
+    
+    ROOT --> LAB
+    ROOT --> DOCS
+    ROOT --> TOOLS
+    ROOT --> SCRIPTS
+    
+    style ROOT fill:#e8f5e8
+    style CORE fill:#e1f5fe
+    style HW fill:#fff3e0
+    style PKG fill:#f3e5f5
+    style INT fill:#ffebee
 ```
 
 ## Getting Started

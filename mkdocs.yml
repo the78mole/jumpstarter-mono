@@ -3,6 +3,8 @@ site_description: Comprehensive documentation for the Jumpstarter monorepo
 site_author: Jumpstarter Contributors
 repo_url: https://github.com/the78mole/jumpstarter-mono
 repo_name: the78mole/jumpstarter-mono
+docs_dir: docs
+site_dir: site
 
 theme:
   name: material
@@ -43,7 +45,14 @@ markdown_extensions:
       permalink: true
   - admonition
   - codehilite
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
 plugins:
   - search
+
+extra_javascript:
+  - https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js

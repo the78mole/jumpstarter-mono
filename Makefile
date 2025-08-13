@@ -150,10 +150,10 @@ package-container: ## Build container images
 # Documentation targets
 docs: ## Build documentation
 	@echo "$(YELLOW)Building documentation...$(RESET)"
-	cd docs && mkdocs build
+	mkdocs build
 
 docs-serve: ## Serve documentation locally
-	cd docs && mkdocs serve
+	mkdocs serve
 
 # Development targets
 dev: ## Start development environment
