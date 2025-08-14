@@ -39,6 +39,7 @@ def shell(config, command: tuple[str, ...], lease_name, selector, duration, expo
     match config:
         case ClientConfigV1Alpha1():
             exit_code = 0
+
             def _launch_remote_shell(path: str) -> int:
                 return launch_shell(
                     path,

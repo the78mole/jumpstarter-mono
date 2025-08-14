@@ -92,7 +92,6 @@ class DigitalInputClient(DriverClient):
             """Wait for edge"""
             self.wait_for_edge(edge_type, float(timeout))
 
-
         @gpio.command()
         @click.option("--timeout", "-t", default="3600", help="Timeout in seconds")
         def wait_for_active(timeout: str | None = None):

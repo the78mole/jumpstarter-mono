@@ -32,7 +32,7 @@ extensions = [
     "sphinx_click",
     "sphinx_substitution_extensions",
     "sphinx_copybutton",
-    "sphinx_inline_tabs"
+    "sphinx_inline_tabs",
 ]
 
 templates_path = ["_templates"]

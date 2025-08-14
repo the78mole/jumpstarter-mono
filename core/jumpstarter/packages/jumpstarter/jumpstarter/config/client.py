@@ -60,7 +60,9 @@ def _handle_connection_error(f):
             raise e
         except Exception:
             raise
+
     return wrapper
+
 
 class ClientConfigV1Alpha1Drivers(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="JMP_DRIVERS_")
@@ -137,7 +139,6 @@ class ClientConfigV1Alpha1(BaseSettings):
         svc = ClientService(channel=await self.channel(), namespace=self.metadata.namespace)
         return await svc.GetExporter(name=name)
 
-
     @_blocking_compat
     @_handle_connection_error
     async def list_exporters(
@@ -169,8 +170,6 @@ class ClientConfigV1Alpha1(BaseSettings):
         return WithLeaseList(
             exporters_with_leases=exporters_with_leases, next_page_token=exporters_response.next_page_token
         )
-
-
 
     @_blocking_compat
     @_handle_connection_error
@@ -221,7 +220,6 @@ class ClientConfigV1Alpha1(BaseSettings):
         svc = ClientService(channel=await self.channel(), namespace=self.metadata.namespace)
         return await svc.UpdateLease(name=name, duration=duration)
 
-
     @asynccontextmanager
     async def lease_async(
         self,
@@ -238,17 +236,17 @@ class ClientConfigV1Alpha1(BaseSettings):
         release_lease = lease_name == ""
         try:
             async with Lease(
-            channel=await self.channel(),
-            namespace=self.metadata.namespace,
-            name=lease_name,
-            selector=selector,
-            duration=duration,
-            portal=portal,
-            allow=self.drivers.allow,
-            unsafe=self.drivers.unsafe,
-            release=release_lease,
-            tls_config=self.tls,
-            grpc_options=self.grpcOptions,
+                channel=await self.channel(),
+                namespace=self.metadata.namespace,
+                name=lease_name,
+                selector=selector,
+                duration=duration,
+                portal=portal,
+                allow=self.drivers.allow,
+                unsafe=self.drivers.unsafe,
+                release=release_lease,
+                tls_config=self.tls,
+                grpc_options=self.grpcOptions,
             ) as lease:
                 yield lease
 

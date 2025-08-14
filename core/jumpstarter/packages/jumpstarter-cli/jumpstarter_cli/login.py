@@ -137,10 +137,11 @@ async def login(  # noqa: C901
         case "exporter_config":
             ExporterConfigV1Alpha1.save(config, value)  # ty: ignore[invalid-argument-type]
 
+
 @blocking
 async def relogin_client(config: ClientConfigV1Alpha1):
     """Relogin into a jumpstarter instance"""
-    client_id = "jumpstarter-cli" # TODO: store this metadata in the config
+    client_id = "jumpstarter-cli"  # TODO: store this metadata in the config
     try:
         issuer = decode_jwt_issuer(config.token)
     except Exception as e:
@@ -150,7 +151,6 @@ async def relogin_client(config: ClientConfigV1Alpha1):
         oidc = Config(issuer=issuer, client_id=client_id)
         tokens = await oidc.authorization_code_grant()
         config.token = tokens["access_token"]
-        ClientConfigV1Alpha1.save(config) # ty: ignore[invalid-argument-type]
+        ClientConfigV1Alpha1.save(config)  # ty: ignore[invalid-argument-type]
     except Exception as e:
         raise ReauthenticationFailed(f"Failed to re-authenticate: {e}") from e
-

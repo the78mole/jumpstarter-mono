@@ -228,7 +228,7 @@ class ISCSI(Driver):
         else:
             normalized_path = os.path.normpath(file_path)
 
-            if normalized_path.startswith('..') or os.path.isabs(normalized_path):
+            if normalized_path.startswith("..") or os.path.isabs(normalized_path):
                 raise ISCSIError(f"Invalid file path: {file_path}")
 
             full_path = os.path.join(self.root_dir, normalized_path)

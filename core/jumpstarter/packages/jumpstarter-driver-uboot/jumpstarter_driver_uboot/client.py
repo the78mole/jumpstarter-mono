@@ -81,7 +81,7 @@ class UbootConsoleClient(CompositeClient):
         """
 
         while tries > 0:
-            tries-=1
+            tries -= 1
             self.logger.info(f"Running command checked: {cmd}")
             output = self.run_command("{}; echo $?".format(cmd), _internal_log=False)
             parsed = output.strip().decode().splitlines()
