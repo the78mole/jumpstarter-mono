@@ -3,12 +3,13 @@ import tempfile
 from pathlib import Path
 
 import pytest
+import pytest_asyncio
 from opendal import AsyncOperator
 
 from jumpstarter_driver_tftp.server import Opcode, TftpServer
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def tftp_server():
     with tempfile.TemporaryDirectory() as temp_dir:
         test_file_path = Path(temp_dir) / "test.txt"

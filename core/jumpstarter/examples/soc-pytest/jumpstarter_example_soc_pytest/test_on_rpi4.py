@@ -13,6 +13,19 @@ from jumpstarter_testing.pytest import JumpstarterTest
 log = logging.getLogger(__file__)
 
 
+# Skip all tests if no Jumpstarter configuration is available
+def jumpstarter_config_available():
+    """Check if Jumpstarter configuration is available"""
+    config_path = os.path.expanduser("~/.config/jumpstarter/clients/default.yaml")
+    return os.path.exists(config_path) or os.getenv("JUMPSTARTER_HOST") is not None
+
+
+pytestmark = pytest.mark.skipif(
+    not jumpstarter_config_available(),
+    reason="Jumpstarter configuration not available"
+)
+
+
 class TestResource(JumpstarterTest):
     selector = "board=rpi4"
 

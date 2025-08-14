@@ -12,7 +12,7 @@ def anyio_backend():
 
 @pytest.fixture
 def http(tmp_path):
-    with serve(HttpServer(root_dir=str(tmp_path))) as client:
+    with serve(HttpServer(root_dir=str(tmp_path), port=0)) as client:  # Use port 0 for auto-assignment
         client.start()
         try:
             yield client

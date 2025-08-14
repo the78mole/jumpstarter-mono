@@ -24,6 +24,7 @@ This is a monorepo containing all Jumpstarter components:
 - Go 1.21+ for controller and lab-config components
 - Rust for firmware development (optional)
 - Node.js and pnpm for VSCode extension development (optional)
+- qemu & qemu-user
 
 ### Development Setup
 
