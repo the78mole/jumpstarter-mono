@@ -91,6 +91,7 @@ flowchart TD
     START[Start Development]
     BRANCH[Create Feature Branch]
     CODE[Make Changes]
+    LOCAL[Test Locally with Act]
     BUILD[Run make build]
     TEST[Run make test]
     LINT[Run make lint]
@@ -101,7 +102,8 @@ flowchart TD
     
     START --> BRANCH
     BRANCH --> CODE
-    CODE --> BUILD
+    CODE --> LOCAL
+    LOCAL --> BUILD
     BUILD --> TEST
     TEST --> LINT
     LINT --> COMMIT
@@ -113,17 +115,20 @@ flowchart TD
     BUILD -->|Failed| CODE
     TEST -->|Failed| CODE
     LINT -->|Failed| CODE
+    LOCAL -->|Failed| CODE
     
     style START fill:#e8f5e8
     style MERGE fill:#e1f5fe
     style CODE fill:#fff3e0
+    style LOCAL fill:#ffebee
 ```
 
 1. Create a feature branch
 2. Make your changes
-3. Run tests: `make test`
-4. Run linting: `make lint`
-5. Submit a pull request
+3. **Test workflows locally**: See [Local Workflow Testing](act-integration.md) for act integration
+4. Run tests: `make test`
+5. Run linting: `make lint`
+6. Submit a pull request
 
 ### Code Standards
 
@@ -207,6 +212,12 @@ graph TB
         E2E_ONLY[make test-e2e]
     end
     
+    subgraph "Workflow Testing"
+        ACT[act - Local Workflow Testing]
+        CI_LOCAL[Test CI/CD Locally]
+        VALIDATE[Validation Scripts]
+    end
+    
     subgraph "Test Types"
         PERF[Performance Tests]
         SEC[Security Tests]
@@ -225,10 +236,30 @@ graph TB
     E2E --> SEC
     E2E --> COMPAT
     
+    ACT --> CI_LOCAL
+    CI_LOCAL --> VALIDATE
+    
     style E2E fill:#ffebee
     style INT fill:#fff3e0
     style UNIT fill:#e8f5e8
+    style ACT fill:#e1f5fe
 ```
+
+### Local Workflow Testing
+
+Test GitHub Actions workflows locally using [act](https://github.com/nektos/act):
+
+```bash
+# Test the full CI pipeline locally
+act workflow_dispatch -W .github/workflows/ci.yml --env ACT=true
+
+# Validate all workflows
+./scripts/validate-ci-with-act.sh
+```
+
+For detailed instructions, see [Local Workflow Testing](act-integration.md).
+
+### Code Testing
 
 - Unit tests for each component
 - Integration tests
