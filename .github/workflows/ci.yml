@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  # Temporarily disabled during monorepo setup - will be re-enabled after Phase 3
+  # push:
+  #   branches: [main, 'release-*']
+  # pull_request:
+  #   branches: [main, 'release-*']
+  # merge_group:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Check for typos across the repository
+  typos:
+    uses: ./.github/workflows/reusable-typos.yml
+
+  # Go components
+  controller-lint:
+    uses: ./.github/workflows/reusable-go-lint.yml
+    with:
+      working-directory: core/controller
+
+  controller-build:
+    uses: ./.github/workflows/reusable-go-build.yml
+    with:
+      working-directory: core/controller
+      binary-name: manager
+      build-flags: '-ldflags "-s -w"'
+
+  lab-config-lint:
+    uses: ./.github/workflows/reusable-go-lint.yml
+    with:
+      working-directory: lab-config
+
+  lab-config-build:
+    uses: ./.github/workflows/reusable-go-build.yml
+    with:
+      working-directory: lab-config
+      binary-name: lab-config
+
+  # Python components
+  jumpstarter-lint:
+    uses: ./.github/workflows/reusable-python-lint.yml
+    with:
+      working-directory: core/jumpstarter
+
+  jumpstarter-test:
+    uses: ./.github/workflows/reusable-python-test.yml
+    with:
+      working-directory: core/jumpstarter
+      test-command: 'uv run pytest --tb=short'
+
+  # Rust components - TODO: Add when Rust toolchain is available
+  # dutlink-firmware-build:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: dtolnay/rust-toolchain@stable
+  #       with:
+  #         targets: thumbv7em-none-eabihf
+  #     - working-directory: hardware/dutlink-firmware
+  #       run: cargo build --release
+
+  # Node.js components - TODO: Add when pnpm is available
+  # vscode-extension-build:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: pnpm/action-setup@v4
+  #       with:
+  #         version: latest
+  #     - working-directory: integrations/vscode
+  #       run: |
+  #         pnpm install
+  #         pnpm run build

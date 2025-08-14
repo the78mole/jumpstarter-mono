@@ -1,0 +1,70 @@
+name: Build Go Application
+
+on:
+  workflow_call:
+    inputs:
+      go-version:
+        required: false
+        type: string
+        default: '1.21'
+      working-directory:
+        required: true
+        type: string
+      binary-name:
+        required: true
+        type: string
+      build-flags:
+        required: false
+        type: string
+        default: ''
+      test-flags:
+        required: false
+        type: string
+        default: '-v -race'
+  workflow_dispatch:
+    inputs:
+      go-version:
+        required: false
+        type: string
+        default: '1.21'
+      working-directory:
+        required: true
+        type: string
+      binary-name:
+        required: true
+        type: string
+      build-flags:
+        required: false
+        type: string
+        default: ''
+      test-flags:
+        required: false
+        type: string
+        default: '-v -race'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ inputs.go-version }}
+          cache-dependency-path: ${{ inputs.working-directory }}/go.sum
+
+      - name: Verify dependencies
+        working-directory: ${{ inputs.working-directory }}
+        run: go mod verify
+
+      - name: Build
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          go build ${{ inputs.build-flags }} -o ${{ inputs.binary-name }} .
+
+      - name: Run tests
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          go test ${{ inputs.test-flags }} ./...

@@ -1,0 +1,83 @@
+apiVersion: meta.jumpstarter.dev/v1alpha1
+kind: ExporterConfigTemplate
+metadata:
+  name: ti-am69
+spec:
+  containerImage: quay.io/jumpstarter/jumpstarter:release-0.6
+  exporterMetadata:
+    name: "$( params.name )"
+    labels:
+      device: "$( params.name )"
+      board: ti-am69
+      board-revision: "1.1A"
+      fleet: ti-am69-production
+      ram: "32"
+      cpu: "8"
+      location: "$( params.location_name )"
+  systemdContainerTemplate: |
+    [Unit]
+    Description=$( params.name ) jumpstarter exporter
+    [Container]
+    ContainerName=$( params.name )
+    Exec=/jumpstarter/bin/jmp run --exporter $( params.name )
+    Image=$( params.container_image )
+    Pull=Always
+    Network=host
+    PodmanArgs=--privileged
+    Volume=/run/udev:/run/udev
+    Volume=/dev:/dev
+    Volume=/etc/jumpstarter:/etc/jumpstarter
+    Volume=/var/lib:/var/lib
+    [Service]
+    Restart=always
+    StartLimitBurst=0
+    [Install]
+    WantedBy=multi-user.target default.target
+
+  configTemplate:  |
+    # this is the config file installed in /etc/jumpstarter/exporters/$( name )".yaml
+    apiVersion: jumpstarter.dev/v1alpha1
+    kind: ExporterConfigTemplate
+    metadata:
+      namespace: "$( params.namespace )"
+      name: "$( params.name )"
+    endpoint: "$( params.endpoint )"
+    tls:
+      ca: $( params.tls_ca )"
+      insecure: true
+    token: "$( params.token )"
+    grpcConfig:
+      grpc.insecure: true
+      grpc.keepalive_time_ms: 20000
+    export:
+      storage:
+        type: "jumpstarter_driver_flashers.driver.TIAM69Flasher"
+        config:
+          log_level: "DEBUG"
+        children:
+          serial:
+            ref: "serial"
+          power:
+            ref: "power"
+      serial:
+        type: "jumpstarter_driver_pyserial.driver.PySerial"
+        config:
+          log_level: "DEBUG"
+          url: "$( params.device_console )"
+          #url: "socket://localhost:9997"
+          baudrate: 115200
+      power:
+        type: "jumpstarter_driver_snmp.driver.SNMPServer"
+        config:
+          timeout: 5
+          log_level: "DEBUG"
+          host: "$( params.pdu_host )"
+          user: "$( params.pdu_user )"
+          password: "$( params.pdu_password )"
+          plug: "$( params.pdu_plug )"
+          oid: " $( pdu_oid )"
+      ssh:
+        type: "jumpstarter_driver_network.driver.TcpNetwork"
+        config:
+          host: "$( params.device_address )"
+          port: 22
