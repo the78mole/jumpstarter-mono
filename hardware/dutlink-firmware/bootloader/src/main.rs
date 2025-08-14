@@ -1,7 +1,7 @@
 //! # DFU bootloader for use with fwupd and STM32F411CEU6
 //!
 //! It is adapted from the example https://github.com/vitalyvb/usbd-dfu-example
-//! writen on top of the https://github.com/vitalyvb/usbd-dfu stack.
+//! written on top of the https://github.com/vitalyvb/usbd-dfu stack.
 //!
 //! The address map is updated so the bootloader space is not exposed
 //! to the host, and the start address begins right after the bootloader

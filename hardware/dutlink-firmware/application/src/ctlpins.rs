@@ -153,7 +153,7 @@ where
     }
 
     fn _lower(&self, ch:u8) -> u8 {
-        // ensure lowcase ascii
+        // ensure lowercase ascii
         if (ch>64) && (ch<91) {
             return ch ^0x20;
         }

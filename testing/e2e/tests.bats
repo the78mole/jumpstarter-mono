@@ -101,7 +101,7 @@ EOF
 @test "can specify client config only using environment variables" {
   wait_for_exporter
 
-  JMP_NAMEPSACE=default \
+  JMP_NAMESPACE=default \
   JMP_NAME=test-exporter-legacy \
   JMP_ENDPOINT=$(kubectl get clients.jumpstarter.dev -n default test-client-legacy -o 'jsonpath={.status.endpoint}') \
   JMP_TOKEN=$(kubectl get secrets -n default test-client-legacy-client -o 'jsonpath={.data.token}' | base64 -d) \

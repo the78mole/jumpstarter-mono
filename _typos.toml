@@ -1,0 +1,50 @@
+# Typos configuration for jumpstarter-mono
+
+[default.extend-words]
+# Technical terms that should not be corrected
+mosquitto = "mosquitto" # MQTT broker name
+oen = "oen"             # Output Enable pin (hardware terminology)
+OEn = "OEn"             # Output Enable pin (hardware terminology)
+OEnPin = "OEnPin"       # Output Enable pin type
+ba = "ba"               # Hash suffix (in test data)
+ser = "ser"             # Serialize abbreviation (Pydantic config)
+Pn = "Pn"               # ISO 8601 duration format part
+
+[files]
+# Exclude certain file patterns
+extend-exclude = [
+    # KiCad files contain technical abbreviations
+    "*.kicad_*",
+    "*.pretty",
+    "fp-info-cache",
+    # Lock files contain hashes and encoded content
+    "*.lock",
+    "uv.lock",
+    "flake.lock",
+    "pnpm-lock.yaml",
+    # Temporary files
+    "tmp/",
+    # Binary files
+    "*.bin",
+    "*.hex",
+    # Generated protocol buffers
+    "*.pb.go",
+    # Generated Kubernetes CRDs
+    "**/templates/crds/*.yaml",
+]
+
+[type.kicad]
+# KiCad specific technical terms
+extend-glob = ["*.kicad_*", "*.pretty/*"]
+
+[type.kicad.extend-words]
+THT = "THT" # Through-hole technology
+BRE = "BRE" # Board routing element  
+Ded = "Ded" # Dedicated (in KiCad context)
+
+[type.mqtt]
+# MQTT related files
+extend-glob = ["**/tasmota/**"]
+
+[type.mqtt.extend-words]
+mosquitto = "mosquitto"

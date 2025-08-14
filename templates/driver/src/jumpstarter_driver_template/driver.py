@@ -1,16 +1,16 @@
-from dataclasses import dataclass
-from anyio.streams.file import FileReadStream
-from itertools import count
-from anyio import sleep
-from contextlib import asynccontextmanager
-
-from jumpstarter_core.driver import Driver, export, exportstream
-from jumpstarter_core.drivers.power.driver import PowerInterface
-from jumpstarter_core.drivers.power.common import PowerReading
-from collections.abc import Generator, AsyncGenerator
 import logging
+from collections.abc import AsyncGenerator, Generator
+from contextlib import asynccontextmanager
+from dataclasses import dataclass
+from itertools import count
 
-# drivers SHOULD use standrd python logging
+from anyio import sleep
+from anyio.streams.file import FileReadStream
+from jumpstarter_core.driver import Driver, export, exportstream
+from jumpstarter_core.drivers.power.common import PowerReading
+from jumpstarter_core.drivers.power.driver import PowerInterface
+
+# drivers SHOULD use standard python logging
 logger = logging.getLogger(__name__)
 
 
@@ -48,7 +48,7 @@ class ExampleCustom(Driver):
     # required classmethod returning the import path of corresponding client class
     @classmethod
     def client(cls) -> str:
-        # roughly equals "from jumpstarter_core_driver_template.client import ExampleCustomClient"
+        # roughly equals "from jumpstarter import drivers, client, types as standard_types"
         # see `client.py` for implementation
         return "jumpstarter_driver_template.client.ExampleCustomClient"
 

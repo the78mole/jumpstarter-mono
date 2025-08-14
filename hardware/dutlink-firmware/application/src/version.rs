@@ -27,7 +27,7 @@ const fn _usb_version_bcd_device(version_str:&'static str) -> u16 {
     let mut bytes = version_str.as_bytes();
 
     // version is in the form of "major.minor" with BCD coding
-    // the result shoudl be coded in BCD where the MSB byte is
+    // the result should be coded in BCD where the MSB byte is
     // the major version, amd the LSB byte is the minor version
     while let [byte, rest @ ..] = bytes {
         bytes = rest;

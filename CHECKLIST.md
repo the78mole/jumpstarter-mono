@@ -111,7 +111,7 @@
 ## Phase 6: Development Environment Setup
 
 ### Local Development
-- [ ] Create a devcontainer setup to support develoment and testing
+- [ ] Create a devcontainer setup to support development and testing
   * [ ] Based on ubuntu-24.04-image
   * [ ] Using devcontainer features for common tooling (python, go, rust)
   * [ ] Add local features for special tooling
