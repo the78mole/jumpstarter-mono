@@ -6,9 +6,9 @@ from fabric.config import Config
 from fabric.connection import Connection
 
 from .portforward import handler
-from jumpstarter_core.client import DriverClient
-from jumpstarter_core.client.adapters import blocking
-from jumpstarter_core.common import TemporaryTcpListener
+from jumpstarter.client import DriverClient
+from jumpstarter.client.adapters import blocking
+from jumpstarter.common import TemporaryTcpListener
 
 
 @blocking

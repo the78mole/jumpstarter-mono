@@ -4,9 +4,9 @@ from dataclasses import dataclass, field
 
 import usb.core
 import usb.util
-from jumpstarter_core_driver_power.driver import PowerInterface, PowerReading
+from jumpstarter_driver_power.driver import PowerInterface, PowerReading
 
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.driver import Driver, export
 
 VID = 0x04D8
 PID = 0xF2F7

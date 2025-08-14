@@ -3,7 +3,7 @@ from enum import Enum
 
 import click
 
-from jumpstarter_core.client import DriverClient
+from jumpstarter.client import DriverClient
 
 
 class PinState(Enum):

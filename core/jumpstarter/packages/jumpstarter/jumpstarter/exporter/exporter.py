@@ -6,16 +6,16 @@ from dataclasses import dataclass, field
 import grpc
 from anyio import connect_unix, create_memory_object_stream, create_task_group, sleep
 from google.protobuf import empty_pb2
-from jumpstarter_core_protocol import (
+from jumpstarter_protocol import (
     jumpstarter_pb2,
     jumpstarter_pb2_grpc,
 )
 
-from jumpstarter_core.common import Metadata
-from jumpstarter_core.common.streams import connect_router_stream
-from jumpstarter_core.config.tls import TLSConfigV1Alpha1
-from jumpstarter_core.driver import Driver
-from jumpstarter_core.exporter.session import Session
+from jumpstarter.common import Metadata
+from jumpstarter.common.streams import connect_router_stream
+from jumpstarter.config.tls import TLSConfigV1Alpha1
+from jumpstarter.driver import Driver
+from jumpstarter.exporter.session import Session
 
 logger = logging.getLogger(__name__)
 

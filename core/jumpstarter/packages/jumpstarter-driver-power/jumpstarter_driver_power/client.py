@@ -4,7 +4,7 @@ from collections.abc import Generator
 import click
 
 from .common import PowerReading
-from jumpstarter_core.client import DriverClient
+from jumpstarter.client import DriverClient
 
 
 class PowerClient(DriverClient):

@@ -3,9 +3,9 @@ name: CI
 
 on:
   push:
-    branches: [main, develop, 'release-*']
+    branches: [main, develop, "release-*"]
   pull_request:
-    branches: [main, 'release-*']
+    branches: [main, "release-*"]
   merge_group: {}
   workflow_dispatch: {}
 
@@ -89,7 +89,7 @@ jobs:
     uses: ./.github/workflows/reusable-python-test.yml
     with:
       working-directory: core/jumpstarter
-      test-command: 'uv run pytest --tb=short'
+      test-command: "uv run pytest --tb=short"
 
   # Go components
   controller-lint:
@@ -112,6 +112,7 @@ jobs:
     with:
       working-directory: core/controller
       binary-name: manager
+      cmd-package: "./cmd"
       build-flags: '-ldflags "-s -w"'
 
   lab-config-lint:
@@ -173,7 +174,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: "3.12"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v3
@@ -215,7 +216,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: "3.12"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v3

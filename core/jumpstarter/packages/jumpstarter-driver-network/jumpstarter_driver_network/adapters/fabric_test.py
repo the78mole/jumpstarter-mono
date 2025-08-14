@@ -7,7 +7,7 @@ from paramiko.rsakey import RSAKey
 
 from ..driver import TcpNetwork
 from .fabric import FabricAdapter
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 class SSHServer(ServerInterface):

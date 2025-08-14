@@ -1,10 +1,10 @@
 from time import sleep
 
-from jumpstarter_core_driver_network.adapters import PexpectAdapter
+from jumpstarter_driver_network.adapters import PexpectAdapter
 
-from jumpstarter_core_driver_dutlink.driver import Dutlink, DutlinkPower, DutlinkSerial, DutlinkStorageMux
+from jumpstarter_driver_dutlink.driver import Dutlink, DutlinkPower, DutlinkSerial, DutlinkStorageMux
 
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 STORAGE_DEVICE = "/dev/null"  # MANUAL: replace with path to block device
 

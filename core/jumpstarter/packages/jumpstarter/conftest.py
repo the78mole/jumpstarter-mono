@@ -13,14 +13,14 @@ from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-from jumpstarter_core_protocol import (
+from jumpstarter_protocol import (
     jumpstarter_pb2,
     jumpstarter_pb2_grpc,
     router_pb2_grpc,
 )
 
-from jumpstarter_core.streams.common import forward_stream
-from jumpstarter_core.streams.router import RouterStream
+from jumpstarter.streams.common import forward_stream
+from jumpstarter.streams.router import RouterStream
 
 
 @dataclass(kw_only=True)
@@ -120,6 +120,3 @@ async def mock_controller(tmp_path, monkeypatch):
         yield f"127.0.0.1:{port}"
     finally:
         await server.stop(grace=None)
-
-
-pytest_plugins = ["pytester"]

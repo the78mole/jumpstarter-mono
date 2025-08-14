@@ -5,7 +5,7 @@ import pytest
 from .corellium.exceptions import CorelliumApiException
 from .corellium.types import Device, Instance, Project
 from .driver import Corellium, CorelliumConsole, CorelliumPower
-from jumpstarter_core.common import exceptions as jmp_exceptions
+from jumpstarter.common import exceptions as jmp_exceptions
 
 
 def test_driver_corellium_init_ok(monkeypatch):

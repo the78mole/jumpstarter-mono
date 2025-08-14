@@ -5,10 +5,10 @@ from typing import Optional
 import anyio
 import anyio.from_thread
 from aiohttp import web
-from jumpstarter_core_driver_opendal.driver import Opendal
+from jumpstarter_driver_opendal.driver import Opendal
 
-from jumpstarter_core.common.ipaddr import get_ip_address
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.common.ipaddr import get_ip_address
+from jumpstarter.driver import Driver, export
 
 
 class HttpServerError(Exception):

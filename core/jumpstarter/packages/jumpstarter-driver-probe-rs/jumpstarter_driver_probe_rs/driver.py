@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from anyio.streams.file import FileWriteStream
 
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.driver import Driver, export
 
 
 @dataclass(kw_only=True)

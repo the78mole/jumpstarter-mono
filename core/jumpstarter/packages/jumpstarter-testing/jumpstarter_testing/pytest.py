@@ -4,8 +4,8 @@ from typing import ClassVar
 
 import pytest
 
-from jumpstarter_core.common.utils import env
-from jumpstarter_core.config.client import ClientConfigV1Alpha1
+from jumpstarter.common.utils import env
+from jumpstarter.config.client import ClientConfigV1Alpha1
 
 log = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ class JumpstarterTest:
         import pytest
         import logging
 
-        from jumpstarter_core_testing.pytest import JumpstarterTest
+        from jumpstarter_testing.pytest import JumpstarterTest
 
         log = logging.getLogger(__name__)
 

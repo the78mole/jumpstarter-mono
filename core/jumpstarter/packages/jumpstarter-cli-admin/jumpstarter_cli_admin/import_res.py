@@ -1,8 +1,8 @@
 from typing import Optional
 
 import click
-from jumpstarter_core_cli_common.blocking import blocking
-from jumpstarter_core_cli_common.opt import (
+from jumpstarter_cli_common.blocking import blocking
+from jumpstarter_cli_common.opt import (
     PathOutputType,
     confirm_insecure_tls,
     opt_context,
@@ -12,7 +12,7 @@ from jumpstarter_core_cli_common.opt import (
     opt_nointeractive,
     opt_output_path_only,
 )
-from jumpstarter_core_kubernetes import ClientsV1Alpha1Api, ExportersV1Alpha1Api
+from jumpstarter_kubernetes import ClientsV1Alpha1Api, ExportersV1Alpha1Api
 from kubernetes_asyncio.client.exceptions import ApiException
 from kubernetes_asyncio.config.config_exception import ConfigException
 
@@ -20,9 +20,9 @@ from .k8s import (
     handle_k8s_api_exception,
     handle_k8s_config_exception,
 )
-from jumpstarter_core.config.client import ClientConfigV1Alpha1
-from jumpstarter_core.config.exporter import ExporterConfigV1Alpha1
-from jumpstarter_core.config.user import UserConfigV1Alpha1
+from jumpstarter.config.client import ClientConfigV1Alpha1
+from jumpstarter.config.exporter import ExporterConfigV1Alpha1
+from jumpstarter.config.user import UserConfigV1Alpha1
 
 
 @click.group("import")

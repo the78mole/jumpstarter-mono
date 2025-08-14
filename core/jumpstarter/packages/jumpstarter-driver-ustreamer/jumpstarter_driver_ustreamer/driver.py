@@ -11,7 +11,7 @@ from aiohttp import ClientSession, UnixConnector
 from anyio import connect_unix
 
 from .common import UStreamerState
-from jumpstarter_core.driver import Driver, export, exportstream
+from jumpstarter.driver import Driver, export, exportstream
 
 
 def find_ustreamer():

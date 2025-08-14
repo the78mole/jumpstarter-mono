@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 
-from jumpstarter_core_driver_composite.client import CompositeClient
-from jumpstarter_core_driver_network.adapters import FabricAdapter, NovncAdapter
+from jumpstarter_driver_composite.client import CompositeClient
+from jumpstarter_driver_network.adapters import FabricAdapter, NovncAdapter
 
 
 class QemuClient(CompositeClient):

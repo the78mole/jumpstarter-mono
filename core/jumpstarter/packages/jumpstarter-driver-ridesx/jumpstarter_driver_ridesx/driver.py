@@ -5,10 +5,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict
 
-from jumpstarter_core_driver_opendal.driver import Opendal
+from jumpstarter_driver_opendal.driver import Opendal
 
-from jumpstarter_core.common.exceptions import ConfigurationError
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.common.exceptions import ConfigurationError
+from jumpstarter.driver import Driver, export
 
 
 async def _send_power_command(serial, logger, command: str):

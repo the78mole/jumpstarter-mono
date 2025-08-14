@@ -1,17 +1,17 @@
 from typing import Optional
 
 import click
-from jumpstarter_core_cli_common.alias import AliasedGroup
-from jumpstarter_core_cli_common.blocking import blocking
-from jumpstarter_core_cli_common.opt import (
+from jumpstarter_cli_common.alias import AliasedGroup
+from jumpstarter_cli_common.blocking import blocking
+from jumpstarter_cli_common.opt import (
     OutputType,
     opt_context,
     opt_kubeconfig,
     opt_namespace,
     opt_output_all,
 )
-from jumpstarter_core_cli_common.print import model_print
-from jumpstarter_core_kubernetes import (
+from jumpstarter_cli_common.print import model_print
+from jumpstarter_kubernetes import (
     ClientsV1Alpha1Api,
     ExportersV1Alpha1Api,
     LeasesV1Alpha1Api,

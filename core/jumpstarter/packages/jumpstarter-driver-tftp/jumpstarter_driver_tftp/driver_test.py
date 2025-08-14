@@ -1,8 +1,8 @@
 import pytest
 
-from jumpstarter_core_driver_tftp.driver import Tftp
+from jumpstarter_driver_tftp.driver import Tftp
 
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 @pytest.fixture

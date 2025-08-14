@@ -1,11 +1,11 @@
 from contextlib import contextmanager
 
 import click
-from jumpstarter_core_driver_network.adapters import PexpectAdapter
+from jumpstarter_driver_network.adapters import PexpectAdapter
 from pexpect.fdpexpect import fdspawn
 
 from .console import Console
-from jumpstarter_core.client import DriverClient
+from jumpstarter.client import DriverClient
 
 
 class PySerialClient(DriverClient):

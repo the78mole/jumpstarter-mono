@@ -10,7 +10,7 @@ import asyncio
 import os
 import sys
 
-from jumpstarter_core_cli_admin.controller import get_latest_compatible_controller_version
+from jumpstarter_cli_admin.controller import get_latest_compatible_controller_version
 
 os.environ["TERM"] = "dumb"
 

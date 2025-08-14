@@ -18,7 +18,7 @@ from anyio._backends._asyncio import SocketStream, StreamProtocol
 from anyio.streams.stapled import StapledObjectStream
 
 from .streams.websocket import WebsocketClientStream
-from jumpstarter_core.driver import Driver, exportstream
+from jumpstarter.driver import Driver, exportstream
 
 
 class NetworkInterface(metaclass=ABCMeta):

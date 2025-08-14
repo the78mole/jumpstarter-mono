@@ -2,10 +2,10 @@ from dataclasses import dataclass, field
 from typing import Generator, Optional
 
 import requests
-from jumpstarter_core_driver_power.common import PowerReading
-from jumpstarter_core_driver_power.driver import PowerInterface
+from jumpstarter_driver_power.common import PowerReading
+from jumpstarter_driver_power.driver import PowerInterface
 
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.driver import Driver, export
 
 
 @dataclass(kw_only=True)

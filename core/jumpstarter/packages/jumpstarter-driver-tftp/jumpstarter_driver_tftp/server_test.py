@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from opendal import AsyncOperator
 
-from jumpstarter_core_driver_tftp.server import Opcode, TftpServer
+from jumpstarter_driver_tftp.server import Opcode, TftpServer
 
 
 @pytest.fixture

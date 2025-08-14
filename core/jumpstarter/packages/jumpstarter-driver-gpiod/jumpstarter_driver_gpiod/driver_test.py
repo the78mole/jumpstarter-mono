@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 # Import the client classes directly
-from jumpstarter_core_driver_gpiod.client import DigitalInputClient, DigitalOutputClient
+from jumpstarter_driver_gpiod.client import DigitalInputClient, DigitalOutputClient
 
 
 def setup_gpiod_mocks(mock_gpiod, line_number=18, line_name=None):
@@ -152,7 +152,7 @@ class TestDriverMethods:
         mock_chip, mock_line, mock_settings = setup_gpiod_mocks(mock_gpiod, line_number=18)
 
         # Import and test the driver
-        from jumpstarter_core_driver_gpiod.driver import DigitalOutput
+        from jumpstarter_driver_gpiod.driver import DigitalOutput
 
         driver = DigitalOutput(
             line=18,
@@ -181,7 +181,7 @@ class TestDriverMethods:
         mock_chip, mock_line, mock_settings = setup_gpiod_mocks(mock_gpiod, line_number=17)
 
         # Import and test the driver
-        from jumpstarter_core_driver_gpiod.driver import DigitalInput
+        from jumpstarter_driver_gpiod.driver import DigitalInput
 
         driver = DigitalInput(
             line=17,
@@ -209,7 +209,7 @@ class TestDriverMethods:
         mock_chip, mock_line, mock_settings = setup_gpiod_mocks(mock_gpiod, line_number=18)
 
         # Import and test the driver
-        from jumpstarter_core_driver_gpiod.driver import DigitalOutput
+        from jumpstarter_driver_gpiod.driver import DigitalOutput
 
         driver = DigitalOutput(line=18)
 
@@ -239,7 +239,7 @@ class TestDriverMethods:
         mock_chip, mock_line, mock_settings = setup_gpiod_mocks(mock_gpiod, line_number=17)
 
         # Import and test the driver
-        from jumpstarter_core_driver_gpiod.driver import DigitalInput
+        from jumpstarter_driver_gpiod.driver import DigitalInput
 
         driver = DigitalInput(line=17)
 
@@ -295,7 +295,7 @@ class TestErrorHandling:
         # This test verifies that the driver handles the import error gracefully
         # The actual import error handling is done at module level, so we test it differently
         try:
-            from jumpstarter_core_driver_gpiod.driver import DigitalOutput
+            from jumpstarter_driver_gpiod.driver import DigitalOutput
             # If we get here, the import succeeded (which is expected in our test environment)
             # We'll just verify that the driver can be imported
             assert DigitalOutput is not None
@@ -308,7 +308,7 @@ class TestErrorHandling:
         """Test handling of chip open error"""
         mock_gpiod.Chip.side_effect = Exception("Cannot open chip")
 
-        from jumpstarter_core_driver_gpiod.driver import DigitalOutput
+        from jumpstarter_driver_gpiod.driver import DigitalOutput
 
         with pytest.raises(Exception, match="Cannot open chip"):
             DigitalOutput(line=18)
@@ -322,7 +322,7 @@ class TestErrorHandling:
         # Set up the error condition
         mock_chip.request_lines.side_effect = Exception("Cannot request line")
 
-        from jumpstarter_core_driver_gpiod.driver import DigitalOutput
+        from jumpstarter_driver_gpiod.driver import DigitalOutput
 
         with pytest.raises(Exception, match="Cannot request line"):
             DigitalOutput(line=18)
@@ -333,7 +333,7 @@ class TestErrorHandling:
         # Set up common mocks
         mock_chip, mock_line, mock_settings = setup_gpiod_mocks(mock_gpiod, line_number=18)
 
-        from jumpstarter_core_driver_gpiod.driver import DigitalOutput
+        from jumpstarter_driver_gpiod.driver import DigitalOutput
 
         with pytest.raises(ValueError, match="Invalid drive: invalid_drive"):
             DigitalOutput(line=18, drive="invalid_drive")
@@ -344,7 +344,7 @@ class TestErrorHandling:
         # Set up common mocks
         mock_chip, mock_line, mock_settings = setup_gpiod_mocks(mock_gpiod, line_number=18)
 
-        from jumpstarter_core_driver_gpiod.driver import DigitalOutput
+        from jumpstarter_driver_gpiod.driver import DigitalOutput
 
         with pytest.raises(ValueError, match="Invalid bias: invalid_bias"):
             DigitalOutput(line=18, bias="invalid_bias")
@@ -355,7 +355,7 @@ class TestErrorHandling:
         # Set up common mocks
         mock_chip, mock_line, mock_settings = setup_gpiod_mocks(mock_gpiod, line_number=18)
 
-        from jumpstarter_core_driver_gpiod.driver import DigitalOutput
+        from jumpstarter_driver_gpiod.driver import DigitalOutput
 
         with pytest.raises(ValueError, match="Invalid initial_value: invalid"):
             DigitalOutput(line=18, initial_value="invalid")

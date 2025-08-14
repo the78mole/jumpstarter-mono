@@ -1,25 +1,3 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[project]
-name = "jumpstarter-mono"
-version = "0.1.0"
-description = "Jumpstarter monorepo containing all components"
-readme = "README.md"
-license = "Apache-2.0"
-authors = [
-    {name = "Jumpstarter Contributors"},
-]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.12",
-]
-dependencies = []
-
 [tool.uv.workspace]
 members = [
     "core/jumpstarter/packages/*",

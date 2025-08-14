@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from pysnmp.entity import config as snmp_config
 
-from jumpstarter_core_driver_snmp.driver import AuthProtocol, PrivProtocol, SNMPServer
+from jumpstarter_driver_snmp.driver import AuthProtocol, PrivProtocol, SNMPServer
 
 
 class MockMibObject:

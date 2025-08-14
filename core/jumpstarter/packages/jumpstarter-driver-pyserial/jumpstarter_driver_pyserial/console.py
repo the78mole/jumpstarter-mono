@@ -6,7 +6,7 @@ from contextlib import contextmanager
 from anyio import create_task_group
 from anyio.streams.file import FileReadStream, FileWriteStream
 
-from jumpstarter_core.client import DriverClient
+from jumpstarter.client import DriverClient
 
 
 class ConsoleExit(Exception):

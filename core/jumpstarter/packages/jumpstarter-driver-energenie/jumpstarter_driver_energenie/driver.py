@@ -4,9 +4,9 @@ from dataclasses import dataclass, field
 
 import requests
 import requests.exceptions
-from jumpstarter_core_driver_power.driver import PowerInterface, PowerReading
+from jumpstarter_driver_power.driver import PowerInterface, PowerReading
 
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.driver import Driver, export
 
 
 @dataclass(kw_only=True)

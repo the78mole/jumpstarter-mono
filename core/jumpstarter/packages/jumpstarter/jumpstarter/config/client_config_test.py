@@ -7,10 +7,10 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from jumpstarter_core.common.exceptions import FileNotFoundError
-from jumpstarter_core.config.client import ClientConfigV1Alpha1, ClientConfigV1Alpha1Drivers, ShellConfigV1Alpha1
-from jumpstarter_core.config.common import ObjectMeta
-from jumpstarter_core.config.env import JMP_DRIVERS_ALLOW, JMP_ENDPOINT, JMP_NAME, JMP_NAMESPACE, JMP_TOKEN
+from jumpstarter.common.exceptions import FileNotFoundError
+from jumpstarter.config.client import ClientConfigV1Alpha1, ClientConfigV1Alpha1Drivers, ShellConfigV1Alpha1
+from jumpstarter.config.common import ObjectMeta
+from jumpstarter.config.env import JMP_DRIVERS_ALLOW, JMP_ENDPOINT, JMP_NAME, JMP_NAMESPACE, JMP_TOKEN
 
 
 def test_client_ensure_exists_makes_dir(monkeypatch: pytest.MonkeyPatch):

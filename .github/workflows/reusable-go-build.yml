@@ -6,41 +6,49 @@ on:
       go-version:
         required: false
         type: string
-        default: '1.24'
+        default: "1.24"
       working-directory:
         required: true
         type: string
       binary-name:
         required: true
         type: string
+      cmd-package:
+        required: false
+        type: string
+        default: "./cmd"
       build-flags:
         required: false
         type: string
-        default: ''
+        default: ""
       test-flags:
         required: false
         type: string
-        default: '-v -race'
+        default: "-v -race"
   workflow_dispatch:
     inputs:
       go-version:
         required: false
         type: string
-        default: '1.24'
+        default: "1.24"
       working-directory:
         required: true
         type: string
       binary-name:
         required: true
         type: string
+      cmd-package:
+        required: false
+        type: string
+        default: "./cmd"
       build-flags:
         required: false
         type: string
-        default: ''
+        default: ""
       test-flags:
         required: false
         type: string
-        default: '-v -race'
+        default: "-v -race"
 
 jobs:
   build:
@@ -62,7 +70,7 @@ jobs:
       - name: Build
         working-directory: ${{ inputs.working-directory }}
         run: |
-          go build ${{ inputs.build-flags }} -o ${{ inputs.binary-name }} .
+          go build ${{ inputs.build-flags }} -o ${{ inputs.binary-name }} ${{ inputs.cmd-package }}
 
       - name: Run tests
         working-directory: ${{ inputs.working-directory }}

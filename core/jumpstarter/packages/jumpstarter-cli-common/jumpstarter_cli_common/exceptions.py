@@ -4,7 +4,7 @@ from types import TracebackType
 
 import click
 
-from jumpstarter_core.common.exceptions import ConnectionError, JumpstarterException
+from jumpstarter.common.exceptions import ConnectionError, JumpstarterException
 
 
 class ClickExceptionRed(click.ClickException):

@@ -1,14 +1,14 @@
 import click
-from jumpstarter_core_cli_common.opt import (
+from jumpstarter_cli_common.opt import (
     OutputMode,
     OutputType,
     PathOutputType,
     opt_output_all,
     opt_output_path_only,
 )
-from jumpstarter_core_cli_common.print import model_print
+from jumpstarter_cli_common.print import model_print
 
-from jumpstarter_core.config.exporter import ExporterConfigV1Alpha1, ObjectMeta
+from jumpstarter.config.exporter import ExporterConfigV1Alpha1, ObjectMeta
 
 arg_alias = click.argument("alias", default="default")
 

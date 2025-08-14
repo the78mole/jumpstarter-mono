@@ -2,7 +2,7 @@ from typing import cast
 
 from .client import PySerialClient
 from .driver import PySerial
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 def test_bare_pyserial():

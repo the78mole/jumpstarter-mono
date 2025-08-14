@@ -5,9 +5,9 @@ from pathlib import Path
 import click
 from pydantic import ValidationError
 
-from jumpstarter_core.config.client import ClientConfigV1Alpha1
-from jumpstarter_core.config.exporter import ExporterConfigV1Alpha1
-from jumpstarter_core.config.user import UserConfigV1Alpha1
+from jumpstarter.config.client import ClientConfigV1Alpha1
+from jumpstarter.config.exporter import ExporterConfigV1Alpha1
+from jumpstarter.config.user import UserConfigV1Alpha1
 
 
 def opt_config_inner(  # noqa: C901

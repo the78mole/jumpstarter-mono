@@ -1,8 +1,8 @@
 import pytest
 
-from jumpstarter_core_driver_ustreamer.driver import UStreamer
+from jumpstarter_driver_ustreamer.driver import UStreamer
 
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 def test_drivers_video_ustreamer():

@@ -7,7 +7,7 @@ from typing import Any
 import imagehash
 from PIL import Image
 
-from jumpstarter_core.client import DriverClient
+from jumpstarter.client import DriverClient
 
 log = logging.getLogger("imagehash")
 

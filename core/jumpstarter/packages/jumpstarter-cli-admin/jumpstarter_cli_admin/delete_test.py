@@ -1,7 +1,7 @@
 from unittest.mock import AsyncMock, Mock, patch
 
 from click.testing import CliRunner
-from jumpstarter_core_kubernetes import (
+from jumpstarter_kubernetes import (
     ClientsV1Alpha1Api,
     ExportersV1Alpha1Api,
     V1Alpha1Exporter,
@@ -10,10 +10,10 @@ from jumpstarter_core_kubernetes import (
 from kubernetes_asyncio.client.models import V1ObjectMeta, V1ObjectReference
 
 from .delete import delete
-from jumpstarter_core.config.client import ClientConfigV1Alpha1, ClientConfigV1Alpha1Drivers
-from jumpstarter_core.config.common import ObjectMeta
-from jumpstarter_core.config.exporter import ExporterConfigV1Alpha1
-from jumpstarter_core.config.user import UserConfigV1Alpha1, UserConfigV1Alpha1Config
+from jumpstarter.config.client import ClientConfigV1Alpha1, ClientConfigV1Alpha1Drivers
+from jumpstarter.config.common import ObjectMeta
+from jumpstarter.config.exporter import ExporterConfigV1Alpha1
+from jumpstarter.config.user import UserConfigV1Alpha1, UserConfigV1Alpha1Config
 
 # Generate a random client name
 CLIENT_NAME = "test"

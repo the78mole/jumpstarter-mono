@@ -1,5 +1,5 @@
 from .driver import ProbeRs
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 def test_drivers_probe_rs(monkeypatch):

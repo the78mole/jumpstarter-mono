@@ -5,10 +5,10 @@ from dataclasses import dataclass, field
 import pyudev
 import usb.core
 import usb.util
-from jumpstarter_core_driver_opendal.driver import StorageMuxFlasherInterface
+from jumpstarter_driver_opendal.driver import StorageMuxFlasherInterface
 
-from jumpstarter_core.common.storage import read_from_storage_device, write_to_storage_device
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.common.storage import read_from_storage_device, write_to_storage_device
+from jumpstarter.driver import Driver, export
 
 
 @dataclass(kw_only=True)

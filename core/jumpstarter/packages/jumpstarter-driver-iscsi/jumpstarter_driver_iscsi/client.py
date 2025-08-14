@@ -3,8 +3,8 @@ import os
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
-from jumpstarter_core_driver_composite.client import CompositeClient
-from jumpstarter_core_driver_opendal.common import PathBuf
+from jumpstarter_driver_composite.client import CompositeClient
+from jumpstarter_driver_opendal.common import PathBuf
 from opendal import Operator
 
 
@@ -112,7 +112,7 @@ class ISCSIServerClient(CompositeClient):
                     hash_obj.update(chunk)
             return hash_obj.hexdigest()
         else:
-            from jumpstarter_core_driver_opendal.client import operator_for_path
+            from jumpstarter_driver_opendal.client import operator_for_path
 
             path, op, _ = operator_for_path(file_path)
             hash_obj = hashlib.sha256()
@@ -133,7 +133,7 @@ class ISCSIServerClient(CompositeClient):
             if operator is None:
                 src_size = os.path.getsize(str(src))
             else:
-                from jumpstarter_core_driver_opendal.client import operator_for_path
+                from jumpstarter_driver_opendal.client import operator_for_path
 
                 path, op, _ = operator_for_path(src)
                 src_size = op.stat(str(path)).content_length

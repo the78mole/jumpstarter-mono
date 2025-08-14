@@ -5,11 +5,11 @@ from subprocess import Popen
 
 from anyio.from_thread import BlockingPortal, start_blocking_portal
 
-from jumpstarter_core.client import client_from_path
-from jumpstarter_core.config.env import JMP_DRIVERS_ALLOW, JUMPSTARTER_HOST
-from jumpstarter_core.driver import Driver
-from jumpstarter_core.exporter import Session
-from jumpstarter_core.utils.env import env
+from jumpstarter.client import client_from_path
+from jumpstarter.config.env import JMP_DRIVERS_ALLOW, JUMPSTARTER_HOST
+from jumpstarter.driver import Driver
+from jumpstarter.exporter import Session
+from jumpstarter.utils.env import env
 
 __all__ = ["env"]
 

@@ -13,16 +13,16 @@ from typing import Any
 from anyio import create_task_group, fail_after, sleep
 from anyio.from_thread import BlockingPortal
 from grpc.aio import Channel
-from jumpstarter_core_protocol import jumpstarter_pb2, jumpstarter_pb2_grpc
+from jumpstarter_protocol import jumpstarter_pb2, jumpstarter_pb2_grpc
 
 from .exceptions import LeaseError
-from jumpstarter_core.client import client_from_path
-from jumpstarter_core.client.grpc import ClientService
-from jumpstarter_core.common import TemporaryUnixListener
-from jumpstarter_core.common.condition import condition_false, condition_message, condition_present_and_equal, condition_true
-from jumpstarter_core.common.grpc import translate_grpc_exceptions
-from jumpstarter_core.common.streams import connect_router_stream
-from jumpstarter_core.config.tls import TLSConfigV1Alpha1
+from jumpstarter.client import client_from_path
+from jumpstarter.client.grpc import ClientService
+from jumpstarter.common import TemporaryUnixListener
+from jumpstarter.common.condition import condition_false, condition_message, condition_present_and_equal, condition_true
+from jumpstarter.common.grpc import translate_grpc_exceptions
+from jumpstarter.common.streams import connect_router_stream
+from jumpstarter.config.tls import TLSConfigV1Alpha1
 
 logger = logging.getLogger(__name__)
 

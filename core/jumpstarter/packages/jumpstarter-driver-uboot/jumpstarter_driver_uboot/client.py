@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from functools import cached_property
 
 import pexpect
-from jumpstarter_core_driver_composite.client import CompositeClient
+from jumpstarter_driver_composite.client import CompositeClient
 
 from .common import ESC, DhcpInfo
 

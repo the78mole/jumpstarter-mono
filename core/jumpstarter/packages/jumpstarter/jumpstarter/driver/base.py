@@ -17,7 +17,7 @@ from uuid import UUID, uuid4
 import aiohttp
 from anyio import to_thread
 from grpc import StatusCode
-from jumpstarter_core_protocol import jumpstarter_pb2, jumpstarter_pb2_grpc, router_pb2_grpc
+from jumpstarter_protocol import jumpstarter_pb2, jumpstarter_pb2_grpc, router_pb2_grpc
 from pydantic import TypeAdapter
 from pydantic.dataclasses import dataclass
 
@@ -27,19 +27,19 @@ from .decorators import (
     MARKER_STREAMCALL,
     MARKER_STREAMING_DRIVERCALL,
 )
-from jumpstarter_core.common import Metadata
-from jumpstarter_core.common.resources import ClientStreamResource, PresignedRequestResource, Resource, ResourceMetadata
-from jumpstarter_core.common.serde import decode_value, encode_value
-from jumpstarter_core.common.streams import (
+from jumpstarter.common import Metadata
+from jumpstarter.common.resources import ClientStreamResource, PresignedRequestResource, Resource, ResourceMetadata
+from jumpstarter.common.serde import decode_value, encode_value
+from jumpstarter.common.streams import (
     DriverStreamRequest,
     ResourceStreamRequest,
 )
-from jumpstarter_core.config.env import JMP_DISABLE_COMPRESSION
-from jumpstarter_core.streams.aiohttp import AiohttpStreamReaderStream
-from jumpstarter_core.streams.common import create_memory_stream
-from jumpstarter_core.streams.encoding import Compression, compress_stream
-from jumpstarter_core.streams.metadata import MetadataStream
-from jumpstarter_core.streams.progress import ProgressStream
+from jumpstarter.config.env import JMP_DISABLE_COMPRESSION
+from jumpstarter.streams.aiohttp import AiohttpStreamReaderStream
+from jumpstarter.streams.common import create_memory_stream
+from jumpstarter.streams.encoding import Compression, compress_stream
+from jumpstarter.streams.metadata import MetadataStream
+from jumpstarter.streams.progress import ProgressStream
 
 SUPPORTED_CONTENT_ENCODINGS = (
     {}

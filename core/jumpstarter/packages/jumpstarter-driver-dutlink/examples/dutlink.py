@@ -3,12 +3,12 @@ import sys
 import time
 
 import click
-from jumpstarter_core_driver_network.adapters import PexpectAdapter
+from jumpstarter_driver_network.adapters import PexpectAdapter
 
-from jumpstarter_core.common.utils import env
+from jumpstarter.common.utils import env
 
 # initialize client from exporter config
-# from jumpstarter_core.config.client import ClientConfigV1Alpha1
+# from jumpstarter.config.client import ClientConfigV1Alpha1
 # with ClientConfigV1Alpha1.load("default").lease(selector="example.com/board=dutlink") as lease:
 #     with lease.connect() as client:
 

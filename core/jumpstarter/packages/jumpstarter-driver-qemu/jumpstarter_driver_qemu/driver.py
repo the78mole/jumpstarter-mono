@@ -16,15 +16,15 @@ from typing import Literal
 import yaml
 from anyio import fail_after, run_process, sleep
 from anyio.streams.file import FileReadStream, FileWriteStream
-from jumpstarter_core_driver_network.driver import TcpNetwork, UnixNetwork, VsockNetwork
-from jumpstarter_core_driver_opendal.driver import FlasherInterface
-from jumpstarter_core_driver_power.driver import PowerInterface, PowerReading
-from jumpstarter_core_driver_pyserial.driver import PySerial
+from jumpstarter_driver_network.driver import TcpNetwork, UnixNetwork, VsockNetwork
+from jumpstarter_driver_opendal.driver import FlasherInterface
+from jumpstarter_driver_power.driver import PowerInterface, PowerReading
+from jumpstarter_driver_pyserial.driver import PySerial
 from pydantic import BaseModel, Field, validate_call
 from qemu.qmp import QMPClient
 from qemu.qmp.protocol import ConnectError, Runstate
 
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.driver import Driver, export
 
 
 def _vsock_available():

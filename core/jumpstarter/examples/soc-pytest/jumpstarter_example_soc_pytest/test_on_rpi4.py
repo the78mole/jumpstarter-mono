@@ -6,9 +6,9 @@ import time
 import opendal
 import pexpect
 import pytest
-from jumpstarter_core_driver_network.adapters import PexpectAdapter
-from jumpstarter_core_imagehash import ImageHash
-from jumpstarter_core_testing.pytest import JumpstarterTest
+from jumpstarter_driver_network.adapters import PexpectAdapter
+from jumpstarter_imagehash import ImageHash
+from jumpstarter_testing.pytest import JumpstarterTest
 
 log = logging.getLogger(__file__)
 

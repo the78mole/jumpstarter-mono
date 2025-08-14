@@ -8,9 +8,9 @@ import pytest
 import requests
 from opendal import Operator
 
-from jumpstarter_core_driver_qemu.driver import Qemu
+from jumpstarter_driver_qemu.driver import Qemu
 
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 @pytest.fixture(scope="session")

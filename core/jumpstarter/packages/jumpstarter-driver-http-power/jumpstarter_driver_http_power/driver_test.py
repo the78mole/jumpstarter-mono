@@ -2,7 +2,7 @@ import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from .driver import HttpEndpointConfig, HttpPower
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 class MockHTTPHandler(BaseHTTPRequestHandler):

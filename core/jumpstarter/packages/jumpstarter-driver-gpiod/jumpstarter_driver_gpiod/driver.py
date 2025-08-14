@@ -8,11 +8,11 @@ try:
 except ImportError:
     gpiod = None
 
-from jumpstarter_core_driver_power.driver import PowerInterface
+from jumpstarter_driver_power.driver import PowerInterface
 
-from jumpstarter_core_driver_gpiod.client import PinState
+from jumpstarter_driver_gpiod.client import PinState
 
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.driver import Driver, export
 
 
 @dataclass(kw_only=True)

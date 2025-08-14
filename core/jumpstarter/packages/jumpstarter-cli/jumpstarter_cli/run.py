@@ -3,8 +3,8 @@ from multiprocessing.sharedctypes import Value
 
 import anyio
 import click
-from jumpstarter_core_cli_common.config import opt_config
-from jumpstarter_core_cli_common.exceptions import handle_exceptions, leaf_exceptions
+from jumpstarter_cli_common.config import opt_config
+from jumpstarter_cli_common.exceptions import handle_exceptions, leaf_exceptions
 
 
 def _serve_with_exc_handling(exporter):

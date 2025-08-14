@@ -2,8 +2,8 @@ from functools import reduce
 
 from pydantic.dataclasses import dataclass
 
-from jumpstarter_core.common.exceptions import ConfigurationError
-from jumpstarter_core.driver import Driver
+from jumpstarter.common.exceptions import ConfigurationError
+from jumpstarter.driver import Driver
 
 
 class CompositeInterface:

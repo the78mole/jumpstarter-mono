@@ -18,9 +18,9 @@ from pydantic import ConfigDict, validate_call
 
 from .adapter import OpendalAdapter
 from .common import Capability, HashAlgo, Metadata, Mode, PathBuf, PresignedRequest
-from jumpstarter_core.client import DriverClient
-from jumpstarter_core.common.exceptions import ArgumentError
-from jumpstarter_core.streams.encoding import Compression
+from jumpstarter.client import DriverClient
+from jumpstarter.common.exceptions import ArgumentError
+from jumpstarter.streams.encoding import Compression
 
 
 @dataclass(kw_only=True)

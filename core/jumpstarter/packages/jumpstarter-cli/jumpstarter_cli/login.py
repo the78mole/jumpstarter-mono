@@ -1,18 +1,18 @@
 import click
-from jumpstarter_core_cli_common.blocking import blocking
-from jumpstarter_core_cli_common.config import opt_config
-from jumpstarter_core_cli_common.oidc import Config, decode_jwt_issuer, opt_oidc
-from jumpstarter_core_cli_common.opt import (
+from jumpstarter_cli_common.blocking import blocking
+from jumpstarter_cli_common.config import opt_config
+from jumpstarter_cli_common.oidc import Config, decode_jwt_issuer, opt_oidc
+from jumpstarter_cli_common.opt import (
     confirm_insecure_tls,
     opt_insecure_tls_config,
     opt_nointeractive,
 )
 
-from jumpstarter_core.common.exceptions import ReauthenticationFailed
-from jumpstarter_core.config.client import ClientConfigV1Alpha1, ClientConfigV1Alpha1Drivers
-from jumpstarter_core.config.common import ObjectMeta
-from jumpstarter_core.config.exporter import ExporterConfigV1Alpha1
-from jumpstarter_core.config.tls import TLSConfigV1Alpha1
+from jumpstarter.common.exceptions import ReauthenticationFailed
+from jumpstarter.config.client import ClientConfigV1Alpha1, ClientConfigV1Alpha1Drivers
+from jumpstarter.config.common import ObjectMeta
+from jumpstarter.config.exporter import ExporterConfigV1Alpha1
+from jumpstarter.config.tls import TLSConfigV1Alpha1
 
 
 @click.command("login", short_help="Login")

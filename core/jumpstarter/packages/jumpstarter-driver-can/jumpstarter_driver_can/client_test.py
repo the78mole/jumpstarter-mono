@@ -7,10 +7,10 @@ import can
 import isotp
 import pytest
 
-from jumpstarter_core_driver_can.common import IsoTpParams
-from jumpstarter_core_driver_can.driver import Can, IsoTpPython, IsoTpSocket
+from jumpstarter_driver_can.common import IsoTpParams
+from jumpstarter_driver_can.driver import Can, IsoTpPython, IsoTpSocket
 
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 def test_client_can_send_recv(request):

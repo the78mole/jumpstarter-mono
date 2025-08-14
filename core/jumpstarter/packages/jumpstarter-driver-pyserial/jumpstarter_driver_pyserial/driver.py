@@ -10,7 +10,7 @@ from anyio.streams.stapled import StapledObjectStream
 from serial import serial_for_url
 from serial_asyncio import open_serial_connection
 
-from jumpstarter_core.driver import Driver, exportstream
+from jumpstarter.driver import Driver, exportstream
 
 LOOP = "loop://"
 

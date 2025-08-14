@@ -2,14 +2,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import anyio.to_thread
-from jumpstarter_core_driver_http.driver import HttpServer
-from jumpstarter_core_driver_tftp.driver import Tftp
-from jumpstarter_core_driver_uboot.driver import UbootConsole
+from jumpstarter_driver_http.driver import HttpServer
+from jumpstarter_driver_tftp.driver import Tftp
+from jumpstarter_driver_uboot.driver import UbootConsole
 from oras.provider import Registry
 
 from .bundle import FlasherBundleManifestV1Alpha1
-from jumpstarter_core.common.exceptions import ConfigurationError
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.common.exceptions import ConfigurationError
+from jumpstarter.driver import Driver, export
 
 
 @dataclass(kw_only=True)

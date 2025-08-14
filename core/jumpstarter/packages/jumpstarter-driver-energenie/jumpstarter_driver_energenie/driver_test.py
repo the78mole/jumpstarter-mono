@@ -1,7 +1,7 @@
 from pytest_httpserver import HTTPServer
 
 from .driver import EnerGenie
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 def test_drivers_energenie(httpserver: HTTPServer):

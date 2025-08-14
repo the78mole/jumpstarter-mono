@@ -1,7 +1,7 @@
 import click
-from jumpstarter_core_cli_common.alias import AliasedGroup
-from jumpstarter_core_cli_common.opt import opt_log_level
-from jumpstarter_core_cli_common.version import version
+from jumpstarter_cli_common.alias import AliasedGroup
+from jumpstarter_cli_common.opt import opt_log_level
+from jumpstarter_cli_common.version import version
 
 from .driver import list_drivers
 

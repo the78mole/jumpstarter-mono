@@ -3,12 +3,12 @@ from typing import Annotated, Literal, Union
 from uuid import UUID
 
 import grpc
-from jumpstarter_core_protocol.jumpstarter.v1 import router_pb2_grpc
+from jumpstarter_protocol.jumpstarter.v1 import router_pb2_grpc
 from pydantic import BaseModel, Field, Json
 
-from jumpstarter_core.common.grpc import aio_secure_channel, ssl_channel_credentials
-from jumpstarter_core.streams.common import forward_stream
-from jumpstarter_core.streams.router import RouterStream
+from jumpstarter.common.grpc import aio_secure_channel, ssl_channel_credentials
+from jumpstarter.streams.common import forward_stream
+from jumpstarter.streams.router import RouterStream
 
 
 class ResourceStreamRequest(BaseModel):

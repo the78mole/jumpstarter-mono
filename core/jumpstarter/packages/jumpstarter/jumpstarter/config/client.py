@@ -26,13 +26,13 @@ from .env import JMP_LEASE
 from .grpc import call_credentials
 from .shell import ShellConfigV1Alpha1
 from .tls import TLSConfigV1Alpha1
-from jumpstarter_core.client.grpc import ClientService, WithLease, WithLeaseList
-from jumpstarter_core.common.exceptions import (
+from jumpstarter.client.grpc import ClientService, WithLease, WithLeaseList
+from jumpstarter.common.exceptions import (
     ConfigurationError,
     ConnectionError,
     FileNotFoundError,
 )
-from jumpstarter_core.common.grpc import aio_secure_channel, ssl_channel_credentials
+from jumpstarter.common.grpc import aio_secure_channel, ssl_channel_credentials
 
 
 def _blocking_compat(f):
@@ -230,7 +230,7 @@ class ClientConfigV1Alpha1(BaseSettings):
         duration: timedelta,
         portal: BlockingPortal,
     ):
-        from jumpstarter_core.client import Lease
+        from jumpstarter.client import Lease
 
         # if no lease_name provided, check if it is set in the environment
         lease_name = lease_name or os.environ.get(JMP_LEASE, "")

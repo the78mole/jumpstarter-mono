@@ -3,16 +3,16 @@ from pathlib import Path
 from unittest.mock import AsyncMock, Mock, patch
 
 from click.testing import CliRunner
-from jumpstarter_core_kubernetes import (
+from jumpstarter_kubernetes import (
     ClientsV1Alpha1Api,
     ExportersV1Alpha1Api,
 )
 
 from .import_res import import_res
-from jumpstarter_core.config.client import ClientConfigV1Alpha1, ClientConfigV1Alpha1Drivers
-from jumpstarter_core.config.common import ObjectMeta
-from jumpstarter_core.config.exporter import ExporterConfigV1Alpha1
-from jumpstarter_core.config.tls import TLSConfigV1Alpha1
+from jumpstarter.config.client import ClientConfigV1Alpha1, ClientConfigV1Alpha1Drivers
+from jumpstarter.config.common import ObjectMeta
+from jumpstarter.config.exporter import ExporterConfigV1Alpha1
+from jumpstarter.config.tls import TLSConfigV1Alpha1
 
 # Generate a random client name
 CLIENT_NAME = uuid.uuid4().hex

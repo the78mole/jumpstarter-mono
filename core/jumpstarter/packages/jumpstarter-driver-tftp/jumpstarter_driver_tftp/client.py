@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from jumpstarter_core_driver_composite.client import CompositeClient
+from jumpstarter_driver_composite.client import CompositeClient
 
 
 @dataclass(kw_only=True)

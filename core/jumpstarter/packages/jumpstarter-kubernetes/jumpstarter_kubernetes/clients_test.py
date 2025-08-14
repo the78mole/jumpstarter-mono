@@ -1,6 +1,6 @@
 from kubernetes_asyncio.client.models import V1ObjectMeta
 
-from jumpstarter_core_kubernetes import V1Alpha1Client, V1Alpha1ClientStatus
+from jumpstarter_kubernetes import V1Alpha1Client, V1Alpha1ClientStatus
 
 TEST_CLIENT = V1Alpha1Client(
     api_version="jumpstarter.dev/v1alpha1",

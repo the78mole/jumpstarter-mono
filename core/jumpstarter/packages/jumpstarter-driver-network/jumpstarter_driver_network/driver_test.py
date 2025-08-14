@@ -10,8 +10,8 @@ from anyio.from_thread import start_blocking_portal
 
 from .adapters import TcpPortforwardAdapter, UnixPortforwardAdapter
 from .driver import DbusNetwork, TcpNetwork, UdpNetwork, UnixNetwork, WebsocketNetwork
-from jumpstarter_core.common import TemporaryUnixListener
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common import TemporaryUnixListener
+from jumpstarter.common.utils import serve
 
 
 async def echo_handler(stream):

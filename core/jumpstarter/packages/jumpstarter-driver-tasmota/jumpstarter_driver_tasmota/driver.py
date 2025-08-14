@@ -3,10 +3,10 @@ from threading import Condition
 from typing import Literal
 
 import paho.mqtt.client as paho
-from jumpstarter_core_driver_power.driver import PowerInterface
+from jumpstarter_driver_power.driver import PowerInterface
 from paho.mqtt.enums import CallbackAPIVersion
 
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.driver import Driver, export
 
 
 @dataclass(kw_only=True)

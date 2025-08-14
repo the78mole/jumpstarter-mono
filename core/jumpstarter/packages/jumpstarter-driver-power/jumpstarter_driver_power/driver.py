@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from collections.abc import AsyncGenerator, Generator
 
 from .common import PowerReading
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.driver import Driver, export
 
 
 class PowerInterface(metaclass=ABCMeta):

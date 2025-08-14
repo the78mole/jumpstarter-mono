@@ -1,4 +1,4 @@
-from jumpstarter_core.common import exceptions
+from jumpstarter.common import exceptions
 
 
 class LeaseError(exceptions.JumpstarterException):

@@ -3,7 +3,7 @@ import time
 from unittest.mock import MagicMock
 
 from .driver import MockPower
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 def test_log_stream(monkeypatch):

@@ -9,7 +9,7 @@ from anyio import (
     EndOfStream,
 )
 from anyio.abc import ObjectStream
-from jumpstarter_core_protocol import router_pb2
+from jumpstarter_protocol import router_pb2
 
 logger = logging.getLogger(__name__)
 

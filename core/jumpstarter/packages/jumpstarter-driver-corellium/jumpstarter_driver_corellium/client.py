@@ -1,4 +1,4 @@
-from jumpstarter_core_driver_composite.client import CompositeClient
+from jumpstarter_driver_composite.client import CompositeClient
 
 
 class CorelliumClient(CompositeClient):

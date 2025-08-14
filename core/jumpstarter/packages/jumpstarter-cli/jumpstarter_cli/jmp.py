@@ -1,9 +1,9 @@
 import click
-from jumpstarter_core_cli_admin import admin
-from jumpstarter_core_cli_common.alias import AliasedGroup
-from jumpstarter_core_cli_common.opt import opt_log_level
-from jumpstarter_core_cli_common.version import version
-from jumpstarter_core_cli_driver import driver
+from jumpstarter_cli_admin import admin
+from jumpstarter_cli_common.alias import AliasedGroup
+from jumpstarter_cli_common.opt import opt_log_level
+from jumpstarter_cli_common.version import version
+from jumpstarter_cli_driver import driver
 
 from .config import config
 from .create import create

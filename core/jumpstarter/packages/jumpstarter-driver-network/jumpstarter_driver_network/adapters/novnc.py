@@ -2,10 +2,10 @@ from contextlib import asynccontextmanager
 from urllib.parse import urlencode, urlunparse
 
 from ..streams import WebsocketServerStream
-from jumpstarter_core.client import DriverClient
-from jumpstarter_core.client.adapters import blocking
-from jumpstarter_core.common import TemporaryTcpListener
-from jumpstarter_core.streams.common import forward_stream
+from jumpstarter.client import DriverClient
+from jumpstarter.client.adapters import blocking
+from jumpstarter.common import TemporaryTcpListener
+from jumpstarter.streams.common import forward_stream
 
 
 @blocking

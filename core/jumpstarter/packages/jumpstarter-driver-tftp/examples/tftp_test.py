@@ -1,8 +1,8 @@
 import logging
 
 import pytest
-from jumpstarter_core_driver_tftp.driver import TftpError
-from jumpstarter_core_testing.pytest import JumpstarterTest
+from jumpstarter_driver_tftp.driver import TftpError
+from jumpstarter_testing.pytest import JumpstarterTest
 
 log = logging.getLogger(__name__)
 

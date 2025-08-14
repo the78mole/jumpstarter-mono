@@ -1,5 +1,5 @@
 from .driver import Ykush
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 def test_drivers_yepkit():
