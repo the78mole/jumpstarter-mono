@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/jumpstarter-dev/jumpstarter-controller/api/v1alpha1"
+	"github.com/the78mole/jumpstarter-mono/core/controller/api/v1alpha1"
 	v1alphaConfig "github.com/the78mole/jumpstarter-mono/lab-config/api/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"

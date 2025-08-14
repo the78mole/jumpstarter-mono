@@ -9,7 +9,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 
-	"github.com/jumpstarter-dev/jumpstarter-controller/api/v1alpha1"
+	"github.com/the78mole/jumpstarter-mono/core/controller/api/v1alpha1"
 	v1alpha1Config "github.com/the78mole/jumpstarter-mono/lab-config/api/v1alpha1"
 	"github.com/the78mole/jumpstarter-mono/lab-config/internal/config"
 	"github.com/the78mole/jumpstarter-mono/lab-config/internal/exporter/template"

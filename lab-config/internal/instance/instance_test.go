@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/jumpstarter-dev/jumpstarter-controller/api/v1alpha1"
+	"github.com/the78mole/jumpstarter-mono/core/controller/api/v1alpha1"
 	v1alphaConfig "github.com/the78mole/jumpstarter-mono/lab-config/api/v1alpha1"
 	"github.com/the78mole/jumpstarter-mono/lab-config/internal/config"
 	"github.com/stretchr/testify/assert"
