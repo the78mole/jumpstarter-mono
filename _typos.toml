@@ -8,6 +8,8 @@ mosquitto = "mosquitto" # MQTT broker name
 oen = "oen"             # Technical abbreviation
 te = "te"               # Technical abbreviation
 nd = "nd"               # Technical abbreviation
+ser = "ser"             # Serialization prefix in Python Pydantic
+Pn = "Pn"               # ISO 8601 duration format pattern
 
 [files]
 # Exclude certain file patterns
