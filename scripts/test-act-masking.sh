@@ -23,15 +23,15 @@ jobs:
     steps:
       - name: Always run step
         run: echo "This step always runs"
-      
+
       - name: Masked for ACT
         if: ${{ !env.ACT }}
         run: echo "This step should NOT run under ACT"
-      
+
       - name: Only runs under ACT
         if: ${{ env.ACT }}
         run: echo "This step ONLY runs under ACT"
-      
+
       - name: Check ACT environment
         run: |
           echo "ACT environment variable: ${ACT:-not set}"

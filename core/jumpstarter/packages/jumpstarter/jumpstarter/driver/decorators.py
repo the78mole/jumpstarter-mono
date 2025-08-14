@@ -1,4 +1,9 @@
-from inspect import isasyncgenfunction, iscoroutinefunction, isfunction, isgeneratorfunction
+from inspect import (
+    isasyncgenfunction,
+    iscoroutinefunction,
+    isfunction,
+    isgeneratorfunction,
+)
 from typing import Final
 
 MARKER_MAGIC: Final[str] = "07c9b9cc"

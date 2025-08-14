@@ -1,14 +1,13 @@
 # Typos configuration for jumpstarter-mono
 
 [default.extend-words]
-# Technical terms that should not be corrected
+# Hardware/technical terms that should not be flagged as typos
+ba = "ba"               # Used in test IDs and technical strings
+fo = "fo"               # vim configuration parameter
 mosquitto = "mosquitto" # MQTT broker name
-oen = "oen"             # Output Enable pin (hardware terminology)
-OEn = "OEn"             # Output Enable pin (hardware terminology)
-OEnPin = "OEnPin"       # Output Enable pin type
-ba = "ba"               # Hash suffix (in test data)
-ser = "ser"             # Serialize abbreviation (Pydantic config)
-Pn = "Pn"               # ISO 8601 duration format part
+oen = "oen"             # Technical abbreviation
+te = "te"               # Technical abbreviation
+nd = "nd"               # Technical abbreviation
 
 [files]
 # Exclude certain file patterns
@@ -31,6 +30,12 @@ extend-exclude = [
     "*.pb.go",
     # Generated Kubernetes CRDs
     "**/templates/crds/*.yaml",
+    # Test files with hashes
+    "core/controller/internal/authorization/metadata_test.go",
+    # Vim config files
+    "core/controller/.goreleaser.yaml",
+    ".goreleaser.yaml",
+    "*/.goreleaser.yaml",
 ]
 
 [type.kicad]
@@ -39,7 +44,7 @@ extend-glob = ["*.kicad_*", "*.pretty/*"]
 
 [type.kicad.extend-words]
 THT = "THT" # Through-hole technology
-BRE = "BRE" # Board routing element  
+BRE = "BRE" # Board routing element
 Ded = "Ded" # Dedicated (in KiCad context)
 
 [type.mqtt]

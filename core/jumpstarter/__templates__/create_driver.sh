@@ -33,8 +33,8 @@ fi
 DRIVER_DIRECTORY=packages/jumpstarter-driver-${DRIVER_NAME}
 MODULE_DIRECTORY=${DRIVER_DIRECTORY}/jumpstarter_driver_${DRIVER_NAME}
 # create the module directories
-mkdir -p ${MODULE_DIRECTORY}
-mkdir -p ${DRIVER_DIRECTORY}/examples
+mkdir -p "${MODULE_DIRECTORY}"
+mkdir -p "${DRIVER_DIRECTORY}/examples"
 
 # Define paths
 DOCS_DIRECTORY=docs/source/reference/package-apis/drivers
@@ -84,10 +84,10 @@ echo "Created symlink: ${DOC_FILE} -> ${rel_path}"
 
 for f in __init__.py client.py driver_test.py driver.py; do
     echo "Creating: ${MODULE_DIRECTORY}/${f}"
-    envsubst < __templates__/driver/jumpstarter_driver/${f}.tmpl > ${MODULE_DIRECTORY}/${f}
+    envsubst < __templates__/driver/jumpstarter_driver/${f}.tmpl > "${MODULE_DIRECTORY}"/${f}
 done
 
 for f in .gitignore pyproject.toml examples/exporter.yaml; do
     echo "Creating: ${DRIVER_DIRECTORY}/${f}"
-    envsubst < __templates__/driver/${f}.tmpl > ${DRIVER_DIRECTORY}/${f}
+    envsubst < __templates__/driver/${f}.tmpl > "${DRIVER_DIRECTORY}"/${f}
 done

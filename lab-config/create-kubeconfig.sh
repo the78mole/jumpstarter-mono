@@ -13,8 +13,8 @@ echo "SA: ${SA}" >&2
 echo "CONTEXT: ${CONTEXT}" >&2
 
 SECRET_NAME="${SA}-token"
-TOKEN=$(kubectl get secret $SECRET_NAME -n ${NAMESPACE} -o jsonpath='{.data.token}' | base64 -d)
-CA_CRT=$(kubectl get secret $SECRET_NAME -n ${NAMESPACE} -o jsonpath='{.data.ca\.crt}' | base64 -d)
+TOKEN=$(kubectl get secret "$SECRET_NAME" -n "${NAMESPACE}" -o jsonpath='{.data.token}' | base64 -d)
+CA_CRT=$(kubectl get secret "$SECRET_NAME" -n "${NAMESPACE}" -o jsonpath='{.data.ca\.crt}' | base64 -d)
 APISERVER=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
 
 cat <<EOF

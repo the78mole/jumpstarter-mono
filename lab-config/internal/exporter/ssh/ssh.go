@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/the78mole/jumpstarter-mono/lab-config/api/v1alpha1"
 	"github.com/pkg/sftp"
+	"github.com/the78mole/jumpstarter-mono/lab-config/api/v1alpha1"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 )

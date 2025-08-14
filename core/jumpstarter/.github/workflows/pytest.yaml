@@ -73,8 +73,7 @@ jobs:
 
       - name: Run pytest
         run: |
-            make test
-
+          make test
 
   # https://github.com/orgs/community/discussions/26822
   pytest:

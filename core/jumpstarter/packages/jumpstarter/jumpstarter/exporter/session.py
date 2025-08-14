@@ -1,6 +1,11 @@
 import logging
 from collections import deque
-from contextlib import AbstractContextManager, asynccontextmanager, contextmanager, suppress
+from contextlib import (
+    AbstractContextManager,
+    asynccontextmanager,
+    contextmanager,
+    suppress,
+)
 from dataclasses import dataclass, field
 from logging.handlers import QueueHandler
 from uuid import UUID

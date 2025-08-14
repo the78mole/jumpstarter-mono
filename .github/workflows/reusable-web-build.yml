@@ -9,23 +9,23 @@ on:
       node-version:
         required: false
         type: string
-        default: '18'
+        default: "18"
       package-manager:
         required: false
         type: string
-        default: 'npm'
+        default: "npm"
       build-command:
         required: false
         type: string
-        default: 'npm run compile'
+        default: "npm run compile"
       test-command:
         required: false
         type: string
-        default: 'npm test'
+        default: "npm test"
       lint-command:
         required: false
         type: string
-        default: 'npm run lint'
+        default: "npm run lint"
   workflow_dispatch:
     inputs:
       working-directory:
@@ -34,23 +34,23 @@ on:
       node-version:
         required: false
         type: string
-        default: '18'
+        default: "18"
       package-manager:
         required: false
         type: string
-        default: 'npm'
+        default: "npm"
       build-command:
         required: false
         type: string
-        default: 'npm run compile'
+        default: "npm run compile"
       test-command:
         required: false
         type: string
-        default: 'npm test'
+        default: "npm test"
       lint-command:
         required: false
         type: string
-        default: 'npm run lint'
+        default: "npm run lint"
 
 jobs:
   build:

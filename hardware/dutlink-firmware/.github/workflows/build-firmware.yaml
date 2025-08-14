@@ -1,4 +1,4 @@
-name: Build 
+name: Build
 on: [push, pull_request]
 jobs:
   bootloader-build:
@@ -38,6 +38,5 @@ jobs:
       - name: Archive resulting application
         uses: actions/upload-artifact@v3
         with:
-          name: jumpstarter-main.cab 
+          name: jumpstarter-main.cab
           path: application/jumpstarter*
-

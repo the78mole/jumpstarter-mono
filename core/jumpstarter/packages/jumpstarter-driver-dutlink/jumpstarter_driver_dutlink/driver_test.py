@@ -2,7 +2,12 @@ from time import sleep
 
 from jumpstarter_driver_network.adapters import PexpectAdapter
 
-from jumpstarter_driver_dutlink.driver import Dutlink, DutlinkPower, DutlinkSerial, DutlinkStorageMux
+from jumpstarter_driver_dutlink.driver import (
+    Dutlink,
+    DutlinkPower,
+    DutlinkSerial,
+    DutlinkStorageMux,
+)
 
 from jumpstarter.common.utils import serve
 

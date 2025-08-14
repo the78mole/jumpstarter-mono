@@ -54,7 +54,7 @@ build_index() {
 
 # Build for tags
 message "--- Building tags ---"
-git tag | while read tag; do
+git tag | while read -r tag; do
     # Check if the tag is in the excluded list
     is_excluded=0
     for excluded_tag in $EXCLUDED_TAGS; do
@@ -64,7 +64,7 @@ git tag | while read tag; do
         fi
     done
 
-    # Exclude tags ending with "dev", "dev0", "dev123", etc. Those are just an anchor for the main branch releases 
+    # Exclude tags ending with "dev", "dev0", "dev123", etc. Those are just an anchor for the main branch releases
     if echo "$tag" | grep -qE "dev[0-9]*$"; then
         is_excluded=1
     fi
@@ -99,7 +99,7 @@ build_index "../dist" "main"
 # Fetch latest branches from remote
 git fetch origin
 # List remote branches matching release-* and strip 'origin/' prefix
-git branch -r | grep 'origin/release-' | sed 's/origin\///' | while read branch; do
+git branch -r | grep 'origin/release-' | sed 's/origin\///' | while read -r branch; do
     build_ref "${branch}" "../dist/${branch}/files"
     build_index "../dist" "${branch}"
 done
@@ -108,4 +108,3 @@ git checkout main
 
 
 message "✅ Build process completed"
-

@@ -22,7 +22,7 @@ export:
 ### Config parameters
 
 | Parameter    | Description                                                     | Default  |
-|--------------|-----------------------------------------------------------------|----------|
+| ------------ | --------------------------------------------------------------- | -------- |
 | `host`       | MQTT broker hostname or IP address                              | Required |
 | `port`       | MQTT broker port                                                | 1883     |
 | `tls`        | MQTT broker TLS enabled                                         | True     |

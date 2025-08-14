@@ -34,7 +34,7 @@ spec:
     [Install]
     WantedBy=multi-user.target default.target
 
-  configTemplate:  |
+  configTemplate: |
     # this is the config file installed in /etc/jumpstarter/exporters/$( name )".yaml
     apiVersion: jumpstarter.dev/v1alpha1
     kind: ExporterConfigTemplate

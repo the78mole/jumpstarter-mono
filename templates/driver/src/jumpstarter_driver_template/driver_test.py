@@ -1,7 +1,8 @@
+from itertools import islice
+
 from jumpstarter_core.common.utils import serve
 from jumpstarter_core.drivers.power.common import PowerReading
-from itertools import islice
-from jumpstarter_core_driver_template.driver import ExamplePower, ExampleCustom
+from jumpstarter_core_driver_template.driver import ExampleCustom, ExamplePower
 
 
 def test_example_power():

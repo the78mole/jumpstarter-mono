@@ -38,7 +38,7 @@ spec:
         CONFIG_DIR=$(workspaces.config-dir.path)
 
         # generate jumpstarter client config
-+       cat <<-EOF > "${CONFIG_DIR}/default.yaml"
+        cat <<-EOF > "${CONFIG_DIR}/default.yaml"
         apiVersion: jumpstarter.dev/v1alpha1
         kind: ClientConfig
         metadata:

@@ -11,8 +11,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/the78mole/jumpstarter-mono/lab-config/api/v1alpha1"
 	"github.com/stretchr/testify/assert"
+	"github.com/the78mole/jumpstarter-mono/lab-config/api/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 

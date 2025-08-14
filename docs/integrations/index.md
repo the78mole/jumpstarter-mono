@@ -11,48 +11,48 @@ graph TB
         GITHUB[GitHub Actions<br/>Cloud CI/CD]
         JENKINS[Jenkins<br/>Self-hosted CI/CD]
     end
-    
+
     subgraph "Development Tools"
         VSCODE[VS Code Extension<br/>Editor Integration]
         DEVSPACE[DevSpace<br/>Development Environment]
         DOCKER[Docker Images<br/>Containerized Deployment]
     end
-    
+
     subgraph "Jumpstarter Core"
         CONTROLLER[Kubernetes Controller<br/>Go Service]
         CLI[CLI Tools<br/>Python Library]
         API[REST API<br/>Integration Interface]
     end
-    
+
     subgraph "Monitoring & Observability"
         PROMETHEUS[Prometheus<br/>Metrics Collection]
         GRAFANA[Grafana<br/>Visualization]
         LOGGING[Centralized Logging<br/>ELK Stack]
     end
-    
+
     subgraph "Hardware Layer"
         HARDWARE[DUT Link Boards<br/>Physical Hardware]
         DEVICES[Test Devices<br/>Under Test]
     end
-    
+
     TEKTON --> CONTROLLER
     GITHUB --> CLI
     JENKINS --> API
-    
+
     VSCODE --> CLI
     DEVSPACE --> CONTROLLER
     DOCKER --> CONTROLLER
-    
+
     CONTROLLER --> API
     CLI --> API
-    
+
     API --> PROMETHEUS
     CONTROLLER --> GRAFANA
     CLI --> LOGGING
-    
+
     CONTROLLER --> HARDWARE
     HARDWARE --> DEVICES
-    
+
     style CONTROLLER fill:#f3e5f5
     style CLI fill:#e1f5fe
     style API fill:#fff3e0
@@ -75,13 +75,13 @@ graph LR
         REPORT[Results Report<br/>Task]
         CLEANUP[Cleanup<br/>Task]
     end
-    
+
     TRIGGER --> PROVISION
     PROVISION --> BUILD
     BUILD --> HARDWARE
     HARDWARE --> REPORT
     REPORT --> CLEANUP
-    
+
     style PROVISION fill:#e8f5e8
     style HARDWARE fill:#fff3e0
     style REPORT fill:#e1f5fe
@@ -129,7 +129,7 @@ sequenceDiagram
     participant Runner as Self-hosted Runner
     participant JS as Jumpstarter
     participant HW as Hardware
-    
+
     Dev->>GH: Push code/Create PR
     GH->>Runner: Trigger workflow
     Runner->>JS: Setup Jumpstarter
@@ -184,30 +184,30 @@ graph TB
         DEBUG[Debug Interface<br/>Breakpoints]
         TERM[Integrated Terminal<br/>CLI Integration]
     end
-    
+
     subgraph "Language Server"
         LSP[Language Server<br/>Protocol]
         VALIDATE[Config Validation<br/>Real-time]
         INTELLISENSE[IntelliSense<br/>Completions]
     end
-    
+
     subgraph "Jumpstarter Integration"
         CLI_INT[CLI Integration<br/>Command Execution]
         DEVICE_MGR[Device Manager<br/>Hardware Control]
         TEST_RUNNER[Test Runner<br/>Execution Engine]
     end
-    
+
     UI --> LSP
     LANG --> VALIDATE
     DEBUG --> CLI_INT
     TERM --> CLI_INT
-    
+
     LSP --> INTELLISENSE
     VALIDATE --> INTELLISENSE
-    
+
     CLI_INT --> DEVICE_MGR
     CLI_INT --> TEST_RUNNER
-    
+
     style UI fill:#e1f5fe
     style LSP fill:#fff3e0
     style CLI_INT fill:#e8f5e8
@@ -244,39 +244,39 @@ graph TB
         DEVSPACE[DevSpace CLI]
         CONFIG[devspace.yaml]
     end
-    
+
     subgraph "Kubernetes Cluster"
         NAMESPACE[Dev Namespace]
         CONTROLLER[Controller Pod]
         RUNNER[Test Runner Pod]
         STORAGE[Persistent Storage]
     end
-    
+
     subgraph "Development Features"
         SYNC[File Sync<br/>Real-time]
         PORT[Port Forwarding<br/>Local Access]
         LOGS[Log Streaming<br/>Real-time]
         SHELL[Remote Shell<br/>Debug Access]
     end
-    
+
     DEV --> DEVSPACE
     DEVSPACE --> CONFIG
     CONFIG --> NAMESPACE
-    
+
     NAMESPACE --> CONTROLLER
     NAMESPACE --> RUNNER
     NAMESPACE --> STORAGE
-    
+
     DEVSPACE --> SYNC
     DEVSPACE --> PORT
     DEVSPACE --> LOGS
     DEVSPACE --> SHELL
-    
+
     SYNC --> CONTROLLER
     PORT --> CONTROLLER
     LOGS --> RUNNER
     SHELL --> RUNNER
-    
+
     style DEV fill:#e8f5e8
     style DEVSPACE fill:#e1f5fe
     style CONTROLLER fill:#fff3e0
@@ -358,13 +358,13 @@ spec:
         app: jumpstarter-controller
     spec:
       containers:
-      - name: controller
-        image: jumpstarter/controller:latest
-        ports:
-        - containerPort: 8080
-        env:
-        - name: CONFIG_PATH
-          value: /etc/jumpstarter/config.yaml
+        - name: controller
+          image: jumpstarter/controller:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: CONFIG_PATH
+              value: /etc/jumpstarter/config.yaml
 ```
 
 ## Monitoring and Observability
@@ -408,11 +408,11 @@ from jumpstarter.plugin import BasePlugin
 class CustomIntegration(BasePlugin):
     def __init__(self, config):
         self.config = config
-    
+
     def on_test_start(self, test_info):
         # Custom logic for test start
         pass
-    
+
     def on_test_complete(self, test_results):
         # Custom logic for test completion
         pass

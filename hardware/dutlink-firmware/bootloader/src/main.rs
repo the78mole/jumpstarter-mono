@@ -104,7 +104,7 @@ impl<'a> DFUMemIO for STM32Mem {
     const MANIFESTATION_TOLERANT: bool = false;
 
     fn read(&mut self, address: u32, length: usize) -> core::result::Result<&[u8], DFUMemError> {
-       
+
         let flash_top: u32 = (self.flash.address() + self.flash.len()) as u32;
 
         if address < FW_ADDRESS {
@@ -119,11 +119,11 @@ impl<'a> DFUMemIO for STM32Mem {
         let mem = unsafe { &*core::ptr::slice_from_raw_parts(address as *const u8, len) };
 
         Ok(mem)
-       
+
     }
 
     fn erase(&mut self, address: u32) -> core::result::Result<(), DFUMemError> {
-        
+
         if address < self.flash.address() as u32 + BOOTLOADER_SIZE_BYTES {
             return Err(DFUMemError::Address);
         }
@@ -133,7 +133,7 @@ impl<'a> DFUMemIO for STM32Mem {
         }
 
         let flash_offset = address as usize - self.flash.address();
-        
+
         match self.flash.sector(flash_offset) {
             Some(sector) => {
                 // let's try to start by not accepting aligned addresses
@@ -145,7 +145,7 @@ impl<'a> DFUMemIO for STM32Mem {
                 unlocked_flash.erase(sector.number).unwrap();
                 return Ok(());
             }
-            None => return Ok(()) 
+            None => return Ok(())
         }
     }
 
@@ -170,7 +170,7 @@ impl<'a> DFUMemIO for STM32Mem {
     }
 
     fn program(&mut self, address: u32, length: usize) -> core::result::Result<(), DFUMemError> {
-        
+
         if address < self.flash.address() as u32 {
             return Err(DFUMemError::Address);
         }
@@ -320,7 +320,7 @@ fn minimal_init() {
         (*GPIOA::ptr()).moder.modify(|_, w| w.moder0().input());
         (*GPIOA::ptr()).pupdr.modify(|_, w| w.pupdr0().pull_up());
     }
- 
+
     cortex_m::asm::delay(100);
 }
 

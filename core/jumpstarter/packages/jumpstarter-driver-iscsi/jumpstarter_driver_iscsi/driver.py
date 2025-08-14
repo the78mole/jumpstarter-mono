@@ -4,7 +4,15 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
 from jumpstarter_driver_opendal.driver import Opendal
-from rtslib_fb import LUN, TPG, BlockStorageObject, FileIOStorageObject, NetworkPortal, RTSRoot, Target
+from rtslib_fb import (
+    LUN,
+    TPG,
+    BlockStorageObject,
+    FileIOStorageObject,
+    NetworkPortal,
+    RTSRoot,
+    Target,
+)
 
 from jumpstarter.driver import Driver, export
 

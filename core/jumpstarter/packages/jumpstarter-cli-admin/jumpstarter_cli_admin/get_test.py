@@ -19,7 +19,11 @@ from jumpstarter_kubernetes import (
     V1Alpha1LeaseStatus,
 )
 from kubernetes_asyncio.client.exceptions import ApiException
-from kubernetes_asyncio.client.models import V1Condition, V1ObjectMeta, V1ObjectReference
+from kubernetes_asyncio.client.models import (
+    V1Condition,
+    V1ObjectMeta,
+    V1ObjectReference,
+)
 
 from jumpstarter_cli_admin.test_utils import json_equal
 

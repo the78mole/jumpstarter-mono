@@ -1,6 +1,6 @@
 # Contributing to Jumpstarter Core
 
-Thank you for your interest in contributing to Jumpstarter! 
+Thank you for your interest in contributing to Jumpstarter!
 
 **For general contribution guidelines, please see the [main repository CONTRIBUTING.md](../../CONTRIBUTING.md).**
 

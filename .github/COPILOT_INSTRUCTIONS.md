@@ -8,7 +8,7 @@ This document provides comprehensive instructions for integrating all Jumpstarte
 
 - Use mermaid for diagrams (e.g. in docs/architecture/index.md)
 - Keep every change compatible to existing jumpstarter (controller, router, exporter, client,...)
-- When addign features, the default behaviour should be the same as in the upstream jumpstarter
+- When adding features, the default behaviour should be the same as in the upstream jumpstarter
 - Documentation will be published on readthedocs.io and also with GitHub Pages
 - Documentation shall also be rendered as PDF and ePUB, z.B. wit pandoc
 
@@ -19,6 +19,7 @@ This document provides comprehensive instructions for integrating all Jumpstarte
 The Jumpstarter project currently consists of 13 separate repositories:
 
 #### Core Components
+
 1. **jumpstarter** - Main Python library and CLI tools
    - Language: Python
    - Purpose: Core Jumpstarter functionality, drivers, CLI
@@ -37,6 +38,7 @@ The Jumpstarter project currently consists of 13 separate repositories:
    - Size: ~173KB, 2 open issues
 
 #### Hardware and Firmware
+
 4. **dutlink-firmware** - Device firmware
    - Language: Rust
    - Purpose: Firmware for the DUTLink test harness board
@@ -47,6 +49,7 @@ The Jumpstarter project currently consists of 13 separate repositories:
    - Size: ~12MB
 
 #### Supporting Tools and Templates
+
 6. **jumpstarter-lab-config** - Lab configuration management
    - Language: Go
    - Purpose: Lab configuration and management tools
@@ -101,7 +104,7 @@ jumpstarter-mono/
 ├── docs/                      # Consolidated documentation
 ├── tools/                     # Build and development tools
 ├── scripts/                   # Utility scripts
-├── 
+├──
 ├── core/                      # Core Jumpstarter components
 │   ├── jumpstarter/           # Main Python library (from jumpstarter)
 │   ├── controller/            # Kubernetes controller (from jumpstarter-controller)
@@ -139,6 +142,7 @@ jumpstarter-mono/
 ### Phase 1: Repository Setup and Core Integration
 
 #### 1.1 Initialize Monorepo Structure
+
 ```bash
 # Create directory structure
 mkdir -p {core,hardware,packages,integrations,templates,testing,lab-config}
@@ -152,6 +156,7 @@ mkdir -p templates/driver
 #### 1.2 Setup Multi-language Workspace Configuration
 
 **Python Workspace (pyproject.toml)**
+
 ```toml
 [build-system]
 requires = ["hatchling"]
@@ -178,6 +183,7 @@ members = [
 ```
 
 **Go Workspace (go.work)**
+
 ```go
 go 1.22
 
@@ -188,6 +194,7 @@ use (
 ```
 
 **Root Makefile**
+
 ```makefile
 .PHONY: help build test clean lint fmt install
 
@@ -245,6 +252,7 @@ install: ## Install all components
 #### 2.1 Core Components Migration
 
 **Migrate jumpstarter (Main Python Library)**
+
 ```bash
 # Clone and move main jumpstarter repository
 git clone https://github.com/jumpstarter-dev/jumpstarter.git temp-jumpstarter
@@ -256,6 +264,7 @@ rm -rf temp-jumpstarter
 ```
 
 **Migrate jumpstarter-controller (Go Kubernetes Controller)**
+
 ```bash
 # Clone and move controller
 git clone https://github.com/jumpstarter-dev/jumpstarter-controller.git temp-controller
@@ -268,6 +277,7 @@ go mod edit -module github.com/the78mole/jumpstarter-mono/core/controller
 ```
 
 **Migrate jumpstarter-protocol**
+
 ```bash
 # Clone and move protocol definitions
 git clone https://github.com/jumpstarter-dev/jumpstarter-protocol.git temp-protocol
@@ -280,6 +290,7 @@ rm -rf temp-protocol
 #### 2.2 Hardware Components Migration
 
 **Migrate dutlink-firmware (Rust)**
+
 ```bash
 # Clone and move firmware
 git clone https://github.com/jumpstarter-dev/dutlink-firmware.git temp-firmware
@@ -290,6 +301,7 @@ rm -rf temp-firmware
 ```
 
 **Migrate dutlink-board (Hardware)**
+
 ```bash
 # Clone and move hardware design files
 git clone https://github.com/jumpstarter-dev/dutlink-board.git temp-board
@@ -300,6 +312,7 @@ rm -rf temp-board
 #### 2.3 Supporting Components Migration
 
 **Migrate remaining components following similar patterns:**
+
 - jumpstarter-tekton-tasks → integrations/tekton/
 - vscode-jumpstarter → integrations/vscode/
 - jumpstarter-devspace → integrations/devspace/
@@ -311,18 +324,21 @@ rm -rf temp-board
 ### Phase 3: Build System Integration
 
 #### 3.1 Python Build Integration
+
 - Consolidate all Python packages under UV workspace
 - Update pyproject.toml files to reference monorepo structure
 - Maintain separate package builds but unified development workflow
 - Update import paths and dependencies
 
 #### 3.2 Go Build Integration
+
 - Setup Go workspace with go.work
 - Update module paths to reference monorepo
 - Consolidate Go tooling and linting configuration
 - Maintain separate Go modules for different components
 
 #### 3.3 Multi-language Tooling
+
 - Setup pre-commit hooks for all languages
 - Integrate formatters: black (Python), gofmt (Go), rustfmt (Rust)
 - Setup linters: ruff (Python), golangci-lint (Go), clippy (Rust)
@@ -333,63 +349,65 @@ rm -rf temp-board
 #### 4.1 GitHub Actions Workflows
 
 **.github/workflows/ci.yml**
+
 ```yaml
 name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   python:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: astral-sh/setup-uv@v3
-    - name: Install dependencies
-      run: uv sync
-    - name: Run tests
-      run: make test-python
-    - name: Run linting
-      run: make lint-python
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - name: Install dependencies
+        run: uv sync
+      - name: Run tests
+        run: make test-python
+      - name: Run linting
+        run: make lint-python
 
   go:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v4
-      with:
-        go-version: '1.22'
-    - name: Run tests
-      run: make test-go
-    - name: Run linting
-      run: make lint-go
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+      - name: Run tests
+        run: make test-go
+      - name: Run linting
+        run: make lint-go
 
   rust:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-    - name: Run tests
-      run: make test-rust
+      - uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Run tests
+        run: make test-rust
 
   e2e:
     runs-on: ubuntu-latest
     needs: [python, go]
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup test environment
-      run: |
-        # Setup kind cluster or other test infrastructure
-    - name: Run E2E tests
-      run: make test-e2e
+      - uses: actions/checkout@v4
+      - name: Setup test environment
+        run: |
+          # Setup kind cluster or other test infrastructure
+      - name: Run E2E tests
+        run: make test-e2e
 ```
 
 #### 4.2 Release Strategy
+
 - Unified versioning strategy across all components
 - Automated release workflows
 - Multi-platform package building
@@ -398,6 +416,7 @@ jobs:
 ### Phase 5: Documentation Consolidation
 
 #### 5.1 Documentation Structure
+
 ```
 docs/
 ├── README.md                  # Main documentation
@@ -428,6 +447,7 @@ docs/
 ```
 
 #### 5.2 Documentation Generation
+
 - Setup unified documentation build with MkDocs or Sphinx
 - Auto-generate API documentation
 - Include hardware documentation and schematics
@@ -436,12 +456,14 @@ docs/
 ### Phase 6: Migration Validation
 
 #### 6.1 Functionality Testing
+
 - Verify all components build successfully
 - Run existing test suites
 - Validate cross-component integrations
 - Test package generation and installation
 
 #### 6.2 Performance Validation
+
 - Compare build times before/after migration
 - Validate container image sizes
 - Test development workflow efficiency
@@ -450,6 +472,7 @@ docs/
 ## Implementation Checklist
 
 ### Pre-Migration Setup
+
 - [ ] Create monorepo directory structure
 - [ ] Setup multi-language workspace configuration
 - [ ] Create root Makefile for build orchestration
@@ -457,6 +480,7 @@ docs/
 - [ ] Create documentation framework
 
 ### Core Component Migration
+
 - [ ] Migrate jumpstarter main library
 - [ ] Migrate jumpstarter-controller
 - [ ] Migrate jumpstarter-protocol
@@ -464,12 +488,14 @@ docs/
 - [ ] Validate core functionality
 
 ### Hardware Component Migration
+
 - [ ] Migrate dutlink-firmware
 - [ ] Migrate dutlink-board
 - [ ] Validate firmware build process
 - [ ] Update hardware documentation
 
 ### Supporting Component Migration
+
 - [ ] Migrate Tekton tasks and examples
 - [ ] Migrate VS Code extension
 - [ ] Migrate DevSpace configuration
@@ -479,6 +505,7 @@ docs/
 - [ ] Migrate package repository tools
 
 ### Build System Integration
+
 - [ ] Consolidate Python packages under UV workspace
 - [ ] Setup Go workspace configuration
 - [ ] Integrate Rust build into main workflow
@@ -487,6 +514,7 @@ docs/
 - [ ] Setup pre-commit hooks
 
 ### CI/CD Integration
+
 - [ ] Create multi-language CI pipeline
 - [ ] Setup automated testing for all components
 - [ ] Create release automation
@@ -494,6 +522,7 @@ docs/
 - [ ] Setup container image building
 
 ### Documentation and Cleanup
+
 - [ ] Consolidate all documentation
 - [ ] Update README files
 - [ ] Create migration guide
@@ -501,6 +530,7 @@ docs/
 - [ ] Update external references
 
 ### Validation and Testing
+
 - [ ] Full integration test suite
 - [ ] Performance benchmarking
 - [ ] Developer workflow testing
@@ -510,6 +540,7 @@ docs/
 ## Risk Mitigation
 
 ### Identified Risks
+
 1. **Build complexity**: Managing multiple languages and build systems
 2. **Repository size**: Large repository with binary hardware files
 3. **Development workflow**: Potential slowdown for developers
@@ -517,6 +548,7 @@ docs/
 5. **Dependency conflicts**: Cross-component dependency management
 
 ### Mitigation Strategies
+
 1. **Modular builds**: Only build/test changed components
 2. **Git LFS**: Use Git LFS for large binary files
 3. **Sparse checkout**: Enable developers to work on subsets
@@ -526,6 +558,7 @@ docs/
 ## Success Criteria
 
 ### Technical Success Criteria
+
 - [ ] All components build successfully in monorepo
 - [ ] All existing tests pass
 - [ ] CI/CD pipeline completes in reasonable time (<30 minutes)
@@ -533,6 +566,7 @@ docs/
 - [ ] Documentation is consolidated and accessible
 
 ### Process Success Criteria
+
 - [ ] Migration completed without data loss
 - [ ] Existing workflows continue to function
 - [ ] Community can continue contributing
@@ -552,6 +586,7 @@ docs/
 This migration will consolidate the Jumpstarter ecosystem into a manageable monorepo while preserving functionality and improving developer experience. The phased approach allows for validation at each step and reduces migration risks.
 
 The resulting monorepo will provide:
+
 - Unified development workflow
 - Simplified dependency management
 - Consolidated documentation

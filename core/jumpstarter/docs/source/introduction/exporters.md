@@ -31,7 +31,7 @@ metadata:
 endpoint: grpc.jumpstarter.example.com:443
 token: xxxxx
 grpcConfig:
-    grpc.keepalive_time_ms: 20000
+  grpc.keepalive_time_ms: 20000
 export:
   power:
     type: jumpstarter_driver_yepkit.driver.Ykush

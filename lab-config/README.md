@@ -43,15 +43,16 @@ export PATH="${HOME}/.local/bin:${PATH}"
 
 ## Features
 
-* Linting of configuration files, to ensure they are valid and follow the expected format.
-* Dry-run mode to verify changes before applying them.
-* Apply mode to apply changes to the jumpstarter controllers.
-* Support for multiple configuration files, allowing for modular and extensible configurations.
-* Bases exporter host management on bootc.
+- Linting of configuration files, to ensure they are valid and follow the expected format.
+- Dry-run mode to verify changes before applying them.
+- Apply mode to apply changes to the jumpstarter controllers.
+- Support for multiple configuration files, allowing for modular and extensible configurations.
+- Bases exporter host management on bootc.
 
 ## Usage
 
 ### Linting changes, useful to verify the configuration files in merge requests
+
 ```shell
 $ jumpstarter-lab-config lint
 
@@ -67,6 +68,7 @@ Validating files from:
 ```
 
 You can also specify a custom configuration file:
+
 ```shell
 $ jumpstarter-lab-config lint my-lab-config.yaml
 
@@ -119,6 +121,7 @@ Detected changes to apply:
 ```
 
 You can also specify a custom configuration file:
+
 ```shell
 jumpstarter-lab-config apply --dry-run my-lab-config.yaml
 
@@ -163,6 +166,7 @@ Applying changes:
 ```
 
 You can also specify a custom configuration file:
+
 ```shell
 jumpstarter-lab-config apply my-lab-config.yaml
 
@@ -173,7 +177,6 @@ Reading files from my-lab-config.yaml...
 Applying changes:
 ...
 ```
-
 
 ### Updating bootc images, useful to update bootc images in the exporter hosts (sidekicks)
 
@@ -202,23 +205,23 @@ Applying changes:
 
 ## Design details
 
-* We want this tool to be modular, will start by interfacing with the exporter-hosts via simple ssh
-calls to update bootc images, restart target services, install updated configurations, etc.
+- We want this tool to be modular, will start by interfacing with the exporter-hosts via simple ssh
+  calls to update bootc images, restart target services, install updated configurations, etc.
 
-* In the longer term we want to create a module to interface with flightctl/redhat edge management,
-to better integrate with the Red Hat Edge Management ecosystem.
+- In the longer term we want to create a module to interface with flightctl/redhat edge management,
+  to better integrate with the Red Hat Edge Management ecosystem.
 
-* We are choosing yaml in the kubernetes/crd format for several reasons:
-   * It tracks version of the format, so we can evolve the configuration format over time.
-   * One potential transition of this, could be a meta-operator that runs in an ACM cluster, providing
-     a single point of management for all jumpstarter controllers in the enterprise, but not a goal
-     now, just potential future evolution.
+- We are choosing yaml in the kubernetes/crd format for several reasons:
+  - It tracks version of the format, so we can evolve the configuration format over time.
+  - One potential transition of this, could be a meta-operator that runs in an ACM cluster, providing
+    a single point of management for all jumpstarter controllers in the enterprise, but not a goal
+    now, just potential future evolution.
 
-* We want to be able to use this tool in a gitops way, so we can have a single source of truth for
+- We want to be able to use this tool in a gitops way, so we can have a single source of truth for
   the configuration of the jumpstarter controllers, and be able to apply changes in a controlled way,
   with dry-runs, linting, etc, yaml is not perfect, but it's human and git friendly.
 
-* We are picking go as our programming language for the tool, as it has a good ecosystem for
+- We are picking go as our programming language for the tool, as it has a good ecosystem for
   building command line tools, and we can use the kubernetes/client-go libraries to interface with the
   jumpstarter controllers and other kubernetes resources, also easing a possible future transition to
   a meta-operator.

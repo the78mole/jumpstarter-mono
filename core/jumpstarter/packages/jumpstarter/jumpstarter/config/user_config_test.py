@@ -4,7 +4,11 @@ from unittest.mock import patch
 
 import pytest
 
-from jumpstarter.config.client import ClientConfigV1Alpha1, ClientConfigV1Alpha1Drivers, ObjectMeta
+from jumpstarter.config.client import (
+    ClientConfigV1Alpha1,
+    ClientConfigV1Alpha1Drivers,
+    ObjectMeta,
+)
 from jumpstarter.config.user import UserConfigV1Alpha1, UserConfigV1Alpha1Config
 
 

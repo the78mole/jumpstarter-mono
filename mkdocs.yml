@@ -28,18 +28,18 @@ theme:
 nav:
   - Home: index.md
   - Installation:
-    - installation/index.md
+      - installation/index.md
   - Development:
-    - development/index.md
-    - Local Workflow Testing: development/act-integration.md
+      - development/index.md
+      - Local Workflow Testing: development/act-integration.md
   - Architecture:
-    - architecture/index.md
+      - architecture/index.md
   - User Guide:
-    - user-guide/index.md
+      - user-guide/index.md
   - Hardware:
-    - hardware/index.md
+      - hardware/index.md
   - Integrations:
-    - integrations/index.md
+      - integrations/index.md
 
 markdown_extensions:
   - toc:

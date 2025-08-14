@@ -16,7 +16,7 @@ global:
   storageClassName: standard
   storageClassNameRWM: standard
   metrics:
-      enabled: false
+    enabled: false
   timestamp: "" # can be used to timestamp deployments and make them reload
 
 ## @section Jumpstarter Controller parameters
@@ -60,56 +60,54 @@ global:
 ##
 ## @param jumpstarter-controller.grpc.mode Mode to use for the gRPC endpoints: route, ingress, or none (for custom ingress config).
 
-
-
 jumpstarter-controller:
-    enabled: true
+  enabled: true
 
-    image: quay.io/jumpstarter-dev/jumpstarter-controller
-    tag: ""
-    imagePullPolicy: IfNotPresent
+  image: quay.io/jumpstarter-dev/jumpstarter-controller
+  tag: ""
+  imagePullPolicy: IfNotPresent
 
-    namespace: ""
+  namespace: ""
 
-    config:
-      grpc:
-        keepalive:
-          # Safety: potentially makes server vulnerable to DDoS
-          # https://grpc.io/docs/guides/keepalive/#how-configuring-keepalive-affects-a-call
-          minTime: 3s
-          permitWithoutStream: true
-      authentication:
-        internal:
-          prefix: "internal:"
-        # To trust service account tokens, first execute:
-        #   kubectl create clusterrolebinding oidc-reviewer \
-        #     --clusterrole=system:service-account-issuer-discovery \
-        #     --group=system:unauthenticated
-        # Then uncomment:
-        #
-        # jwt:
-        # - issuer:
-        #     url: https://kubernetes.default.svc.cluster.local
-        #     audiences:
-        #       - https://kubernetes.default.svc.cluster.local
-        #     audienceMatchPolicy: MatchAny
-        #     certificateAuthority: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-        #   claimMappings:
-        #     username:
-        #       claim: "sub"
-        #       prefix: "kubernetes:"
-
+  config:
     grpc:
-      hostname: ""
-      routerHostname: ""
+      keepalive:
+        # Safety: potentially makes server vulnerable to DDoS
+        # https://grpc.io/docs/guides/keepalive/#how-configuring-keepalive-affects-a-call
+        minTime: 3s
+        permitWithoutStream: true
+    authentication:
+      internal:
+        prefix: "internal:"
+      # To trust service account tokens, first execute:
+      #   kubectl create clusterrolebinding oidc-reviewer \
+      #     --clusterrole=system:service-account-issuer-discovery \
+      #     --group=system:unauthenticated
+      # Then uncomment:
+      #
+      # jwt:
+      # - issuer:
+      #     url: https://kubernetes.default.svc.cluster.local
+      #     audiences:
+      #       - https://kubernetes.default.svc.cluster.local
+      #     audienceMatchPolicy: MatchAny
+      #     certificateAuthority: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      #   claimMappings:
+      #     username:
+      #       claim: "sub"
+      #       prefix: "kubernetes:"
 
-      endpoint: ""
-      routerEndpoint: ""
+  grpc:
+    hostname: ""
+    routerHostname: ""
 
-      tls:
-        mode: "passthrough"
-        port: 443
-        routerCertSecret: ""
-        controllerCertSecret: ""
+    endpoint: ""
+    routerEndpoint: ""
 
-      mode: "route" # route, ingress, or none (for custom ingress config)
+    tls:
+      mode: "passthrough"
+      port: 443
+      routerCertSecret: ""
+      controllerCertSecret: ""
+
+    mode: "route" # route, ingress, or none (for custom ingress config)

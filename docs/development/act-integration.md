@@ -33,11 +33,13 @@ curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
 ### Option 2: Package Managers
 
 **macOS with Homebrew:**
+
 ```bash
 brew install act
 ```
 
 **Arch Linux:**
+
 ```bash
 sudo pacman -S act
 ```
@@ -90,7 +92,7 @@ The repository includes a `.actrc` configuration file with optimal defaults:
 # Use medium-sized Ubuntu container for better compatibility
 -P ubuntu-latest=catthehacker/ubuntu:act-latest
 
-# Set ACT environment variable automatically  
+# Set ACT environment variable automatically
 --env ACT=true
 
 # Enable artifact server for local artifact handling
@@ -107,11 +109,13 @@ This configuration ensures consistent behavior across all local testing scenario
 ### Basic Workflow Testing
 
 Test the CI workflow structure:
+
 ```bash
 act workflow_dispatch -W .github/workflows/ci.yml --list
 ```
 
 Run the CI workflow (using .actrc configuration):
+
 ```bash
 act workflow_dispatch -W .github/workflows/ci.yml
 ```
@@ -119,11 +123,13 @@ act workflow_dispatch -W .github/workflows/ci.yml
 ### Event-Specific Testing
 
 Test pull request events:
+
 ```bash
 act pull_request
 ```
 
 Test push events:
+
 ```bash
 act push
 ```
@@ -131,11 +137,13 @@ act push
 ### Job-Specific Testing
 
 Run only the change detection job:
+
 ```bash
 act workflow_dispatch -j detect-changes
 ```
 
 Run specific language builds:
+
 ```bash
 act workflow_dispatch -j python-test
 act workflow_dispatch -j controller-build
@@ -144,6 +152,7 @@ act workflow_dispatch -j controller-build
 ### Reusable Workflow Testing
 
 Test reusable workflows:
+
 ```bash
 act workflow_call -W .github/workflows/reusable-rust-build.yml \
   --input working-directory=hardware/dutlink-firmware \
@@ -163,6 +172,7 @@ Use the main validation script to test all workflows:
 ```
 
 This script performs:
+
 - **YAML syntax validation** for all workflow files
 - **Workflow structure validation** using act's `--list` mode
 - **ACT masking condition verification** to ensure proper conditional execution
@@ -178,6 +188,7 @@ Test specific masking conditions:
 ```
 
 This script validates:
+
 - All steps that should be masked under act have proper `if: ${{ !env.ACT }}` conditions
 - Steps that push artifacts, publish packages, or modify repositories are properly masked
 - Local-only debug steps work correctly under act
@@ -256,6 +267,7 @@ When running with act:
 **Error**: "This action requires 'base' input to be configured"
 
 **Solution**: The CI workflow now includes automatic base branch configuration for act:
+
 ```yaml
 - name: Check for changes
   uses: dorny/paths-filter@v3
@@ -313,6 +325,7 @@ act --platform ubuntu-latest=ubuntu:20.04  # Use official Ubuntu instead
 ```
 
 **Corporate Firewall/Proxy Issues:**
+
 ```bash
 # Configure Docker to use proxy
 export HTTPS_PROXY=your-proxy:port
@@ -325,6 +338,7 @@ act --platform ubuntu-latest=registry-1.docker.io/library/ubuntu:20.04
 ### Common Issues
 
 **Git not found:**
+
 ```bash
 # Use a larger image with git installed
 act --platform ubuntu-latest=catthehacker/ubuntu:act-latest
@@ -334,6 +348,7 @@ echo "--platform ubuntu-latest=catthehacker/ubuntu:act-latest" >> ~/.actrc
 ```
 
 **Bash not found:**
+
 ```bash
 # Use an image with bash
 act --platform ubuntu-latest=ubuntu:20.04
@@ -343,6 +358,7 @@ act --platform ubuntu-latest=node:16-alpine --env SETUP_BASH=true
 ```
 
 **Action compatibility issues:**
+
 ```bash
 # Use the full image for maximum compatibility
 act --platform ubuntu-latest=catthehacker/ubuntu:full-latest
@@ -352,6 +368,7 @@ act workflow_dispatch --list  # Shows action compatibility
 ```
 
 **Docker daemon not running:**
+
 ```bash
 # Start Docker service
 sudo systemctl start docker
@@ -362,6 +379,7 @@ open -a Docker  # macOS
 ```
 
 **Permission denied errors:**
+
 ```bash
 # Add user to docker group (Linux)
 sudo usermod -aG docker $USER
@@ -372,6 +390,7 @@ sudo act workflow_dispatch --env ACT=true
 ```
 
 **Container image pull failures:**
+
 ```bash
 # Use smaller images that are more likely to be cached
 act --platform ubuntu-latest=node:16-alpine
@@ -402,6 +421,7 @@ act workflow_dispatch -j python-test --env ACT=true --verbose
 ### Environment-Specific Issues
 
 **Resource Constraints:**
+
 ```bash
 # Use micro image for resource-constrained environments
 act --platform ubuntu-latest=node:16-alpine
@@ -414,6 +434,7 @@ act --rm
 ```
 
 **File System Permissions:**
+
 ```bash
 # Fix workspace permissions
 act --userns host
@@ -423,6 +444,7 @@ act --env RUNNER_UID=$(id -u) --env RUNNER_GID=$(id -g)
 ```
 
 **Multiple Docker Contexts:**
+
 ```bash
 # List available contexts
 docker context ls
@@ -437,6 +459,7 @@ docker context use desktop-linux  # or your preferred context
 ### Local Configuration
 
 Create `~/.actrc` for persistent configuration:
+
 ```
 --platform ubuntu-latest=catthehacker/ubuntu:act-latest
 --env ACT=true
@@ -446,23 +469,27 @@ Create `~/.actrc` for persistent configuration:
 ## Examples
 
 ### Test Python Components
+
 ```bash
 act workflow_dispatch -j python-lint --env ACT=true
 act workflow_dispatch -j python-test --env ACT=true
 ```
 
 ### Test Go Components
+
 ```bash
 act workflow_dispatch -j controller-build --env ACT=true
 act workflow_dispatch -j lab-config-build --env ACT=true
 ```
 
 ### Test Rust Components
+
 ```bash
 act workflow_dispatch -j rust-build --env ACT=true
 ```
 
 ### Test Documentation
+
 ```bash
 act workflow_dispatch -j docs-build --env ACT=true
 ```
@@ -494,6 +521,7 @@ act --platform ubuntu-latest=catthehacker/ubuntu:full-latest
 ### Optimization Tips
 
 **Cache Docker Images:**
+
 ```bash
 # Pre-pull commonly used images
 docker pull catthehacker/ubuntu:act-latest
@@ -505,6 +533,7 @@ act --platform ubuntu-latest=catthehacker/ubuntu:act-latest
 ```
 
 **Selective Job Execution:**
+
 ```bash
 # Test only changed components
 act workflow_dispatch -j detect-changes --env ACT=true
@@ -515,6 +544,7 @@ act workflow_dispatch --job controller-build --env ACT=true
 ```
 
 **Resource Management:**
+
 ```bash
 # Limit container resources for faster startup
 act --container-options "--memory=1g --cpus=2"
@@ -549,35 +579,35 @@ This integration ensures that workflows can be thoroughly tested locally, reduci
 
 ### Essential Commands
 
-| Command | Purpose |
-|---------|---------|
-| `act workflow_dispatch -W .github/workflows/ci.yml --env ACT=true` | Test CI workflow |
-| `act pull_request --env ACT=true` | Test pull request workflow |
-| `act push --env ACT=true` | Test push workflow |
-| `act workflow_dispatch -j python-test --env ACT=true` | Test specific job |
-| `./scripts/validate-ci-with-act.sh` | Validate all workflows |
-| `act --list` | List available workflows and jobs |
+| Command                                                            | Purpose                           |
+| ------------------------------------------------------------------ | --------------------------------- |
+| `act workflow_dispatch -W .github/workflows/ci.yml --env ACT=true` | Test CI workflow                  |
+| `act pull_request --env ACT=true`                                  | Test pull request workflow        |
+| `act push --env ACT=true`                                          | Test push workflow                |
+| `act workflow_dispatch -j python-test --env ACT=true`              | Test specific job                 |
+| `./scripts/validate-ci-with-act.sh`                                | Validate all workflows            |
+| `act --list`                                                       | List available workflows and jobs |
 
 ### Common Flags
 
-| Flag | Description |
-|------|-------------|
-| `--env ACT=true` | Set ACT environment variable (masks publish steps) |
-| `--list` | List workflows/jobs without execution |
-| `--dry-run` | Show what would run without execution |
-| `--verbose` | Verbose output for debugging |
-| `-j JOB_NAME` | Run specific job only |
-| `-W WORKFLOW_FILE` | Specify workflow file |
-| `--platform ubuntu-latest=IMAGE` | Use specific container image |
+| Flag                             | Description                                        |
+| -------------------------------- | -------------------------------------------------- |
+| `--env ACT=true`                 | Set ACT environment variable (masks publish steps) |
+| `--list`                         | List workflows/jobs without execution              |
+| `--dry-run`                      | Show what would run without execution              |
+| `--verbose`                      | Verbose output for debugging                       |
+| `-j JOB_NAME`                    | Run specific job only                              |
+| `-W WORKFLOW_FILE`               | Specify workflow file                              |
+| `--platform ubuntu-latest=IMAGE` | Use specific container image                       |
 
 ### Container Images
 
-| Image | Size | Use Case |
-|-------|------|----------|
-| `node:16-alpine` | ~200MB | Simple Node.js workflows |
-| `catthehacker/ubuntu:act-latest` | ~500MB | General purpose (recommended) |
-| `catthehacker/ubuntu:full-latest` | ~17GB | Maximum compatibility |
-| `ubuntu:20.04` | ~200MB | Basic Ubuntu environment |
+| Image                             | Size   | Use Case                      |
+| --------------------------------- | ------ | ----------------------------- |
+| `node:16-alpine`                  | ~200MB | Simple Node.js workflows      |
+| `catthehacker/ubuntu:act-latest`  | ~500MB | General purpose (recommended) |
+| `catthehacker/ubuntu:full-latest` | ~17GB  | Maximum compatibility         |
+| `ubuntu:20.04`                    | ~200MB | Basic Ubuntu environment      |
 
 ### Masked Operations
 
@@ -593,6 +623,7 @@ The following operations are automatically skipped when `ACT=true`:
 ### Configuration Files
 
 Create `~/.actrc` for persistent configuration:
+
 ```
 --platform ubuntu-latest=catthehacker/ubuntu:act-latest
 --env ACT=true
@@ -601,6 +632,7 @@ Create `~/.actrc` for persistent configuration:
 ```
 
 Create `.actrc` in repository root for project-specific settings:
+
 ```
 --platform ubuntu-latest=catthehacker/ubuntu:act-latest
 --env ACT=true

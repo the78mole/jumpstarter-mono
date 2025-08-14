@@ -158,7 +158,6 @@ communication or video streaming. This enables real-time interaction with both
 physical and virtual interfaces across the network. Methods marked with the
 `@exportstream` decorator create streams for bidirectional communication.
 
-
 ## Authentication and Security
 
 Driver access is controlled through Jumpstarter's authentication mechanisms:

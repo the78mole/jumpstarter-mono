@@ -14,6 +14,10 @@
 package clientv1
 
 import (
+	reflect "reflect"
+	sync "sync"
+	unsafe "unsafe"
+
 	v1 "github.com/the78mole/jumpstarter-mono/core/controller/internal/protocol/jumpstarter/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -21,9 +25,6 @@ import (
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
 )
 
 const (

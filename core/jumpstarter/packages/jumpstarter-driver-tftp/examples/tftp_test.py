@@ -15,10 +15,7 @@ def jumpstarter_config_available():
     return os.path.exists(config_path) or os.getenv("JUMPSTARTER_HOST") is not None
 
 
-pytestmark = pytest.mark.skipif(
-    not jumpstarter_config_available(),
-    reason="Jumpstarter configuration not available"
-)
+pytestmark = pytest.mark.skipif(not jumpstarter_config_available(), reason="Jumpstarter configuration not available")
 
 
 class TestResource(JumpstarterTest):

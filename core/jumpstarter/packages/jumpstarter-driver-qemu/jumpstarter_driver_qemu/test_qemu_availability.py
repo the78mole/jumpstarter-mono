@@ -1,6 +1,7 @@
 """Simple smoke test to verify QEMU is available in CI."""
 
 import subprocess
+
 import pytest
 
 

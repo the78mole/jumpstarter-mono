@@ -4,7 +4,11 @@ from typing import Literal, Optional
 import click
 from jumpstarter_cli_common.blocking import blocking
 from jumpstarter_cli_common.opt import opt_context, opt_kubeconfig
-from jumpstarter_kubernetes import helm_installed, install_helm_chart, uninstall_helm_chart
+from jumpstarter_kubernetes import (
+    helm_installed,
+    install_helm_chart,
+    uninstall_helm_chart,
+)
 
 from .controller import get_latest_compatible_controller_version
 from jumpstarter.common.ipaddr import get_ip_address, get_minikube_ip

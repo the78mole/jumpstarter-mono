@@ -28,7 +28,12 @@ from .decorators import (
     MARKER_STREAMING_DRIVERCALL,
 )
 from jumpstarter.common import Metadata
-from jumpstarter.common.resources import ClientStreamResource, PresignedRequestResource, Resource, ResourceMetadata
+from jumpstarter.common.resources import (
+    ClientStreamResource,
+    PresignedRequestResource,
+    Resource,
+    ResourceMetadata,
+)
 from jumpstarter.common.serde import decode_value, encode_value
 from jumpstarter.common.streams import (
     DriverStreamRequest,

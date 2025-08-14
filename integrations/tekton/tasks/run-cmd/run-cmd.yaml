@@ -7,7 +7,7 @@ spec:
     - description: The lease ID to use for command execution.
       name: jmp-lease-id
       type: string
-    - default: 'default'
+    - default: "default"
       description: The client config to use.
       name: client-name
       type: string
@@ -17,15 +17,15 @@ spec:
     - description: Image to use.
       name: image
       type: string
-      default: 'quay.io/jumpstarter-dev/jumpstarter:latest'
+      default: "quay.io/jumpstarter-dev/jumpstarter:latest"
     - description: User home for the provided image
       name: home
       type: string
-      default: '/root'
-    - name: 'client-config'
+      default: "/root"
+    - name: "client-config"
       description: Jumpstarter client config contents, can be used instead of the workspace.
       type: string
-      default: ''
+      default: ""
   steps:
     - computeResources: {}
       image: "$(params.image)"
@@ -51,7 +51,7 @@ spec:
           # Replace the __POD_TOKEN__ placeholder with the actual pod token
           POD_TOKEN=$(cat "$POD_TOKEN_FILE")
           sed -i "s/__POD_TOKEN__/$POD_TOKEN/g" "$CONFIG_FILE"
-          
+
           set -x
          fi
 

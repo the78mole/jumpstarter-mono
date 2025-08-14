@@ -7,17 +7,17 @@ spec:
     - description: The lease to be released.
       name: jmp-lease-id
       type: string
-    - default: 'default'
+    - default: "default"
       description: The client intending to release the lease.
       name: client-name
       type: string
-    - name: 'client-config'
+    - name: "client-config"
       description: Jumpstarter client config contents, can be used instead of the workspace.
       type: string
-      default: ''
+      default: ""
   steps:
     - computeResources: {}
-      image: 'quay.io/jumpstarter-dev/jumpstarter:latest'
+      image: "quay.io/jumpstarter-dev/jumpstarter:latest"
       name: release-lease
       script: |
         #!/bin/bash
@@ -40,7 +40,7 @@ spec:
           # Replace the __POD_TOKEN__ placeholder with the actual pod token
           POD_TOKEN=$(cat "$POD_TOKEN_FILE")
           sed -i "s/__POD_TOKEN__/$POD_TOKEN/g" "$CONFIG_FILE"
-          
+
           set -x
          fi
 
@@ -60,4 +60,3 @@ spec:
   workspaces:
     - mountPath: /root/.config/jumpstarter/clients
       name: jumpstarter-client-secret
-      

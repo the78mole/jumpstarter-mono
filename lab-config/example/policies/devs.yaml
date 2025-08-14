@@ -9,21 +9,21 @@ spec:
       dut-purpose: development
       stage: production
   policies:
-  - priority: 20
-    from:                # Administrators come first, highest priority
-    - clientSelector:
-        matchLabels:
-          user-type: administrator
-  - priority: 10        # Developers come next, maximum 2days
-    maximumDuration: 48h
-    from:
-    - clientSelector:
-        matchLabels:
-          user-type: developer
-  - priority: 5          # CI comes next, but only spot instances, can be deallocated
-    spotAccess: true
-    maximumDuration: 12h
-    from:
-    - clientSelector:
-        matchLabels:
-          user-type: ci
+    - priority: 20
+      from: # Administrators come first, highest priority
+        - clientSelector:
+            matchLabels:
+              user-type: administrator
+    - priority: 10 # Developers come next, maximum 2days
+      maximumDuration: 48h
+      from:
+        - clientSelector:
+            matchLabels:
+              user-type: developer
+    - priority: 5 # CI comes next, but only spot instances, can be deallocated
+      spotAccess: true
+      maximumDuration: 12h
+      from:
+        - clientSelector:
+            matchLabels:
+              user-type: ci

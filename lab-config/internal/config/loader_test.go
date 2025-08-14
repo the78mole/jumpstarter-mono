@@ -166,7 +166,7 @@ func TestSplitYAMLDocuments_SeparatorWithSpaces(t *testing.T) {
 kind: ConfigMap
 metadata:
   name: config1
----   
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -325,8 +325,8 @@ kind: ConfigMap
 metadata:
   name: config1
 ---
-   
-   
+
+
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -343,7 +343,7 @@ kind: ConfigMap
 metadata:
   name: config1`
 
-	expected2 := `   
+	expected2 := `
    `
 
 	expected3 := `apiVersion: v1

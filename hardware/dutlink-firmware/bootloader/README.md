@@ -21,7 +21,6 @@ by the firmware.
 This directory contains a Makefile which should help you flash the bootloader into a
 device. Please read the (security considerations)[../../#bootloader-security-considerations].
 
-
 ## Building
 
 To make the bootloader you can use:
@@ -80,14 +79,14 @@ Submitting leave request...
 Transitioning to dfuMANIFEST state
 ```
 
-The bootloader is located at 0x08000000, and uses 32KB. Leaving additional 2*16KB sectors
+The bootloader is located at 0x08000000, and uses 32KB. Leaving additional 2\*16KB sectors
 for configuration storage. This means that the application should be compiled to run at
 0x08010000 (see the memory.x linkerscript in the application and bootloader directories).
-
 
 Once flashed, you can see the device connecting via USB on the dmesg output:
 
 (TODO @mangelajo: update this output)
+
 ```
 [ 116.701570] usb 2-2.7: new full-speed USB device number 120 using xhci_hcd
 [ 116.843527] usb 2-2.7: New USB device found, idVendor=2b23, idProduct=e012, bcdDevice= 0.01
@@ -100,4 +99,3 @@ Once flashed, you can see the device connecting via USB on the dmesg output:
 Now when powering up your device, you can use the DFU button if you want to force
 our DFU bootloader to stay instead of jumping to your final application when
 it's already flashed.
-

@@ -3,7 +3,7 @@ use core::{mem::size_of, cmp::min};
 use stm32f4xx_hal::flash::{LockedFlash, FlashExt};
 
 // Configuration is stored in the 3'rd sector of the flash memory, starting at 0x0800_C000.
-// The sector is 16k, so we can store 16 ConfigBlocks of 1k each. The last one with 
+// The sector is 16k, so we can store 16 ConfigBlocks of 1k each. The last one with
 // the magic word is the valid one.
 // Each sector has a limited amount of times it can be erased, so we use the next free block
 // and only erase the sector when all blocks are used.

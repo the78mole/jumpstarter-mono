@@ -127,14 +127,14 @@ total_masked_steps=0
 for workflow in .github/workflows/*.yml; do
     if [ -f "$workflow" ]; then
         workflow_name=$(basename "$workflow")
-        
+
         # Count steps with ACT masking
         masked_count=$(grep -c "!env.ACT" "$workflow" || true)
-        if [ $masked_count -gt 0 ]; then
+        if [ "$masked_count" -gt 0 ]; then
             log_success "$workflow_name has $masked_count steps masked for ACT"
             ((act_masked_steps += masked_count))
         fi
-        
+
         # Count steps that should be masked (publish/push operations)
         publish_steps=$(grep -c -E "(publish|push|upload-artifact|download-artifact|docker.*login|gh-deploy)" "$workflow" || true)
         ((total_masked_steps += publish_steps))

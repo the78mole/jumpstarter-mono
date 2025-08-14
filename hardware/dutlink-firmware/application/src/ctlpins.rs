@@ -290,4 +290,3 @@ where
         self.on = false;
     }
 }
-

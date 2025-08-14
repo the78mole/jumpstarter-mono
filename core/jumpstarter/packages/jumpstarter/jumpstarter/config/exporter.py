@@ -118,7 +118,7 @@ class ExporterConfigV1Alpha1(BaseModel):
         return ExporterConfigListV1Alpha1(items=exporters)
 
     @classmethod
-    def dump_yaml(self, config: Self) -> str:
+    def dump_yaml(cls, config: Self) -> str:
         return yaml.safe_dump(config.model_dump(mode="json", exclude={"alias", "path"}), sort_keys=False)
 
     @classmethod

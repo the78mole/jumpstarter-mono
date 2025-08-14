@@ -31,10 +31,11 @@ def _vsock_available():
     """Check if vsock is available and accessible"""
     if platform.system() != "Linux":
         return False
-    
+
     # Check if we can access the vhost-vsock device
     try:
         import os
+
         return os.access("/dev/vhost-vsock", os.R_OK | os.W_OK)
     except Exception:
         return False

@@ -69,6 +69,7 @@ line-length = 120
 [tool.ruff.lint]
 exclude = ["packages/jumpstarter-protocol"]
 extend-select = ["I", "C", "E", "F", "W", "B"]
+ignore = ["E501", "N801", "N802", "N803", "N806", "N815", "N818"]
 
 [tool.ruff.lint.isort]
 known-local-folder = ["packages", "examples", "jumpstarter"]

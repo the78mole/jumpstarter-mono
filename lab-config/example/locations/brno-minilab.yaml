@@ -1,4 +1,3 @@
-
 apiVersion: meta.jumpstarter.dev/v1alpha1
 kind: PhysicalLocation
 metadata:
@@ -10,4 +9,3 @@ spec:
     - name: "Michal S."
       email: "michal@s.com"
       phone: "+13424343422"
-

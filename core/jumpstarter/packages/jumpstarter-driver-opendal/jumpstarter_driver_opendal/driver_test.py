@@ -229,7 +229,7 @@ def test_drivers_mock_storage_mux_http():
         server_thread = Thread(target=server.serve_forever)
         server_thread.daemon = True
         server_thread.start()
-        
+
         # Get the actual port assigned
         server_port = server.server_address[1]
 

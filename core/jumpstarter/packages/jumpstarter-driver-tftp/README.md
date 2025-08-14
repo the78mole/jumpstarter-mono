@@ -19,9 +19,9 @@ export:
   tftp:
     type: jumpstarter_driver_tftp.driver.Tftp
     config:
-      root_dir: /var/lib/tftpboot  # Directory to serve files from
-      host: 192.168.1.100          # Host IP to bind to (optional)
-      port: 69                     # Port to listen on (optional)
+      root_dir: /var/lib/tftpboot # Directory to serve files from
+      host: 192.168.1.100 # Host IP to bind to (optional)
+      port: 69 # Port to listen on (optional)
 ```
 
 ### Config parameters

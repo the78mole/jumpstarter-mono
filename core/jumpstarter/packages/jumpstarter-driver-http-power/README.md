@@ -62,29 +62,29 @@ export:
 
 ### Config parameters
 
-| Parameter | Description | Type | Required | Default |
-|-----------|-------------|------|----------|---------|
-| name | Name of the device, for logging purposes | str | no | "device" |
-| power_on | HTTP endpoint config for powering on | HttpEndpointConfig | yes | |
-| power_off | HTTP endpoint config for powering off | HttpEndpointConfig | yes | |
-| power_read | HTTP endpoint config for reading power measurements | HttpEndpointConfig | no | None |
-| auth | Authentication configuration | HttpAuthConfig | no | None |
-| auth.basic | Basic authentication credentials | HttpBasicAuth | no | None |
+| Parameter  | Description                                         | Type               | Required | Default  |
+| ---------- | --------------------------------------------------- | ------------------ | -------- | -------- |
+| name       | Name of the device, for logging purposes            | str                | no       | "device" |
+| power_on   | HTTP endpoint config for powering on                | HttpEndpointConfig | yes      |          |
+| power_off  | HTTP endpoint config for powering off               | HttpEndpointConfig | yes      |          |
+| power_read | HTTP endpoint config for reading power measurements | HttpEndpointConfig | no       | None     |
+| auth       | Authentication configuration                        | HttpAuthConfig     | no       | None     |
+| auth.basic | Basic authentication credentials                    | HttpBasicAuth      | no       | None     |
 
 #### HttpEndpointConfig parameters
 
-| Parameter | Description | Type | Required | Default |
-|-----------|-------------|------|----------|---------|
-| url | The HTTP endpoint URL | str | yes | |
-| method | HTTP method (GET, POST, PUT, etc.) | str | no | "GET" |
-| data | Request body data for POST/PUT/PATCH requests | str | no | None |
+| Parameter | Description                                   | Type | Required | Default |
+| --------- | --------------------------------------------- | ---- | -------- | ------- |
+| url       | The HTTP endpoint URL                         | str  | yes      |         |
+| method    | HTTP method (GET, POST, PUT, etc.)            | str  | no       | "GET"   |
+| data      | Request body data for POST/PUT/PATCH requests | str  | no       | None    |
 
 #### HttpBasicAuth parameters
 
-| Parameter | Description | Type | Required | Default |
-|-----------|-------------|------|----------|---------|
-| user | Username for basic authentication | str | yes | |
-| password | Password for basic authentication | str | yes | |
+| Parameter | Description                       | Type | Required | Default |
+| --------- | --------------------------------- | ---- | -------- | ------- |
+| user      | Username for basic authentication | str  | yes      |         |
+| password  | Password for basic authentication | str  | yes      |         |
 
 ## API Reference
 
@@ -97,6 +97,7 @@ export:
 ### Examples
 
 Basic power control:
+
 ```python
 # Power on the device
 http_power_client.on()
@@ -104,7 +105,6 @@ http_power_client.on()
 # Power off the device
 http_power_client.off()
 ```
-
 
 ## Notes
 

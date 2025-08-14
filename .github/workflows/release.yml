@@ -3,11 +3,11 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to release'
+        description: "Tag to release"
         required: true
         type: string
 
@@ -21,21 +21,21 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
-      
+          python-version: "3.12"
+
       - name: Install uv
         uses: astral-sh/setup-uv@v3
-      
+
       - name: Install dependencies
         run: uv sync
-      
+
       - name: Build Python packages
         run: uv build
-      
+
       - name: Upload Python artifacts
         if: ${{ !env.ACT }}
         uses: actions/upload-artifact@v4
@@ -57,15 +57,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.22'
+          go-version: "1.22"
           cache-dependency-path: |
             core/controller/go.sum
             lab-config/go.sum
-      
+
       - name: Build binary
         working-directory: ${{ matrix.component.path }}
         run: |
@@ -73,7 +73,7 @@ jobs:
           GOOS=darwin GOARCH=amd64 go build -ldflags "-s -w" -o ${{ matrix.component.binary }}-darwin-amd64 ./...
           GOOS=darwin GOARCH=arm64 go build -ldflags "-s -w" -o ${{ matrix.component.binary }}-darwin-arm64 ./...
           GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -o ${{ matrix.component.binary }}-windows-amd64.exe ./...
-      
+
       - name: Upload Go artifacts
         if: ${{ !env.ACT }}
         uses: actions/upload-artifact@v4
@@ -86,12 +86,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: thumbv7em-none-eabihf
-      
+
       - name: Cache cargo dependencies
         uses: actions/cache@v4
         with:
@@ -102,13 +102,13 @@ jobs:
           key: ${{ runner.os }}-cargo-release-${{ hashFiles('hardware/dutlink-firmware/**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-release-
-      
+
       - name: Build firmware
         working-directory: hardware/dutlink-firmware
         run: |
           cd application && cargo build --release
           cd ../bootloader && cargo build --release
-      
+
       - name: Upload Rust artifacts
         if: ${{ !env.ACT }}
         uses: actions/upload-artifact@v4
@@ -123,24 +123,24 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
           cache-dependency-path: integrations/vscode/package-lock.json
-      
+
       - name: Install dependencies
         working-directory: integrations/vscode
         run: npm ci
-      
+
       - name: Build extension
         working-directory: integrations/vscode
         run: |
           npm run compile
           npx vsce package
-      
+
       - name: Upload web artifacts
         if: ${{ !env.ACT }}
         uses: actions/upload-artifact@v4
@@ -155,16 +155,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Download artifacts
         if: ${{ !env.ACT }}
         uses: actions/download-artifact@v4
         with:
           path: artifacts/
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Login to GitHub Container Registry
         if: ${{ !env.ACT }}
         uses: docker/login-action@v3
@@ -172,7 +172,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -181,7 +181,7 @@ jobs:
           tags: |
             type=ref,event=tag
             type=raw,value=latest,enable={{is_default_branch}}
-      
+
       - name: Build and push container images
         if: ${{ !env.ACT }}
         working-directory: packages/container
@@ -201,13 +201,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Download all artifacts
         if: ${{ !env.ACT }}
         uses: actions/download-artifact@v4
         with:
           path: release-artifacts/
-      
+
       - name: Generate release notes
         id: release-notes
         run: |
@@ -220,7 +220,7 @@ jobs:
             echo "## Changes" >> release_notes.md
             git log --oneline --since="$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo '1970-01-01')" >> release_notes.md
           fi
-      
+
       - name: Create GitHub Release
         if: ${{ !env.ACT }}
         uses: softprops/action-gh-release@v1
@@ -244,7 +244,7 @@ jobs:
         with:
           name: python-packages
           path: dist/
-      
+
       - name: Publish to PyPI
         if: ${{ !env.ACT }}
         uses: pypa/gh-action-pypi-publish@release/v1
@@ -259,14 +259,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Download VSCode extension
         if: ${{ !env.ACT }}
         uses: actions/download-artifact@v4
         with:
           name: vscode-extension
           path: integrations/vscode/
-      
+
       - name: Publish to VSCode Marketplace
         if: ${{ !env.ACT }}
         working-directory: integrations/vscode

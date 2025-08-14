@@ -14,71 +14,71 @@ function:
 
 Drivers that control the power state and basic operation of devices:
 
-* **[Power](power.md)** (`jumpstarter-driver-power`) - Power control for devices
-* **[gpiod](gpiod.md)** (`jumpstarter-driver-gpiod`) -
+- **[Power](power.md)** (`jumpstarter-driver-power`) - Power control for devices
+- **[gpiod](gpiod.md)** (`jumpstarter-driver-gpiod`) -
   gpiod hardware control
-* **[Yepkit](yepkit.md)** (`jumpstarter-driver-yepkit`) - Yepkit hardware
+- **[Yepkit](yepkit.md)** (`jumpstarter-driver-yepkit`) - Yepkit hardware
   control
-* **[DUT Link](dutlink.md)** (`jumpstarter-driver-dutlink`) - [DUT Link
+- **[DUT Link](dutlink.md)** (`jumpstarter-driver-dutlink`) - [DUT Link
   Board](https://github.com/jumpstarter-dev/dutlink-board) hardware control
-* **[Energenie PDU](energenie.md)** (`jumpstarter-driver-energenie`) - Energenie PDUs
-* **[Tasmota](tasmota.md)** (`jumpstarter-driver-tasmota`) - Tasmota hardware control
-* **[HTTP Power](http-power.md)** (`jumpstarter-driver-http-power`) - HTTP-based power
+- **[Energenie PDU](energenie.md)** (`jumpstarter-driver-energenie`) - Energenie PDUs
+- **[Tasmota](tasmota.md)** (`jumpstarter-driver-tasmota`) - Tasmota hardware control
+- **[HTTP Power](http-power.md)** (`jumpstarter-driver-http-power`) - HTTP-based power
   control, useful for smart sockets, like the Shelly Smart Plug or similar
 
 ### Communication Drivers
 
 Drivers that provide various communication interfaces:
 
-* **[CAN](can.md)** (`jumpstarter-driver-can`) - Controller Area Network
+- **[CAN](can.md)** (`jumpstarter-driver-can`) - Controller Area Network
   communication
-* **[HTTP](http.md)** (`jumpstarter-driver-http`) - HTTP communication
-* **[Network](network.md)** (`jumpstarter-driver-network`) - Network interfaces
+- **[HTTP](http.md)** (`jumpstarter-driver-http`) - HTTP communication
+- **[Network](network.md)** (`jumpstarter-driver-network`) - Network interfaces
   and configuration
-* **[PySerial](pyserial.md)** (`jumpstarter-driver-pyserial`) - Serial port
+- **[PySerial](pyserial.md)** (`jumpstarter-driver-pyserial`) - Serial port
   communication
-* **[SNMP](snmp.md)** (`jumpstarter-driver-snmp`) - Simple Network Management
+- **[SNMP](snmp.md)** (`jumpstarter-driver-snmp`) - Simple Network Management
   Protocol
-* **[TFTP](tftp.md)** (`jumpstarter-driver-tftp`) - Trivial File Transfer
+- **[TFTP](tftp.md)** (`jumpstarter-driver-tftp`) - Trivial File Transfer
   Protocol
 
 ### Storage and Data Drivers
 
 Drivers that control storage devices and manage data:
 
-* **[OpenDAL](opendal.md)** (`jumpstarter-driver-opendal`) - Open Data Access
+- **[OpenDAL](opendal.md)** (`jumpstarter-driver-opendal`) - Open Data Access
   Layer
-* **[SD Wire](sdwire.md)** (`jumpstarter-driver-sdwire`) - SD card switching
+- **[SD Wire](sdwire.md)** (`jumpstarter-driver-sdwire`) - SD card switching
   utilities
-* **[iSCSI](iscsi.md)** (`jumpstarter-driver-iscsi`) - iSCSI server to serve LUNs
+- **[iSCSI](iscsi.md)** (`jumpstarter-driver-iscsi`) - iSCSI server to serve LUNs
 
 ### Media Drivers
 
 Drivers that handle media streams:
 
-* **[UStreamer](ustreamer.md)** (`jumpstarter-driver-ustreamer`) - Video
+- **[UStreamer](ustreamer.md)** (`jumpstarter-driver-ustreamer`) - Video
   streaming functionality
 
 ### Debug and Programming Drivers
 
 Drivers for debugging and programming devices:
 
-* **[Flashers](flashers.md)** (`jumpstarter-driver-flashers`) - Flash memory
+- **[Flashers](flashers.md)** (`jumpstarter-driver-flashers`) - Flash memory
   programming tools
-* **[Probe-RS](probe-rs.md)** (`jumpstarter-driver-probe-rs`) - Debugging probe
+- **[Probe-RS](probe-rs.md)** (`jumpstarter-driver-probe-rs`) - Debugging probe
   support
-* **[QEMU](qemu.md)** (`jumpstarter-driver-qemu`) - QEMU virtualization platform
-* **[Corellium](corellium.md)** (`jumpstarter-driver-corellium`) - Corellium
+- **[QEMU](qemu.md)** (`jumpstarter-driver-qemu`) - QEMU virtualization platform
+- **[Corellium](corellium.md)** (`jumpstarter-driver-corellium`) - Corellium
   virtualization platform
-* **[U-Boot](uboot.md)** (`jumpstarter-driver-uboot`) - Universal Bootloader
+- **[U-Boot](uboot.md)** (`jumpstarter-driver-uboot`) - Universal Bootloader
   interface
-* **[RideSX](ridesx.md)** (`jumpstarter-driver-ridesx`) - Flashing and power management for Qualcomm RideSX devices
+- **[RideSX](ridesx.md)** (`jumpstarter-driver-ridesx`) - Flashing and power management for Qualcomm RideSX devices
 
 ### Utility Drivers
 
 General-purpose utility drivers:
 
-* **[Shell](shell.md)** (`jumpstarter-driver-shell`) - Shell command execution
+- **[Shell](shell.md)** (`jumpstarter-driver-shell`) - Shell command execution
 
 ```{toctree}
 :hidden:

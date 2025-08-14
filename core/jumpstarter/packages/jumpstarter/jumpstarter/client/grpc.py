@@ -10,7 +10,13 @@ from typing import Any
 from google.protobuf import duration_pb2, field_mask_pb2, json_format
 from grpc import ChannelConnectivity
 from grpc.aio import Channel
-from jumpstarter_protocol import client_pb2, client_pb2_grpc, jumpstarter_pb2_grpc, kubernetes_pb2, router_pb2_grpc
+from jumpstarter_protocol import (
+    client_pb2,
+    client_pb2_grpc,
+    jumpstarter_pb2_grpc,
+    kubernetes_pb2,
+    router_pb2_grpc,
+)
 from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
 from jumpstarter.common.grpc import translate_grpc_exceptions

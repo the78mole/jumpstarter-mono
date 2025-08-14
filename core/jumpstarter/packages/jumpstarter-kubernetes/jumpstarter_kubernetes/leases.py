@@ -1,12 +1,20 @@
 from typing import Literal, Optional
 
-from kubernetes_asyncio.client.models import V1Condition, V1ObjectMeta, V1ObjectReference
+from kubernetes_asyncio.client.models import (
+    V1Condition,
+    V1ObjectMeta,
+    V1ObjectReference,
+)
 from pydantic import Field
 
 from .datetime import time_since
 from .json import JsonBaseModel
 from .list import V1Alpha1List
-from .serialize import SerializeV1Condition, SerializeV1ObjectMeta, SerializeV1ObjectReference
+from .serialize import (
+    SerializeV1Condition,
+    SerializeV1ObjectMeta,
+    SerializeV1ObjectReference,
+)
 from .util import AbstractAsyncCustomObjectApi
 
 

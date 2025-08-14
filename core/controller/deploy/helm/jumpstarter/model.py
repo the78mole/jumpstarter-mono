@@ -7,7 +7,6 @@
 from __future__ import annotations
 
 import json
-
 from typing import Any, Dict, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Field

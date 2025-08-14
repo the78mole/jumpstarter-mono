@@ -47,31 +47,38 @@ jumpstarter-mono/
 ## 🎯 Components
 
 ### Core Components
+
 - **jumpstarter**: Main Python library providing the core Jumpstarter functionality, CLI tools, and device drivers
 - **controller**: Kubernetes controller for managing Jumpstarter resources in cloud environments
 - **protocol**: Shared protocol definitions and communication interfaces
 
 ### Hardware
+
 - **dutlink-board**: Open hardware design files for the DUTLink test harness board
 - **dutlink-firmware**: Rust firmware for the DUTLink board enabling hardware-in-the-loop testing
 
 ### Integrations
+
 - **tekton**: CI/CD integration with Tekton pipelines for automated testing workflows
 - **vscode**: Visual Studio Code extension for enhanced Jumpstarter development experience
 - **devspace**: Development environment configurations and templates
 
 ### Templates
+
 - **driver**: Template for creating new Jumpstarter device drivers
 
 ### Testing
+
 - **e2e**: Comprehensive end-to-end test suite validating full system functionality
 
 ### Lab Configuration
+
 - **lab-config**: Tools for configuring and managing hardware test labs
 
 ## 🛠️ Development
 
 ### Prerequisites
+
 - Python 3.12+
 - Go 1.22+
 - Rust (latest stable)
@@ -87,7 +94,7 @@ flowchart LR
         CLONE[Clone Repo]
         SETUP[make setup]
     end
-    
+
     subgraph "Development Cycle"
         CODE[Write Code]
         BUILD[make build]
@@ -95,14 +102,14 @@ flowchart LR
         LINT[make lint]
         COMMIT[Commit]
     end
-    
+
     subgraph "Multi-language Support"
         PY[Python<br/>UV Workspace]
         GO[Go<br/>Go Workspace]
         RUST[Rust<br/>Cargo]
         WEB[TypeScript<br/>NPM]
     end
-    
+
     CLONE --> SETUP
     SETUP --> CODE
     CODE --> BUILD
@@ -110,12 +117,12 @@ flowchart LR
     TEST --> LINT
     LINT --> COMMIT
     COMMIT --> CODE
-    
+
     BUILD --> PY
     BUILD --> GO
     BUILD --> RUST
     BUILD --> WEB
-    
+
     style SETUP fill:#e8f5e8
     style BUILD fill:#e1f5fe
     style TEST fill:#fff3e0
@@ -168,6 +175,7 @@ Detailed documentation is available in the following documents:
 ## 🚀 Installation
 
 ### From Source
+
 ```bash
 # Install all Python components
 pip install -e .
@@ -177,7 +185,9 @@ cd core/controller && make install
 ```
 
 ### Packages
+
 Pre-built packages will be available for:
+
 - Python wheels (PyPI)
 - Debian packages
 - RPM packages
@@ -193,6 +203,7 @@ The monorepo includes comprehensive testing at multiple levels:
 - **Hardware-in-the-loop tests**: Real hardware testing
 
 Run tests with:
+
 ```bash
 make test           # All tests
 make test-e2e       # End-to-end tests only
@@ -209,41 +220,41 @@ graph TB
         API[REST API]
         WEB[Web Dashboard]
     end
-    
+
     subgraph "Core Platform"
         LIB[Python Core Library<br/>Device Drivers & Automation]
         CTL[Kubernetes Controller<br/>Cloud-native Orchestration]
         PROTO[Protocol Definitions<br/>Cross-component Communication]
     end
-    
+
     subgraph "Hardware Layer"
         FW[Rust Firmware<br/>Real-time Control]
         BOARD[DUTLink Hardware<br/>Test Harness Board]
         DUT[Device Under Test]
     end
-    
+
     subgraph "Integration & CI/CD"
         TEKTON[Tekton Pipelines]
         VSCODE[VS Code Extension]
         GITHUB[GitHub Actions]
     end
-    
+
     CLI --> LIB
     API --> LIB
     WEB --> LIB
-    
+
     LIB <--> CTL
     LIB <--> PROTO
     CTL <--> PROTO
-    
+
     LIB --> FW
     FW --> BOARD
     BOARD <--> DUT
-    
+
     TEKTON --> CTL
     VSCODE --> LIB
     GITHUB --> CTL
-    
+
     style LIB fill:#e1f5fe
     style CTL fill:#f3e5f5
     style FW fill:#fff3e0

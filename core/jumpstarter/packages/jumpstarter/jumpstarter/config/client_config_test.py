@@ -8,9 +8,19 @@ import yaml
 from pydantic import ValidationError
 
 from jumpstarter.common.exceptions import FileNotFoundError
-from jumpstarter.config.client import ClientConfigV1Alpha1, ClientConfigV1Alpha1Drivers, ShellConfigV1Alpha1
+from jumpstarter.config.client import (
+    ClientConfigV1Alpha1,
+    ClientConfigV1Alpha1Drivers,
+    ShellConfigV1Alpha1,
+)
 from jumpstarter.config.common import ObjectMeta
-from jumpstarter.config.env import JMP_DRIVERS_ALLOW, JMP_ENDPOINT, JMP_NAME, JMP_NAMESPACE, JMP_TOKEN
+from jumpstarter.config.env import (
+    JMP_DRIVERS_ALLOW,
+    JMP_ENDPOINT,
+    JMP_NAME,
+    JMP_NAMESPACE,
+    JMP_TOKEN,
+)
 
 
 def test_client_ensure_exists_makes_dir(monkeypatch: pytest.MonkeyPatch):

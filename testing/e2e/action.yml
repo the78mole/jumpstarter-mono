@@ -1,10 +1,10 @@
-name: 'Jumpstarter end-to-end testing'
+name: "Jumpstarter end-to-end testing"
 inputs:
   controller-ref:
-    description: 'jumpstarter-dev/jumpstarter-controller git ref'
+    description: "jumpstarter-dev/jumpstarter-controller git ref"
     required: true
   jumpstarter-ref:
-    description: 'jumpstarter-dev/jumpstarter git ref'
+    description: "jumpstarter-dev/jumpstarter git ref"
     required: true
 runs:
   using: "composite"

@@ -1,6 +1,15 @@
-from kubernetes_asyncio.client.models import V1Condition, V1ObjectMeta, V1ObjectReference
+from kubernetes_asyncio.client.models import (
+    V1Condition,
+    V1ObjectMeta,
+    V1ObjectReference,
+)
 
-from jumpstarter_kubernetes import V1Alpha1Lease, V1Alpha1LeaseSelector, V1Alpha1LeaseSpec, V1Alpha1LeaseStatus
+from jumpstarter_kubernetes import (
+    V1Alpha1Lease,
+    V1Alpha1LeaseSelector,
+    V1Alpha1LeaseSpec,
+    V1Alpha1LeaseStatus,
+)
 
 TEST_LEASE = V1Alpha1Lease(
     api_version="jumpstarter.dev/v1alpha1",

@@ -7,5 +7,5 @@ git clone --depth 1 --branch 2025.05  https://github.com/buildroot/buildroot /bu
 ./replace_kernel.sh
 cp -R overlay /buildroot
 cp rootfs_only_defconfig  /buildroot/configs/
-( cd /buildroot; make rootfs_only_defconfig && make )
+( cd /buildroot || exit; make rootfs_only_defconfig && make )
 mkimage -f flasher.its data/flasher.itb

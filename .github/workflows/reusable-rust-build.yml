@@ -9,15 +9,15 @@ on:
       rust-toolchain:
         required: false
         type: string
-        default: 'stable'
+        default: "stable"
       targets:
         required: false
         type: string
-        default: ''
+        default: ""
       build-flags:
         required: false
         type: string
-        default: '--release'
+        default: "--release"
   workflow_dispatch:
     inputs:
       working-directory:
@@ -26,15 +26,15 @@ on:
       rust-toolchain:
         required: false
         type: string
-        default: 'stable'
+        default: "stable"
       targets:
         required: false
         type: string
-        default: ''
+        default: ""
       build-flags:
         required: false
         type: string
-        default: '--release'
+        default: "--release"
 
 jobs:
   build:

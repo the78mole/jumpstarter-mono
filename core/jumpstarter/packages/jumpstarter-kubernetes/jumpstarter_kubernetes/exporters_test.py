@@ -1,6 +1,10 @@
 from kubernetes_asyncio.client.models import V1ObjectMeta, V1ObjectReference
 
-from jumpstarter_kubernetes.exporters import V1Alpha1Exporter, V1Alpha1ExporterDevice, V1Alpha1ExporterStatus
+from jumpstarter_kubernetes.exporters import (
+    V1Alpha1Exporter,
+    V1Alpha1ExporterDevice,
+    V1Alpha1ExporterStatus,
+)
 
 TEST_EXPORTER = V1Alpha1Exporter(
     api_version="jumpstarter.dev/v1alpha1",

@@ -38,24 +38,24 @@ print_status() {
 # Check if required tools are available
 check_dependencies() {
     print_status "INFO" "Checking dependencies..."
-    
+
     local missing_deps=()
-    
+
     # Check for act (GitHub Actions runner)
     if ! command -v act &> /dev/null; then
         missing_deps+=("act")
     fi
-    
+
     # Check for yamllint
     if ! command -v yamllint &> /dev/null; then
         missing_deps+=("yamllint")
     fi
-    
+
     # Check for actionlint
     if ! command -v actionlint &> /dev/null; then
         missing_deps+=("actionlint")
     fi
-    
+
     if [ ${#missing_deps[@]} -ne 0 ]; then
         print_status "WARNING" "Missing optional dependencies: ${missing_deps[*]}"
         print_status "INFO" "Install with: brew install act yamllint actionlint"
@@ -68,7 +68,7 @@ check_dependencies() {
 # Validate YAML syntax
 validate_yaml() {
     print_status "INFO" "Validating YAML syntax..."
-    
+
     local yaml_files=(
         ".github/workflows/ci.yml"
         ".github/workflows/release.yml"
@@ -77,7 +77,7 @@ validate_yaml() {
         ".github/workflows/reusable-rust-build.yml"
         ".github/workflows/reusable-web-build.yml"
     )
-    
+
     for file in "${yaml_files[@]}"; do
         if [ -f "$file" ]; then
             if command -v yamllint &> /dev/null; then
@@ -122,7 +122,7 @@ validate_actions() {
 test_workflows() {
     if command -v act &> /dev/null; then
         print_status "INFO" "Testing workflows with act..."
-        
+
         # Test CI workflow (dry run)
         print_status "INFO" "Testing CI workflow (dry run)..."
         if act -n workflow_dispatch -W .github/workflows/ci.yml 2>/dev/null; then
@@ -130,7 +130,7 @@ test_workflows() {
         else
             print_status "WARNING" "CI workflow test failed (this might be expected)"
         fi
-        
+
         # List available workflows
         print_status "INFO" "Available workflows:"
         act -l 2>/dev/null || true
@@ -143,7 +143,7 @@ test_workflows() {
 # Check file structure
 check_structure() {
     print_status "INFO" "Checking CI/CD file structure..."
-    
+
     local expected_files=(
         ".github/workflows/ci.yml"
         ".github/workflows/release.yml"
@@ -157,7 +157,7 @@ check_structure() {
         ".github/workflows/reusable-web-build.yml"
         ".github/workflows/reusable-typos.yml"
     )
-    
+
     for file in "${expected_files[@]}"; do
         if [ -f "$file" ]; then
             print_status "SUCCESS" "✓ $file"
@@ -170,21 +170,21 @@ check_structure() {
 # Validate workflow triggers and paths
 validate_triggers() {
     print_status "INFO" "Validating workflow triggers..."
-    
+
     # Check if main CI has proper triggers
     if grep -q "push:" .github/workflows/ci.yml && grep -q "pull_request:" .github/workflows/ci.yml; then
         print_status "SUCCESS" "CI workflow has proper triggers"
     else
         print_status "WARNING" "CI workflow might be missing triggers"
     fi
-    
+
     # Check if change detection is configured
     if grep -q "dorny/paths-filter" .github/workflows/ci.yml; then
         print_status "SUCCESS" "Change detection configured"
     else
         print_status "WARNING" "Change detection not found"
     fi
-    
+
     # Check if caching is configured
     if grep -q "actions/cache" .github/workflows/ci.yml; then
         print_status "SUCCESS" "Caching configured in CI"
@@ -221,22 +221,22 @@ generate_summary() {
 main() {
     check_dependencies
     echo ""
-    
+
     check_structure
     echo ""
-    
+
     validate_yaml
     echo ""
-    
+
     validate_actions
     echo ""
-    
+
     validate_triggers
     echo ""
-    
+
     test_workflows
     echo ""
-    
+
     generate_summary
 }
 
