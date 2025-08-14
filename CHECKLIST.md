@@ -14,7 +14,7 @@
 - [x] Run `setup-monorepo-structure.sh` script
 - [x] Verify directory structure creation
 - [x] Setup workspace configuration files
-- [ ] Initialize git submodules if needed
+- ~~[ ] Initialize git submodules if needed~~
 
 ### Core Components
 - [x] Migrate jumpstarter main library → `core/jumpstarter/`
