@@ -5,7 +5,6 @@ run:
 linters:
   enable:
     - copyloopvar
-    - dupl
     - errcheck
     - ginkgolinter
     - goconst
