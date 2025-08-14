@@ -94,7 +94,52 @@
 - [ ] Community communication
 - [ ] Update package registries
 
-## Phase 6: Release and Migration
+## Phase 6: Development Environment Setup
+
+### Local Development
+- [ ] Create a devcontainer setup to support develoment and testing
+  * [ ] Based on ubuntu-24.04-image
+  * [ ] Using devcontainer features for common tooling (python, go, rust)
+  * [ ] Add local features for special tooling
+  * [ ] Integrate k3d for local Kubernetes testing
+  * [ ] Include pre-configured VSCode extensions
+
+### Validation
+- [ ] Validate local builds
+- [ ] Validate local testing
+- [ ] Validate local linting
+- [ ] Validate local documentation generation
+- [ ] Validate local action workflow (act)
+  * [ ] Conditionals for action changing or pushing artifacts (use `{ ! ENV.act }` to mask)
+  * [ ] Workflow file for building each component
+  * [ ] Workflow file for running linters
+  * [ ] Workflow file for running tests
+  * [ ] Workflow file for documentation generation
+  * [ ] Workflow file for publishing
+  * [ ] Workflow file for stitching together the above, indidually for PRs (checking) and main branch (icl. publishing)
+  * [ ] PR branches shall also publish artifacts to registries, but not as a release, so you can use e.g. images for testing, before approving the PR
+
+## Phase 7: Create jumpstarter-server
+- [ ] Create `jumpstarter-server` component
+- [ ] Integrate with existing components, but replaces the controller and router
+- [ ] Setup API endpoints for core functionality
+- [ ] Implement authentication and authorization
+  * [ ] Minimal/Mock OIDC setup, but shall be attached to keycloak or other OIDC provider
+  * [ ] Default setup (compose) shall include controller and router
+  * [ ] Router can be started separately and registers at a configured controller
+  * [ ] Controller will distribute routing loads to available routers
+    - [ ] First simple round-robin
+    - [ ] Later more advanced routing (e.g. based on load, etc.)
+- [ ] jumpstarter-server configuration shall be based on the same config file structure as the controller
+  * [ ] Additionally introduced configuration elements (e.g. for router registry) shall be compatible with kubernetes controller (shall ignore unknown config elements)
+- [ ] Kubernetes objects shall be replaced by internal datastructures of the server (controller-piece)
+  * [ ] Possible migration to redis or other database in the future
+- [ ] Create documentation for jumpstarter-server
+- [ ] Create integration tests for jumpstarter-server
+- [ ] Validate jumpstarter-server functionality
+- [ ] Integrate jumpstarter-server into CI/CD pipeline
+
+## Phase 8: Release and Migration
 
 ### Final Validation
 - [ ] All components build successfully
