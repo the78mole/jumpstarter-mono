@@ -1,0 +1,91 @@
+name: Rust Build
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        required: true
+        type: string
+      rust-toolchain:
+        required: false
+        type: string
+        default: 'stable'
+      targets:
+        required: false
+        type: string
+        default: ''
+      build-flags:
+        required: false
+        type: string
+        default: '--release'
+  workflow_dispatch:
+    inputs:
+      working-directory:
+        required: true
+        type: string
+      rust-toolchain:
+        required: false
+        type: string
+        default: 'stable'
+      targets:
+        required: false
+        type: string
+        default: ''
+      build-flags:
+        required: false
+        type: string
+        default: '--release'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ inputs.rust-toolchain }}
+          targets: ${{ inputs.targets }}
+          components: rustfmt, clippy
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles(format('{0}/**/Cargo.lock', inputs.working-directory)) }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-registry-
+
+      - name: Cache cargo index
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles(format('{0}/**/Cargo.lock', inputs.working-directory)) }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-index-
+
+      - name: Cache cargo build
+        uses: actions/cache@v4
+        with:
+          path: ${{ inputs.working-directory }}/target
+          key: ${{ runner.os }}-cargo-build-${{ inputs.working-directory }}-${{ hashFiles(format('{0}/**/Cargo.lock', inputs.working-directory)) }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-build-${{ inputs.working-directory }}-
+
+      - name: Check formatting
+        working-directory: ${{ inputs.working-directory }}
+        run: cargo fmt --all -- --check
+
+      - name: Run clippy
+        working-directory: ${{ inputs.working-directory }}
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Run tests
+        working-directory: ${{ inputs.working-directory }}
+        run: cargo test
+
+      - name: Build
+        working-directory: ${{ inputs.working-directory }}
+        run: cargo build ${{ inputs.build-flags }}

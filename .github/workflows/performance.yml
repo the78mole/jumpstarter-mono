@@ -1,0 +1,270 @@
+name: Performance Analysis
+
+on:
+  pull_request:
+    paths:
+      - 'core/jumpstarter/**'
+      - 'core/controller/**'
+      - 'hardware/dutlink-firmware/**'
+  schedule:
+    - cron: '0 6 * * 1'  # Weekly on Monday
+  workflow_dispatch:
+
+jobs:
+  # Analyze build performance and cache efficiency
+  build-performance:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component:
+          - name: python
+            path: .
+            setup-cmd: 'uv sync'
+            build-cmd: 'uv build'
+            cache-paths: |
+              ~/.cache/uv
+              .venv
+          - name: go-controller
+            path: core/controller
+            setup-cmd: 'go mod download'
+            build-cmd: 'make build'
+            cache-paths: |
+              ~/go/pkg/mod
+              ~/.cache/go-build
+          - name: go-lab-config
+            path: lab-config
+            setup-cmd: 'go mod download'
+            build-cmd: 'go build ./...'
+            cache-paths: |
+              ~/go/pkg/mod
+              ~/.cache/go-build
+          - name: rust
+            path: hardware/dutlink-firmware
+            setup-cmd: 'cargo fetch'
+            build-cmd: 'cargo build --release'
+            cache-paths: |
+              ~/.cargo/registry
+              ~/.cargo/git
+              target
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup environment
+        run: |
+          case "${{ matrix.component.name }}" in
+            python)
+              pip install uv
+              ;;
+            go-*)
+              # Go is pre-installed
+              ;;
+            rust)
+              rustup update stable
+              rustup default stable
+              ;;
+          esac
+      
+      - name: Check cache hit rate (before)
+        id: cache-before
+        uses: actions/cache@v4
+        with:
+          path: ${{ matrix.component.cache-paths }}
+          key: perf-${{ matrix.component.name }}-${{ runner.os }}-${{ hashFiles(format('{0}/**/package*.json', matrix.component.path), format('{0}/**/go.sum', matrix.component.path), format('{0}/**/Cargo.lock', matrix.component.path), format('{0}/**/uv.lock', matrix.component.path)) }}
+          restore-keys: |
+            perf-${{ matrix.component.name }}-${{ runner.os }}-
+      
+      - name: Measure setup time
+        working-directory: ${{ matrix.component.path }}
+        run: |
+          echo "SETUP_START=$(date +%s)" >> $GITHUB_ENV
+          ${{ matrix.component.setup-cmd }}
+          echo "SETUP_END=$(date +%s)" >> $GITHUB_ENV
+      
+      - name: Measure build time (cold)
+        if: steps.cache-before.outputs.cache-hit != 'true'
+        working-directory: ${{ matrix.component.path }}
+        run: |
+          echo "BUILD_COLD_START=$(date +%s)" >> $GITHUB_ENV
+          ${{ matrix.component.build-cmd }}
+          echo "BUILD_COLD_END=$(date +%s)" >> $GITHUB_ENV
+      
+      - name: Clean for warm build test
+        if: steps.cache-before.outputs.cache-hit == 'true'
+        working-directory: ${{ matrix.component.path }}
+        run: |
+          case "${{ matrix.component.name }}" in
+            python)
+              rm -rf dist/ build/ *.egg-info/
+              ;;
+            go-*)
+              go clean -cache -modcache -testcache || true
+              make clean || true
+              ;;
+            rust)
+              cargo clean --release
+              ;;
+          esac
+      
+      - name: Measure build time (warm)
+        if: steps.cache-before.outputs.cache-hit == 'true'
+        working-directory: ${{ matrix.component.path }}
+        run: |
+          echo "BUILD_WARM_START=$(date +%s)" >> $GITHUB_ENV
+          ${{ matrix.component.build-cmd }}
+          echo "BUILD_WARM_END=$(date +%s)" >> $GITHUB_ENV
+      
+      - name: Calculate metrics
+        run: |
+          setup_time=$((SETUP_END - SETUP_START))
+          
+          if [ -n "$BUILD_COLD_START" ]; then
+            build_time=$((BUILD_COLD_END - BUILD_COLD_START))
+            cache_status="MISS"
+          else
+            build_time=$((BUILD_WARM_END - BUILD_WARM_START))
+            cache_status="HIT"
+          fi
+          
+          total_time=$((setup_time + build_time))
+          
+          echo "## Performance Metrics - ${{ matrix.component.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Setup time: ${setup_time}s" >> $GITHUB_STEP_SUMMARY
+          echo "- Build time: ${build_time}s" >> $GITHUB_STEP_SUMMARY
+          echo "- Total time: ${total_time}s" >> $GITHUB_STEP_SUMMARY
+          echo "- Cache status: ${cache_status}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+  # Test parallel build efficiency
+  parallel-build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup all tools
+        run: |
+          # Python/uv
+          pip install uv
+          
+          # Go is pre-installed
+          
+          # Rust
+          rustup update stable
+          rustup default stable
+          rustup target add thumbv7em-none-eabihf
+          
+          # Node.js is pre-installed
+      
+      - name: Setup caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/uv
+            ~/.cache/go-build
+            ~/go/pkg/mod
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.npm
+          key: parallel-build-${{ runner.os }}-${{ hashFiles('**/uv.lock', '**/go.sum', '**/Cargo.lock', '**/package-lock.json') }}
+          restore-keys: |
+            parallel-build-${{ runner.os }}-
+      
+      - name: Sequential build test
+        run: |
+          echo "SEQUENTIAL_START=$(date +%s)" >> $GITHUB_ENV
+          
+          # Build each component sequentially
+          uv sync && uv build
+          cd core/controller && make build
+          cd ../../lab-config && go build ./...
+          cd ../hardware/dutlink-firmware && cargo build --release
+          cd ../../integrations/vscode && npm ci && npm run compile
+          
+          echo "SEQUENTIAL_END=$(date +%s)" >> $GITHUB_ENV
+      
+      - name: Clean for parallel test
+        run: |
+          rm -rf dist/ build/ *.egg-info/
+          cd core/controller && make clean || true
+          cd ../../lab-config && go clean -cache || true
+          cd ../hardware/dutlink-firmware && cargo clean
+          cd ../../integrations/vscode && rm -rf out/
+      
+      - name: Parallel build test
+        run: |
+          echo "PARALLEL_START=$(date +%s)" >> $GITHUB_ENV
+          
+          # Build components in parallel using background jobs
+          (uv sync && uv build) &
+          (cd core/controller && make build) &
+          (cd lab-config && go build ./...) &
+          (cd hardware/dutlink-firmware && cargo build --release) &
+          (cd integrations/vscode && npm ci && npm run compile) &
+          
+          # Wait for all jobs to complete
+          wait
+          
+          echo "PARALLEL_END=$(date +%s)" >> $GITHUB_ENV
+      
+      - name: Compare build times
+        run: |
+          sequential_time=$((SEQUENTIAL_END - SEQUENTIAL_START))
+          parallel_time=$((PARALLEL_END - PARALLEL_START))
+          improvement=$((sequential_time - parallel_time))
+          percentage=$(((improvement * 100) / sequential_time))
+          
+          echo "## Parallel Build Performance" >> $GITHUB_STEP_SUMMARY
+          echo "- Sequential build: ${sequential_time}s" >> $GITHUB_STEP_SUMMARY
+          echo "- Parallel build: ${parallel_time}s" >> $GITHUB_STEP_SUMMARY
+          echo "- Time saved: ${improvement}s (${percentage}%)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+  # Analyze dependency sizes and cache efficiency
+  dependency-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Analyze Python dependencies
+        run: |
+          pip install uv
+          uv sync
+          
+          echo "## Dependency Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "### Python Dependencies" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          du -sh .venv/ >> $GITHUB_STEP_SUMMARY
+          uv pip list | wc -l | xargs echo "Packages installed:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Analyze Go dependencies
+        run: |
+          cd core/controller
+          go mod download
+          echo "### Go Dependencies (controller)" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          du -sh ~/go/pkg/mod/ >> $GITHUB_STEP_SUMMARY
+          go list -m all | wc -l | xargs echo "Modules:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Analyze Rust dependencies
+        run: |
+          cd hardware/dutlink-firmware
+          cargo fetch
+          echo "### Rust Dependencies" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          du -sh ~/.cargo/registry/ >> $GITHUB_STEP_SUMMARY
+          cargo tree --depth 1 | wc -l | xargs echo "Direct dependencies:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Analyze Node.js dependencies
+        run: |
+          cd integrations/vscode
+          npm ci
+          echo "### Node.js Dependencies" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          du -sh node_modules/ >> $GITHUB_STEP_SUMMARY
+          npm list --depth=0 | grep -c "├\|└" | xargs echo "Packages:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

@@ -1,29 +1,112 @@
+---
 name: CI
 
 on:
-  # push:
-  #   branches: [main, 'release-*']
-  # pull_request:
-  #   branches: [main, 'release-*']
-  # merge_group:
-  workflow_dispatch:
+  push:
+    branches: [main, develop, 'release-*']
+  pull_request:
+    branches: [main, 'release-*']
+  merge_group: {}
+  workflow_dispatch: {}
+
+env:
+  CARGO_TERM_COLOR: always
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  # Detect what components have changed to optimize build times
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      python: ${{ steps.changes.outputs.python }}
+      go: ${{ steps.changes.outputs.go }}
+      rust: ${{ steps.changes.outputs.rust }}
+      web: ${{ steps.changes.outputs.web }}
+      docs: ${{ steps.changes.outputs.docs }}
+      ci: ${{ steps.changes.outputs.ci }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            python:
+              - 'core/jumpstarter/**'
+              - 'templates/driver/**'
+              - 'pyproject.toml'
+              - 'uv.lock'
+              - '.github/workflows/reusable-python-*.yml'
+            go:
+              - 'core/controller/**'
+              - 'lab-config/**'
+              - 'go.work'
+              - 'go.work.sum'
+              - '.github/workflows/reusable-go-*.yml'
+            rust:
+              - 'hardware/dutlink-firmware/**'
+            web:
+              - 'integrations/vscode/**'
+            docs:
+              - 'docs/**'
+              - 'mkdocs.yml'
+              - '*.md'
+            ci:
+              - '.github/workflows/**'
+              - 'Makefile'
+
   # Check for typos across the repository
   typos:
+    needs: detect-changes
+    if: >
+      needs.detect-changes.outputs.ci == 'true' ||
+      github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/reusable-typos.yml
+
+  # Python components
+  python-lint:
+    needs: detect-changes
+    if: >
+      needs.detect-changes.outputs.python == 'true' ||
+      needs.detect-changes.outputs.ci == 'true' ||
+      github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/reusable-python-lint.yml
+    with:
+      working-directory: core/jumpstarter
+
+  python-test:
+    needs: detect-changes
+    if: >
+      needs.detect-changes.outputs.python == 'true' ||
+      needs.detect-changes.outputs.ci == 'true' ||
+      github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/reusable-python-test.yml
+    with:
+      working-directory: core/jumpstarter
+      test-command: 'uv run pytest --tb=short'
 
   # Go components
   controller-lint:
+    needs: detect-changes
+    if: >
+      needs.detect-changes.outputs.go == 'true' ||
+      needs.detect-changes.outputs.ci == 'true' ||
+      github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/reusable-go-lint.yml
     with:
       working-directory: core/controller
 
   controller-build:
+    needs: detect-changes
+    if: >
+      needs.detect-changes.outputs.go == 'true' ||
+      needs.detect-changes.outputs.ci == 'true' ||
+      github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/reusable-go-build.yml
     with:
       working-directory: core/controller
@@ -31,48 +114,118 @@ jobs:
       build-flags: '-ldflags "-s -w"'
 
   lab-config-lint:
+    needs: detect-changes
+    if: >
+      needs.detect-changes.outputs.go == 'true' ||
+      needs.detect-changes.outputs.ci == 'true' ||
+      github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/reusable-go-lint.yml
     with:
       working-directory: lab-config
 
   lab-config-build:
+    needs: detect-changes
+    if: >
+      needs.detect-changes.outputs.go == 'true' ||
+      needs.detect-changes.outputs.ci == 'true' ||
+      github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/reusable-go-build.yml
     with:
       working-directory: lab-config
       binary-name: lab-config
 
-  # Python components
-  jumpstarter-lint:
-    uses: ./.github/workflows/reusable-python-lint.yml
+  # Rust components
+  rust-build:
+    needs: detect-changes
+    if: >
+      needs.detect-changes.outputs.rust == 'true' ||
+      needs.detect-changes.outputs.ci == 'true' ||
+      github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/reusable-rust-build.yml
     with:
-      working-directory: core/jumpstarter
+      working-directory: hardware/dutlink-firmware
+      targets: thumbv7em-none-eabihf
 
-  jumpstarter-test:
-    uses: ./.github/workflows/reusable-python-test.yml
+  # Node.js/TypeScript components
+  web-build:
+    needs: detect-changes
+    if: >
+      needs.detect-changes.outputs.web == 'true' ||
+      needs.detect-changes.outputs.ci == 'true' ||
+      github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/reusable-web-build.yml
     with:
-      working-directory: core/jumpstarter
-      test-command: 'uv run pytest --tb=short'
+      working-directory: integrations/vscode
 
-  # Rust components - TODO: Add when Rust toolchain is available
-  # dutlink-firmware-build:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: dtolnay/rust-toolchain@stable
-  #       with:
-  #         targets: thumbv7em-none-eabihf
-  #     - working-directory: hardware/dutlink-firmware
-  #       run: cargo build --release
+  # Documentation build
+  docs-build:
+    needs: detect-changes
+    if: >
+      needs.detect-changes.outputs.docs == 'true' ||
+      needs.detect-changes.outputs.ci == 'true' ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  # Node.js components - TODO: Add when pnpm is available
-  # vscode-extension-build:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: pnpm/action-setup@v4
-  #       with:
-  #         version: latest
-  #     - working-directory: integrations/vscode
-  #       run: |
-  #         pnpm install
-  #         pnpm run build
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install documentation dependencies
+        run: |
+          uv pip install --system mkdocs mkdocs-material
+
+      - name: Build documentation
+        run: mkdocs build --strict
+
+      - name: Deploy documentation (main branch only)
+        if: >
+          github.ref == 'refs/heads/main' &&
+          github.event_name == 'push'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email \
+            "github-actions[bot]@users.noreply.github.com"
+          mkdocs gh-deploy --force
+
+  # End-to-end tests (run after all component builds pass)
+  e2e-tests:
+    needs: [python-test, controller-build, lab-config-build]
+    if: >
+      always() &&
+      (needs.python-test.result == 'success' ||
+       needs.python-test.result == 'skipped') &&
+      (needs.controller-build.result == 'success' ||
+       needs.controller-build.result == 'skipped') &&
+      (needs.lab-config-build.result == 'success' ||
+       needs.lab-config-build.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run end-to-end tests
+        working-directory: testing/e2e
+        run: |
+          if [ -f "run-tests.sh" ]; then
+            bash run-tests.sh
+          else
+            echo "No e2e tests found, skipping"
+          fi
