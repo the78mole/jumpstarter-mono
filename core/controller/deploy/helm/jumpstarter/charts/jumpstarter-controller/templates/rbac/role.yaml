@@ -4,55 +4,55 @@ kind: ClusterRole
 metadata:
   name: jumpstarter-manager-role
 rules:
-  - apiGroups:
-      - ""
-    resources:
-      - secrets
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - jumpstarter.dev
-    resources:
-      - clients
-      - exporters
-      - leases
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - jumpstarter.dev
-    resources:
-      - clients/finalizers
-      - exporters/finalizers
-      - leases/finalizers
-    verbs:
-      - update
-  - apiGroups:
-      - jumpstarter.dev
-    resources:
-      - clients/status
-      - exporters/status
-      - leases/status
-    verbs:
-      - get
-      - patch
-      - update
-  - apiGroups:
-      - jumpstarter.dev
-    resources:
-      - exporteraccesspolicies
-    verbs:
-      - get
-      - list
-      - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - jumpstarter.dev
+  resources:
+  - clients
+  - exporters
+  - leases
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - jumpstarter.dev
+  resources:
+  - clients/finalizers
+  - exporters/finalizers
+  - leases/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - jumpstarter.dev
+  resources:
+  - clients/status
+  - exporters/status
+  - leases/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - jumpstarter.dev
+  resources:
+  - exporteraccesspolicies
+  verbs:
+  - get
+  - list
+  - watch
