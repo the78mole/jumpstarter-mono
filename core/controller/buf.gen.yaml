@@ -3,7 +3,7 @@ managed:
   enabled: true
   override:
     - file_option: go_package_prefix
-      value: github.com/jumpstarter-dev/jumpstarter-controller
+      value: github.com/the78mole/jumpstarter-mono/core/controller/internal/protocol
 plugins:
   - remote: buf.build/protocolbuffers/go
     out: internal/protocol
@@ -15,5 +15,6 @@ plugins:
     out: internal/protocol
     opt: paths=source_relative
 inputs:
+  - module: buf.build/googleapis/googleapis
   - git_repo: https://github.com/jumpstarter-dev/jumpstarter-protocol.git
     subdir: proto

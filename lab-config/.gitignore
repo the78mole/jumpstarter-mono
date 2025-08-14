@@ -1,5 +1,6 @@
 # Go build outputs
 lab-config
+lab-config-test
 *.exe
 *.exe~
 *.dll
