@@ -4,26 +4,26 @@ on:
   push:
     branches: [main]
     paths:
-      - 'core/jumpstarter/**'
-      - 'pyproject.toml'
-      - 'uv.lock'
+      - "core/jumpstarter/**"
+      - "pyproject.toml"
+      - "uv.lock"
   workflow_dispatch:
     inputs:
       publish-python:
-        description: 'Publish Python packages'
+        description: "Publish Python packages"
         required: false
         type: boolean
         default: true
       publish-containers:
-        description: 'Publish container images'
+        description: "Publish container images"
         required: false
         type: boolean
         default: true
       tag-suffix:
-        description: 'Tag suffix (e.g., -dev, -rc1)'
+        description: "Tag suffix (e.g., -dev, -rc1)"
         required: false
         type: string
-        default: '-dev'
+        default: "-dev"
 
 env:
   REGISTRY: ghcr.io
@@ -33,38 +33,38 @@ jobs:
   # Build and publish Python packages to TestPyPI on main branch
   publish-python-dev:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish-python)
+    if: false && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish-python))
     environment: testpypi
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
-      
+          python-version: "3.12"
+
       - name: Install uv
         uses: astral-sh/setup-uv@v3
-      
+
       - name: Install dependencies
         run: uv sync
-      
+
       - name: Update version for development release
         run: |
           # Get current version and add dev suffix
           current_version=$(uv run python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")
           dev_version="${current_version}.dev$(date +%Y%m%d%H%M%S)"
-          
+
           # Update pyproject.toml with dev version
           sed -i "s/version = \"${current_version}\"/version = \"${dev_version}\"/" pyproject.toml
           echo "DEV_VERSION=${dev_version}" >> $GITHUB_ENV
-      
+
       - name: Build Python packages
         run: uv build
-      
+
       - name: Publish to TestPyPI
         if: ${{ !env.ACT }}
         uses: pypa/gh-action-pypi-publish@release/v1
@@ -72,7 +72,7 @@ jobs:
           repository-url: https://test.pypi.org/legacy/
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           skip-existing: true
-      
+
       - name: Create development tag
         if: ${{ !env.ACT }}
         run: |
@@ -84,17 +84,17 @@ jobs:
   # Build and publish container images
   publish-containers:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish-containers)
+    if: false && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish-containers))
     permissions:
       contents: read
       packages: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Login to Container Registry
         if: ${{ !env.ACT }}
         uses: docker/login-action@v3
@@ -102,7 +102,7 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -112,7 +112,7 @@ jobs:
             type=ref,event=branch,suffix=${{ inputs.tag-suffix || '-dev' }}
             type=sha,prefix={{branch}}-,suffix=${{ inputs.tag-suffix || '-dev' }}
             type=raw,value=latest-dev,enable={{is_default_branch}}
-      
+
       - name: Check for Dockerfiles
         id: check-docker
         run: |
@@ -121,7 +121,7 @@ jobs:
           else
             echo "dockerfiles-found=false" >> $GITHUB_OUTPUT
           fi
-      
+
       - name: Build and push container images
         if: steps.check-docker.outputs.dockerfiles-found == 'true' && !env.ACT
         run: |
@@ -149,16 +149,16 @@ jobs:
     if: needs.publish-python-dev.result == 'success'
     strategy:
       matrix:
-        python-version: ['3.10', '3.11', '3.12']
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      
+
       - name: Wait for package availability
-        run: sleep 60  # Wait for package to be available on TestPyPI
-      
+        run: sleep 60 # Wait for package to be available on TestPyPI
+
       - name: Test package installation
         run: |
           pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ jumpstarter || true

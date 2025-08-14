@@ -82,6 +82,26 @@ The workflows are designed to work with act out of the box. When running under a
 - Require authentication tokens
 - Perform Docker registry operations
 
+### Repository .actrc Configuration
+
+The repository includes a `.actrc` configuration file with optimal defaults:
+
+```ini
+# Use medium-sized Ubuntu container for better compatibility
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
+
+# Set ACT environment variable automatically  
+--env ACT=true
+
+# Enable artifact server for local artifact handling
+--artifact-server-path /tmp/artifacts
+
+# Default event for testing
+--eventpath .github/workflows/events/workflow_dispatch.json
+```
+
+This configuration ensures consistent behavior across all local testing scenarios and eliminates the need to specify `--env ACT=true` manually.
+
 ## Usage Examples
 
 ### Basic Workflow Testing
@@ -91,34 +111,34 @@ Test the CI workflow structure:
 act workflow_dispatch -W .github/workflows/ci.yml --list
 ```
 
-Run the CI workflow with act environment:
+Run the CI workflow (using .actrc configuration):
 ```bash
-act workflow_dispatch -W .github/workflows/ci.yml --env ACT=true
+act workflow_dispatch -W .github/workflows/ci.yml
 ```
 
 ### Event-Specific Testing
 
 Test pull request events:
 ```bash
-act pull_request --env ACT=true
+act pull_request
 ```
 
 Test push events:
 ```bash
-act push --env ACT=true
+act push
 ```
 
 ### Job-Specific Testing
 
 Run only the change detection job:
 ```bash
-act workflow_dispatch -j detect-changes --env ACT=true
+act workflow_dispatch -j detect-changes
 ```
 
 Run specific language builds:
 ```bash
-act workflow_dispatch -j python-test --env ACT=true
-act workflow_dispatch -j controller-build --env ACT=true
+act workflow_dispatch -j python-test
+act workflow_dispatch -j controller-build
 ```
 
 ### Reusable Workflow Testing
@@ -228,6 +248,53 @@ When running with act:
 5. **File system differences**: Container filesystem differs from GitHub runners
 
 ## Troubleshooting
+
+### Common Issues and Solutions
+
+#### 1. Paths-filter Action Errors
+
+**Error**: "This action requires 'base' input to be configured"
+
+**Solution**: The CI workflow now includes automatic base branch configuration for act:
+```yaml
+- name: Check for changes
+  uses: dorny/paths-filter@v3
+  with:
+    base: ${{ env.ACT && 'main' || '' }}
+    filters: |
+      # ... filters
+```
+
+This ensures the paths-filter action works correctly in both GitHub Actions and act environments.
+
+#### 2. Certificate/Network Issues
+
+**Error**: "self-signed certificate in certificate chain"
+
+This is common when using actions that download tools. Solutions:
+
+```bash
+# Option 1: Use pre-built containers with tools included
+act -P ubuntu-latest=ghcr.io/catthehacker/ubuntu:full-latest
+
+# Option 2: Skip problematic jobs during testing
+act workflow_dispatch -j detect-changes  # Test only specific jobs
+
+# Option 3: Use dryrun mode for structure validation
+act workflow_dispatch --dryrun
+```
+
+#### 3. Container Image Issues
+
+**Error**: Command not found or missing tools
+
+```bash
+# Use full-featured container for complete tool compatibility
+act --platform ubuntu-latest=ghcr.io/catthehacker/ubuntu:full-latest
+
+# Or specify different container images per job
+act -P ubuntu-latest=ubuntu:22.04  # Official Ubuntu with apt packages
+```
 
 ### Network and Firewall Issues
 
