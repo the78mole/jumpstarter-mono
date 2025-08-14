@@ -61,7 +61,21 @@ repos:
       - id: hadolint-docker
         name: Lint Dockerfiles
         exclude: ^(core/jumpstarter/packages/jumpstarter-protocol/|core/protocol/)
-        args: ['--ignore', 'DL3045', '--ignore', 'DL3059', '--ignore', 'DL3007', '--ignore', 'DL3041', '--ignore', 'DL3040', '--ignore', 'DL3020']
+        args:
+          [
+            "--ignore",
+            "DL3045",
+            "--ignore",
+            "DL3059",
+            "--ignore",
+            "DL3007",
+            "--ignore",
+            "DL3041",
+            "--ignore",
+            "DL3040",
+            "--ignore",
+            "DL3020",
+          ]
 
   # Prettier for various file formats
   - repo: https://github.com/pre-commit/mirrors-prettier
