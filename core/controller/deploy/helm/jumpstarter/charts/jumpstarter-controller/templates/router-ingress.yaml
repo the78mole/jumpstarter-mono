@@ -42,3 +42,7 @@ spec:
     secretName: {{ .Values.grpc.tls.routerCertSecret }}
     {{ end }}
 {{ end }}
+{{/* 
+  Note: When grpc.mode is set to "none", no ingress or route resources are created.
+  This allows administrators to provide custom ingress configurations as needed.
+*/}}

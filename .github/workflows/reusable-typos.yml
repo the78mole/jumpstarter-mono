@@ -1,0 +1,21 @@
+name: Typos Check
+
+on:
+  workflow_call:
+    inputs:
+      exclude-paths:
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  typos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for typos
+        uses: crate-ci/typos@v1.26.8
+        with:
+          files: ${{ inputs.exclude-paths && format('--exclude {0}', inputs.exclude-paths) || '.' }}
