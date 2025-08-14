@@ -21,6 +21,26 @@ on:
         required: false
         type: string
         default: '-v -race'
+  workflow_dispatch:
+    inputs:
+      go-version:
+        required: false
+        type: string
+        default: '1.21'
+      working-directory:
+        required: true
+        type: string
+      binary-name:
+        required: true
+        type: string
+      build-flags:
+        required: false
+        type: string
+        default: ''
+      test-flags:
+        required: false
+        type: string
+        default: '-v -race'
 
 jobs:
   build:

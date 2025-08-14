@@ -27,6 +27,8 @@ This is a monorepo containing all Jumpstarter components:
 
 ### Development Setup
 
+> **Note**: These manual setup steps will be automated with a devcontainer configuration in the near future to streamline the development experience.
+
 1. Clone the repository:
    ```bash
    git clone https://github.com/jumpstarter-dev/jumpstarter-mono.git

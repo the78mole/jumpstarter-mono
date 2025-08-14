@@ -1,11 +1,13 @@
 name: CI
 
 on:
-  push:
-    branches: [main, 'release-*']
-  pull_request:
-    branches: [main, 'release-*']
-  merge_group:
+  # Temporarily disabled during monorepo setup - will be re-enabled after Phase 3
+  # push:
+  #   branches: [main, 'release-*']
+  # pull_request:
+  #   branches: [main, 'release-*']
+  # merge_group:
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

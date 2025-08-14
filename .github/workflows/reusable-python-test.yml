@@ -14,6 +14,19 @@ on:
         required: false
         type: string
         default: 'uv run pytest'
+  workflow_dispatch:
+    inputs:
+      python-version:
+        required: false
+        type: string
+        default: '3.12'
+      working-directory:
+        required: true
+        type: string
+      test-command:
+        required: false
+        type: string
+        default: 'uv run pytest'
 
 jobs:
   test:
