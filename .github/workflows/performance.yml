@@ -20,7 +20,7 @@ jobs:
           - name: python
             path: core/jumpstarter
             setup-cmd: "uv sync"
-            build-cmd: "uv build"
+            build-cmd: "uv build packages/jumpstarter"
             cache-paths: |
               ~/.cache/uv
               .venv
@@ -193,7 +193,7 @@ jobs:
           echo "SEQUENTIAL_START=$(date +%s)" >> $GITHUB_ENV
 
           # Build each component sequentially - using absolute paths from workspace root
-          (cd core/jumpstarter && uv sync && uv build)
+          (cd core/jumpstarter && uv sync && uv build packages/jumpstarter)
           (cd core/controller && make build)
           (cd lab-config && go build ./...)
           (cd hardware/dutlink-firmware/application && cargo build --release)
@@ -217,7 +217,7 @@ jobs:
           echo "PARALLEL_START=$(date +%s)" >> $GITHUB_ENV
 
           # Build components in parallel using background jobs
-          (cd core/jumpstarter && uv sync && uv build) &
+          (cd core/jumpstarter && uv sync && uv build packages/jumpstarter) &
           (cd core/controller && make build) &
           (cd lab-config && go build ./...) &
           (cd hardware/dutlink-firmware/application && cargo build --release) &
