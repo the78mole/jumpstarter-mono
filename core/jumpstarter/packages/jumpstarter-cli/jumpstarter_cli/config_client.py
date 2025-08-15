@@ -2,19 +2,19 @@ from os import PathLike
 from typing import Optional
 
 import click
-from jumpstarter_core_cli_common.exceptions import handle_exceptions
-from jumpstarter_core_cli_common.opt import (
+from jumpstarter_cli_common.exceptions import handle_exceptions
+from jumpstarter_cli_common.opt import (
     OutputMode,
     OutputType,
     PathOutputType,
     opt_output_all,
     opt_output_path_only,
 )
-from jumpstarter_core_cli_common.print import model_print
+from jumpstarter_cli_common.print import model_print
 
-from jumpstarter_core.config.client import ClientConfigV1Alpha1, ClientConfigV1Alpha1Drivers
-from jumpstarter_core.config.common import ObjectMeta
-from jumpstarter_core.config.user import UserConfigV1Alpha1
+from jumpstarter.config.client import ClientConfigV1Alpha1, ClientConfigV1Alpha1Drivers
+from jumpstarter.config.common import ObjectMeta
+from jumpstarter.config.user import UserConfigV1Alpha1
 
 
 @click.group("client")

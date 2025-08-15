@@ -1,8 +1,8 @@
 use core::str;
 
 use stm32f4xx_hal::otg_fs::UsbBusType;
-use usbd_dfu_rt::{DfuRuntimeClass, DfuRuntimeOps};
 use usb_device::class_prelude::*;
+use usbd_dfu_rt::{DfuRuntimeClass, DfuRuntimeOps};
 
 pub struct DFUBootloader;
 
@@ -63,6 +63,6 @@ fn read_serial() -> u32 {
     unsafe { u_id0.read().wrapping_add(u_id1.read()) }
 }
 
-pub fn new_dfu_bootloader(u:&UsbBusAllocator<UsbBusType>) -> DFUBootloaderRuntime {
+pub fn new_dfu_bootloader(u: &UsbBusAllocator<UsbBusType>) -> DFUBootloaderRuntime {
     DfuRuntimeClass::new(u, DFUBootloader)
 }

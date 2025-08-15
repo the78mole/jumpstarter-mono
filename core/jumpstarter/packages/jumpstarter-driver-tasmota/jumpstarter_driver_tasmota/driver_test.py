@@ -2,7 +2,7 @@ import pytest
 from pytest_mqtt.model import MqttMessage
 
 from .driver import TasmotaPower
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 @pytest.mark.skip("requires docker")

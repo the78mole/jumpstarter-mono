@@ -1,7 +1,7 @@
 import pytest
 from anyio.from_thread import start_blocking_portal
 
-from jumpstarter_core.common import TemporaryTcpListener
+from jumpstarter.common import TemporaryTcpListener
 
 
 async def echo_handler(stream):

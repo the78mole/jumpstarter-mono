@@ -13,10 +13,10 @@ projects:
       remotes:
         origin: https://github.com/jumpstarter-dev/jumpstarter.git
 components:
-   - name: runtime
-     container:
-       image: quay.io/jumpstarter-dev/jumpstarter-dev:latest
-       mountSources: true
+  - name: runtime
+    container:
+      image: quay.io/jumpstarter-dev/jumpstarter-dev:latest
+      mountSources: true
 
 commands:
   - id: serve-docs
@@ -35,4 +35,3 @@ commands:
     exec:
       component: runtime
       commandLine: make test
-

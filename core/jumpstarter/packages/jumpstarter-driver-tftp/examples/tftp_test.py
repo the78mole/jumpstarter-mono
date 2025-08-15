@@ -1,10 +1,21 @@
 import logging
+import os
 
 import pytest
-from jumpstarter_core_driver_tftp.driver import TftpError
-from jumpstarter_core_testing.pytest import JumpstarterTest
+from jumpstarter_driver_tftp.driver import TftpError
+from jumpstarter_testing.pytest import JumpstarterTest
 
 log = logging.getLogger(__name__)
+
+
+# Skip all tests if no Jumpstarter configuration is available
+def jumpstarter_config_available():
+    """Check if Jumpstarter configuration is available"""
+    config_path = os.path.expanduser("~/.config/jumpstarter/clients/default.yaml")
+    return os.path.exists(config_path) or os.getenv("JUMPSTARTER_HOST") is not None
+
+
+pytestmark = pytest.mark.skipif(not jumpstarter_config_available(), reason="Jumpstarter configuration not available")
 
 
 class TestResource(JumpstarterTest):
@@ -35,4 +46,4 @@ class TestResource(JumpstarterTest):
             assert test_file not in client.tftp.list_files()
 
         except (TftpError, FileNotFoundError) as e:
-            pytest.fail(f"Test failed: {e}") # ty: ignore[call-non-callable]
+            pytest.fail(f"Test failed: {e}")  # ty: ignore[call-non-callable]

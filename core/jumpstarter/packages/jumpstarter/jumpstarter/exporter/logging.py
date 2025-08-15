@@ -1,7 +1,7 @@
 import logging
 from collections import deque
 
-from jumpstarter_core_protocol import jumpstarter_pb2
+from jumpstarter_protocol import jumpstarter_pb2
 
 
 class LogHandler(logging.Handler):

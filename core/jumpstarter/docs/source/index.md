@@ -37,7 +37,7 @@ using cloud native principles. See Jumpstarter in action:
 ```
 
 One tool, any target. Jumpstarter decouples devices from test runners, letting
-you use identical automation scripts everywhere - your *Makefile* for device
+you use identical automation scripts everywhere - your _Makefile_ for device
 testing.
 
 ```{include} ../../README.md

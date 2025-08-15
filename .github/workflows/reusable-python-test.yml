@@ -6,27 +6,27 @@ on:
       python-version:
         required: false
         type: string
-        default: '3.12'
+        default: "3.12"
       working-directory:
         required: true
         type: string
       test-command:
         required: false
         type: string
-        default: 'uv run pytest'
+        default: "uv run pytest"
   workflow_dispatch:
     inputs:
       python-version:
         required: false
         type: string
-        default: '3.12'
+        default: "3.12"
       working-directory:
         required: true
         type: string
       test-command:
         required: false
         type: string
-        default: 'uv run pytest'
+        default: "uv run pytest"
 
 jobs:
   test:
@@ -40,11 +40,29 @@ jobs:
         with:
           python-version: ${{ inputs.python-version }}
 
+      - name: Install QEMU
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-system-x86 qemu-system-arm qemu-utils
+
       - name: Install uv
         uses: astral-sh/setup-uv@v3
 
-      - name: Install dependencies
+      - name: Install buf
+        run: |
+          # Download and install buf
+          sudo curl -sSL \
+            "https://github.com/bufbuild/buf/releases/latest/download/buf-$(uname -s)-$(uname -m)" \
+            -o "/usr/local/bin/buf"
+          sudo chmod +x "/usr/local/bin/buf"
+
+      - name: Generate protobuf files
         working-directory: ${{ inputs.working-directory }}
+        run: |
+          buf generate
+          python3 fix_protobuf_imports.py
+
+      - name: Install dependencies
         run: uv sync
 
       - name: Run tests

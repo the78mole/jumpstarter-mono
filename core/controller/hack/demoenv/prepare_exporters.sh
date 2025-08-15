@@ -2,8 +2,8 @@
 OUT_DIR=${OUT_DIR:-"hack/demoenv/gen"}
 NAMESPACE=${NAMESPACE:-"jumpstarter-lab"}
 
-mkdir -p ${OUT_DIR}
-for i in `seq 0 4`; do
+mkdir -p "${OUT_DIR}"
+for i in $(seq 0 4); do
     EXPORTER_NAME="exporter-$i"
     echo "Creating exporter $EXPORTER_NAME"
     OUT_FILE="${OUT_DIR}/${EXPORTER_NAME}.yaml"
@@ -27,7 +27,7 @@ EOF
     kubectl label exporter -n "${NAMESPACE}" "${EXPORTER_NAME}" device-type=mock
 done
 
-for i in `seq 0 4`; do
+for i in $(seq 0 4); do
     EXPORTER_NAME="vcan-exporter-$i"
     echo "Creating exporter $EXPORTER_NAME"
     OUT_FILE="${OUT_DIR}/${EXPORTER_NAME}.yaml"

@@ -26,13 +26,13 @@ from .env import JMP_LEASE
 from .grpc import call_credentials
 from .shell import ShellConfigV1Alpha1
 from .tls import TLSConfigV1Alpha1
-from jumpstarter_core.client.grpc import ClientService, WithLease, WithLeaseList
-from jumpstarter_core.common.exceptions import (
+from jumpstarter.client.grpc import ClientService, WithLease, WithLeaseList
+from jumpstarter.common.exceptions import (
     ConfigurationError,
     ConnectionError,
     FileNotFoundError,
 )
-from jumpstarter_core.common.grpc import aio_secure_channel, ssl_channel_credentials
+from jumpstarter.common.grpc import aio_secure_channel, ssl_channel_credentials
 
 
 def _blocking_compat(f):
@@ -60,7 +60,9 @@ def _handle_connection_error(f):
             raise e
         except Exception:
             raise
+
     return wrapper
+
 
 class ClientConfigV1Alpha1Drivers(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="JMP_DRIVERS_")
@@ -137,7 +139,6 @@ class ClientConfigV1Alpha1(BaseSettings):
         svc = ClientService(channel=await self.channel(), namespace=self.metadata.namespace)
         return await svc.GetExporter(name=name)
 
-
     @_blocking_compat
     @_handle_connection_error
     async def list_exporters(
@@ -169,8 +170,6 @@ class ClientConfigV1Alpha1(BaseSettings):
         return WithLeaseList(
             exporters_with_leases=exporters_with_leases, next_page_token=exporters_response.next_page_token
         )
-
-
 
     @_blocking_compat
     @_handle_connection_error
@@ -221,7 +220,6 @@ class ClientConfigV1Alpha1(BaseSettings):
         svc = ClientService(channel=await self.channel(), namespace=self.metadata.namespace)
         return await svc.UpdateLease(name=name, duration=duration)
 
-
     @asynccontextmanager
     async def lease_async(
         self,
@@ -230,7 +228,7 @@ class ClientConfigV1Alpha1(BaseSettings):
         duration: timedelta,
         portal: BlockingPortal,
     ):
-        from jumpstarter_core.client import Lease
+        from jumpstarter.client import Lease
 
         # if no lease_name provided, check if it is set in the environment
         lease_name = lease_name or os.environ.get(JMP_LEASE, "")
@@ -238,17 +236,17 @@ class ClientConfigV1Alpha1(BaseSettings):
         release_lease = lease_name == ""
         try:
             async with Lease(
-            channel=await self.channel(),
-            namespace=self.metadata.namespace,
-            name=lease_name,
-            selector=selector,
-            duration=duration,
-            portal=portal,
-            allow=self.drivers.allow,
-            unsafe=self.drivers.unsafe,
-            release=release_lease,
-            tls_config=self.tls,
-            grpc_options=self.grpcOptions,
+                channel=await self.channel(),
+                namespace=self.metadata.namespace,
+                name=lease_name,
+                selector=selector,
+                duration=duration,
+                portal=portal,
+                allow=self.drivers.allow,
+                unsafe=self.drivers.unsafe,
+                release=release_lease,
+                tls_config=self.tls,
+                grpc_options=self.grpcOptions,
             ) as lease:
                 yield lease
 

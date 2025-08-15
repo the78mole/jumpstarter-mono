@@ -20,7 +20,7 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # In the case of a personal access token, it needs to be added to the repository's secrets and used in this field.
           GITHUB_REPO_FOR_ISSUE: jumpstarter
-          GITHUB_OWNER_FOR_ISSUE: jumpstarter-dev 
+          GITHUB_OWNER_FOR_ISSUE: jumpstarter-dev
           GITHUB_OWNERS_REPOS: jumpstarter-dev/jumpstarter #TODO: check with more repos later, needs PAT: ,jumpstarter-dev/jumpstarter-controller
           USE_CHARTS: true
           TIMEZONE: "Etc/UTC"

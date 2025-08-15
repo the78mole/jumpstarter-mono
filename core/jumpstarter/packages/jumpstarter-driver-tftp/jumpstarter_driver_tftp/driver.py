@@ -4,12 +4,12 @@ import threading
 from dataclasses import dataclass, field
 from typing import Optional
 
-from jumpstarter_core_driver_opendal.driver import Opendal
+from jumpstarter_driver_opendal.driver import Opendal
 
-from jumpstarter_core_driver_tftp.server import TftpServer
+from jumpstarter_driver_tftp.server import TftpServer
 
-from jumpstarter_core.common.ipaddr import get_ip_address
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.common.ipaddr import get_ip_address
+from jumpstarter.driver import Driver, export
 
 
 class TftpError(Exception):

@@ -6,21 +6,21 @@ metadata:
     app.kubernetes.io/name: jumpstarter-router
   name: client-editor-role
 rules:
-- apiGroups:
-  - jumpstarter.dev
-  resources:
-  - clients 
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - jumpstarter.dev
-  resources:
-  - identities/status
-  verbs:
-  - get
+  - apiGroups:
+      - jumpstarter.dev
+    resources:
+      - clients
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - jumpstarter.dev
+    resources:
+      - identities/status
+    verbs:
+      - get

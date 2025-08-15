@@ -4,7 +4,7 @@ from collections.abc import Generator
 import click
 
 from .common import PowerReading
-from jumpstarter_core.client import DriverClient
+from jumpstarter.client import DriverClient
 
 
 class PowerClient(DriverClient):
@@ -62,13 +62,13 @@ class PowerClient(DriverClient):
 
 class VirtualPowerClient(PowerClient):
     def off(self, destroy: bool = False) -> None:
-        self.call('off', destroy)
+        self.call("off", destroy)
 
     def cli(self):
         parent = super().cli()
 
-        @parent.command(name='off')
-        @click.option('--destroy', is_flag=True, help='destroy the instance after powering it off')
+        @parent.command(name="off")
+        @click.option("--destroy", is_flag=True, help="destroy the instance after powering it off")
         def off(destroy: bool):
             """Power off"""
             self.off(destroy)

@@ -16,15 +16,16 @@ This guide provides comprehensive information on using Jumpstarter for testing a
 1. Install Jumpstarter following the [Installation Guide](../installation/index.md)
 
 2. Create a simple test configuration:
+
    ```yaml
    # test-config.yaml
    name: basic-test
    description: Basic device test
-   
+
    devices:
      - name: my-device
        type: example-device
-       
+
    tests:
      - name: power-on-test
        steps:
@@ -83,7 +84,7 @@ class MyCustomDriver(BaseDriver):
     def power_on(self):
         # Implementation
         pass
-        
+
     def power_off(self):
         # Implementation
         pass

@@ -11,22 +11,22 @@ from anyio import create_task_group
 from google.protobuf import empty_pb2
 from grpc import StatusCode
 from grpc.aio import AioRpcError
-from jumpstarter_core_protocol import jumpstarter_pb2, jumpstarter_pb2_grpc, router_pb2_grpc
+from jumpstarter_protocol import jumpstarter_pb2, jumpstarter_pb2_grpc, router_pb2_grpc
 
-from jumpstarter_core.common import Metadata
-from jumpstarter_core.common.exceptions import JumpstarterException
-from jumpstarter_core.common.resources import ResourceMetadata
-from jumpstarter_core.common.serde import decode_value, encode_value
-from jumpstarter_core.common.streams import (
+from jumpstarter.common import Metadata
+from jumpstarter.common.exceptions import JumpstarterException
+from jumpstarter.common.resources import ResourceMetadata
+from jumpstarter.common.serde import decode_value, encode_value
+from jumpstarter.common.streams import (
     DriverStreamRequest,
     ResourceStreamRequest,
     StreamRequestMetadata,
 )
-from jumpstarter_core.streams.common import forward_stream
-from jumpstarter_core.streams.encoding import compress_stream
-from jumpstarter_core.streams.metadata import MetadataStream, MetadataStreamAttributes
-from jumpstarter_core.streams.progress import ProgressStream
-from jumpstarter_core.streams.router import RouterStream
+from jumpstarter.streams.common import forward_stream
+from jumpstarter.streams.encoding import compress_stream
+from jumpstarter.streams.metadata import MetadataStream, MetadataStreamAttributes
+from jumpstarter.streams.progress import ProgressStream
+from jumpstarter.streams.router import RouterStream
 
 
 class DriverError(JumpstarterException):

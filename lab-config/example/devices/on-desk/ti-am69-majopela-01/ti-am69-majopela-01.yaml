@@ -1,4 +1,3 @@
-
 apiVersion: meta.jumpstarter.dev/v1alpha1
 kind: ExporterInstance
 metadata:

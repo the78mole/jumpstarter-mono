@@ -18,7 +18,7 @@
       "groupName": "python dependencies"
     },
     {
-      "description": "Group Go dependencies", 
+      "description": "Group Go dependencies",
       "matchManagers": ["gomod"],
       "groupName": "go dependencies"
     },

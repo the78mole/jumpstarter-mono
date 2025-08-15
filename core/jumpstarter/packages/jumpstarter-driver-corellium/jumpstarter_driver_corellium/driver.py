@@ -8,13 +8,13 @@ from collections.abc import AsyncGenerator
 from dataclasses import dataclass, field
 from typing import Dict, Optional
 
-from jumpstarter_core_driver_network.driver import WebsocketNetwork
-from jumpstarter_core_driver_power.driver import PowerReading, VirtualPowerInterface
+from jumpstarter_driver_network.driver import WebsocketNetwork
+from jumpstarter_driver_power.driver import PowerReading, VirtualPowerInterface
 
 from .corellium.api import ApiClient
 from .corellium.types import Instance
-from jumpstarter_core.common import exceptions as jmp_exceptions
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.common import exceptions as jmp_exceptions
+from jumpstarter.driver import Driver, export
 
 
 @dataclass(kw_only=True)

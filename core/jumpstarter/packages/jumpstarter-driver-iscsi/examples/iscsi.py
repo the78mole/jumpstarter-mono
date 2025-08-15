@@ -3,9 +3,9 @@
 import os
 
 import click
-from jumpstarter_core_driver_opendal.client import operator_for_path
+from jumpstarter_driver_opendal.client import operator_for_path
 
-from jumpstarter_core.common.utils import env
+from jumpstarter.common.utils import env
 
 
 def determine_architecture(arch, image):

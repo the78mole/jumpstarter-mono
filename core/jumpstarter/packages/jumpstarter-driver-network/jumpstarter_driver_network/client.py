@@ -6,7 +6,7 @@ import click
 
 from .adapters import DbusAdapter, TcpPortforwardAdapter, UnixPortforwardAdapter
 from .driver import DbusNetwork
-from jumpstarter_core.client import DriverClient
+from jumpstarter.client import DriverClient
 
 
 class NetworkClient(DriverClient):

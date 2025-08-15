@@ -1,18 +1,18 @@
 import click
-from jumpstarter_core_cli_common.blocking import blocking
-from jumpstarter_core_cli_common.config import opt_config
-from jumpstarter_core_cli_common.oidc import Config, decode_jwt_issuer, opt_oidc
-from jumpstarter_core_cli_common.opt import (
+from jumpstarter_cli_common.blocking import blocking
+from jumpstarter_cli_common.config import opt_config
+from jumpstarter_cli_common.oidc import Config, decode_jwt_issuer, opt_oidc
+from jumpstarter_cli_common.opt import (
     confirm_insecure_tls,
     opt_insecure_tls_config,
     opt_nointeractive,
 )
 
-from jumpstarter_core.common.exceptions import ReauthenticationFailed
-from jumpstarter_core.config.client import ClientConfigV1Alpha1, ClientConfigV1Alpha1Drivers
-from jumpstarter_core.config.common import ObjectMeta
-from jumpstarter_core.config.exporter import ExporterConfigV1Alpha1
-from jumpstarter_core.config.tls import TLSConfigV1Alpha1
+from jumpstarter.common.exceptions import ReauthenticationFailed
+from jumpstarter.config.client import ClientConfigV1Alpha1, ClientConfigV1Alpha1Drivers
+from jumpstarter.config.common import ObjectMeta
+from jumpstarter.config.exporter import ExporterConfigV1Alpha1
+from jumpstarter.config.tls import TLSConfigV1Alpha1
 
 
 @click.command("login", short_help="Login")
@@ -137,10 +137,11 @@ async def login(  # noqa: C901
         case "exporter_config":
             ExporterConfigV1Alpha1.save(config, value)  # ty: ignore[invalid-argument-type]
 
+
 @blocking
 async def relogin_client(config: ClientConfigV1Alpha1):
     """Relogin into a jumpstarter instance"""
-    client_id = "jumpstarter-cli" # TODO: store this metadata in the config
+    client_id = "jumpstarter-cli"  # TODO: store this metadata in the config
     try:
         issuer = decode_jwt_issuer(config.token)
     except Exception as e:
@@ -150,7 +151,6 @@ async def relogin_client(config: ClientConfigV1Alpha1):
         oidc = Config(issuer=issuer, client_id=client_id)
         tokens = await oidc.authorization_code_grant()
         config.token = tokens["access_token"]
-        ClientConfigV1Alpha1.save(config) # ty: ignore[invalid-argument-type]
+        ClientConfigV1Alpha1.save(config)  # ty: ignore[invalid-argument-type]
     except Exception as e:
         raise ReauthenticationFailed(f"Failed to re-authenticate: {e}") from e
-

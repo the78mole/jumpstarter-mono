@@ -8,9 +8,9 @@ import pytest
 import requests
 from opendal import Operator
 
-from jumpstarter_core_driver_qemu.driver import Qemu
+from jumpstarter_driver_qemu.driver import Qemu
 
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 @pytest.fixture(scope="session")
@@ -39,12 +39,16 @@ def get_native_arch_config():
     elif native_arch == "aarch64":
         return "aarch64", "aarch64"
     else:
-        pytest.skip(f"Unsupported architecture: {native_arch}") # ty: ignore[call-non-callable]
+        pytest.skip(f"Unsupported architecture: {native_arch}")  # ty: ignore[call-non-callable]
 
 
 @pytest.mark.xfail(
+    os.getenv("GITHUB_ACTIONS") == "true",
+    reason="QEMU tests are resource-intensive and may be flaky in CI",
+)
+@pytest.mark.xfail(
     platform.system() == "Darwin" and os.getenv("GITHUB_ACTIONS") == "true",
-    reason="QEMU tests are flaky on macOS in GitHub CI"
+    reason="QEMU tests are flaky on macOS in GitHub CI",
 )
 def test_driver_qemu(tmp_path, ovmf):
     arch, ovmf_arch = get_native_arch_config()

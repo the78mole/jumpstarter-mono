@@ -23,7 +23,6 @@ class JumpstarterException(Exception):
             return f"{self.message} (Caused by: {self.__cause__})"
         return f"{self.message}"
 
-
     # some exceptions need to able to set the config that caused the error
     # to attempt recovery, or re-authentication if the token is expired
     def set_config(self, config):
@@ -31,7 +30,6 @@ class JumpstarterException(Exception):
 
     def get_config(self):
         return self._config
-
 
     def print(self, message: str | None = None):
         ANSI_RED = "\033[91m"

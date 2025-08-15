@@ -1,6 +1,5 @@
-
-use stm32f4xx_hal::gpio::{self,DynamicPin};
 use embedded_hal::digital::OutputPin;
+use stm32f4xx_hal::gpio::{self, DynamicPin};
 
 // create an enum with 3 possibilities: High, Low, and Floating
 // this is used to set the CTL pins to a specific state
@@ -33,19 +32,19 @@ pub enum PinState {
 //   "p1,bL,w5,bZ" => Power on, POWER_BTN low, wait 500ms, POWER_BTN HiZ
 
 pub trait CTLPinsTrait {
-    fn set_ctl_a(&mut self, state:PinState);
-    fn set_ctl_b(&mut self, state:PinState);
-    fn set_ctl_c(&mut self, state:PinState);
-    fn set_ctl_d(&mut self, state:PinState);
-    fn set_reset(&mut self, state:PinState);
+    fn set_ctl_a(&mut self, state: PinState);
+    fn set_ctl_b(&mut self, state: PinState);
+    fn set_ctl_c(&mut self, state: PinState);
+    fn set_ctl_d(&mut self, state: PinState);
+    fn set_reset(&mut self, state: PinState);
     fn power_on(&mut self, on_seq: &[u8]);
     fn power_off(&mut self, off_seq: &[u8]);
-
 }
 
 pub struct CTLPins<PWPin>
 where
-    PWPin: OutputPin, {
+    PWPin: OutputPin,
+{
     ctl_a: DynamicPin<'A', 5>,
     stored_a: PinState,
     ctl_b: DynamicPin<'A', 6>,
@@ -64,18 +63,28 @@ impl<PWPin> CTLPins<PWPin>
 where
     PWPin: OutputPin,
 {
-    pub fn new(ctl_a:DynamicPin<'A', 5>,
-               ctl_b:DynamicPin<'A', 6>,
-               ctl_c:DynamicPin<'A', 7>,
-               ctl_d:DynamicPin<'A', 8>,
-               reset:DynamicPin<'A', 9>,
-               power:PWPin) -> Self {
-        let mut instance = Self{ctl_a, stored_a: PinState::Floating,
-                                ctl_b, stored_b: PinState::Floating,
-                                ctl_c, stored_c: PinState::Floating,
-                                ctl_d, stored_d: PinState::Floating,
-                                reset, stored_reset: PinState::Floating,
-                                power, on: false};
+    pub fn new(
+        ctl_a: DynamicPin<'A', 5>,
+        ctl_b: DynamicPin<'A', 6>,
+        ctl_c: DynamicPin<'A', 7>,
+        ctl_d: DynamicPin<'A', 8>,
+        reset: DynamicPin<'A', 9>,
+        power: PWPin,
+    ) -> Self {
+        let mut instance = Self {
+            ctl_a,
+            stored_a: PinState::Floating,
+            ctl_b,
+            stored_b: PinState::Floating,
+            ctl_c,
+            stored_c: PinState::Floating,
+            ctl_d,
+            stored_d: PinState::Floating,
+            reset,
+            stored_reset: PinState::Floating,
+            power,
+            on: false,
+        };
         instance.set_ctl_a(PinState::Floating);
         instance.set_ctl_b(PinState::Floating);
         instance.set_ctl_c(PinState::Floating);
@@ -86,43 +95,63 @@ where
         instance
     }
 
-    fn _set_ctl_a(&mut self, state:PinState) {
+    fn _set_ctl_a(&mut self, state: PinState) {
         match state {
-            PinState::High      => self.ctl_a.make_push_pull_output_in_state(gpio::PinState::High),
-            PinState::Low       => self.ctl_a.make_push_pull_output_in_state(gpio::PinState::Low),
-            PinState::Floating  => self.ctl_a.make_floating_input(),
+            PinState::High => self
+                .ctl_a
+                .make_push_pull_output_in_state(gpio::PinState::High),
+            PinState::Low => self
+                .ctl_a
+                .make_push_pull_output_in_state(gpio::PinState::Low),
+            PinState::Floating => self.ctl_a.make_floating_input(),
         }
     }
 
     fn _set_ctl_b(&mut self, state: PinState) {
         match state {
-            PinState::High      => self.ctl_b.make_push_pull_output_in_state(gpio::PinState::High),
-            PinState::Low       => self.ctl_b.make_push_pull_output_in_state(gpio::PinState::Low),
-            PinState::Floating  => self.ctl_b.make_floating_input(),
+            PinState::High => self
+                .ctl_b
+                .make_push_pull_output_in_state(gpio::PinState::High),
+            PinState::Low => self
+                .ctl_b
+                .make_push_pull_output_in_state(gpio::PinState::Low),
+            PinState::Floating => self.ctl_b.make_floating_input(),
         }
     }
 
     fn _set_ctl_c(&mut self, state: PinState) {
         match state {
-            PinState::High      => self.ctl_c.make_push_pull_output_in_state(gpio::PinState::High),
-            PinState::Low       => self.ctl_c.make_push_pull_output_in_state(gpio::PinState::Low),
-            PinState::Floating  => self.ctl_c.make_floating_input(),
+            PinState::High => self
+                .ctl_c
+                .make_push_pull_output_in_state(gpio::PinState::High),
+            PinState::Low => self
+                .ctl_c
+                .make_push_pull_output_in_state(gpio::PinState::Low),
+            PinState::Floating => self.ctl_c.make_floating_input(),
         }
     }
 
     fn _set_ctl_d(&mut self, state: PinState) {
         match state {
-            PinState::High      => self.ctl_d.make_push_pull_output_in_state(gpio::PinState::High),
-            PinState::Low       => self.ctl_d.make_push_pull_output_in_state(gpio::PinState::Low),
-            PinState::Floating  => self.ctl_d.make_floating_input(),
+            PinState::High => self
+                .ctl_d
+                .make_push_pull_output_in_state(gpio::PinState::High),
+            PinState::Low => self
+                .ctl_d
+                .make_push_pull_output_in_state(gpio::PinState::Low),
+            PinState::Floating => self.ctl_d.make_floating_input(),
         }
     }
 
     fn _set_reset(&mut self, state: PinState) {
         match state {
-            PinState::High      => self.reset.make_push_pull_output_in_state(gpio::PinState::High),
-            PinState::Low       => self.reset.make_push_pull_output_in_state(gpio::PinState::Low),
-            PinState::Floating  => self.reset.make_floating_input(),
+            PinState::High => self
+                .reset
+                .make_push_pull_output_in_state(gpio::PinState::High),
+            PinState::Low => self
+                .reset
+                .make_push_pull_output_in_state(gpio::PinState::Low),
+            PinState::Floating => self.reset.make_floating_input(),
         }
     }
 
@@ -152,14 +181,14 @@ where
         }
     }
 
-    fn _lower(&self, ch:u8) -> u8 {
-        // ensure lowcase ascii
-        if (ch>64) && (ch<91) {
-            return ch ^0x20;
+    fn _lower(&self, ch: u8) -> u8 {
+        // ensure lowercase ascii
+        if (ch > 64) && (ch < 91) {
+            return ch ^ 0x20;
         }
-        return ch
+        return ch;
     }
-    fn _status_from_u8(&self, ch:u8) -> PinState {
+    fn _status_from_u8(&self, ch: u8) -> PinState {
         match self._lower(ch) {
             b'h' => PinState::High,
             b'l' => PinState::Low,
@@ -172,32 +201,48 @@ where
         while p + 1 < sequence.len() {
             let pin = self._lower(sequence[p]);
 
-            p+=1;
+            p += 1;
             match pin {
                 b'\0' => break,
-                b'a' => { self._set_ctl_a(self._status_from_u8(sequence[p])); p+=1},
-                b'b' => { self._set_ctl_b(self._status_from_u8(sequence[p])); p+=1},
-                b'c' => { self._set_ctl_c(self._status_from_u8(sequence[p])); p+=1},
-                b'd' => { self._set_ctl_d(self._status_from_u8(sequence[p])); p+=1},
-                b'r' => { self._set_reset(self._status_from_u8(sequence[p])); p+=1},
+                b'a' => {
+                    self._set_ctl_a(self._status_from_u8(sequence[p]));
+                    p += 1
+                }
+                b'b' => {
+                    self._set_ctl_b(self._status_from_u8(sequence[p]));
+                    p += 1
+                }
+                b'c' => {
+                    self._set_ctl_c(self._status_from_u8(sequence[p]));
+                    p += 1
+                }
+                b'd' => {
+                    self._set_ctl_d(self._status_from_u8(sequence[p]));
+                    p += 1
+                }
+                b'r' => {
+                    self._set_reset(self._status_from_u8(sequence[p]));
+                    p += 1
+                }
                 b'w' => p = self._wait(sequence, p),
-                b'p' => { let pw = sequence[p];
-                          p+=1;
-                          if pw == b'1' {
-                             self.power_on(&[0u8; 0])
-                          } else {
-                             self.power_off(&[0u8; 0])
-                          }
-                        }
-                b',' => {}, // ignore commas
-                _ => {}, // ignore unknown commands
+                b'p' => {
+                    let pw = sequence[p];
+                    p += 1;
+                    if pw == b'1' {
+                        self.power_on(&[0u8; 0])
+                    } else {
+                        self.power_off(&[0u8; 0])
+                    }
+                }
+                b',' => {} // ignore commas
+                _ => {}    // ignore unknown commands
             }
         }
     }
 
     fn _wait(&self, sequence: &[u8], mut p: usize) -> usize {
         // parse for 100ms increments
-        let mut wait:u32 = 0;
+        let mut wait: u32 = 0;
         while p < sequence.len() {
             let ch = sequence[p];
             if (ch < b'0') || (ch > b'9') {
@@ -227,38 +272,37 @@ impl<PWPin> CTLPinsTrait for CTLPins<PWPin>
 where
     PWPin: OutputPin,
 {
-    fn set_ctl_a(&mut self, state:PinState) {
+    fn set_ctl_a(&mut self, state: PinState) {
         self.stored_a = state;
-        if self.on || off_tolerant(state){
+        if self.on || off_tolerant(state) {
             self._set_ctl_a(state)
         }
     }
 
     fn set_ctl_b(&mut self, state: PinState) {
         self.stored_b = state;
-        if self.on || off_tolerant(state){
+        if self.on || off_tolerant(state) {
             self._set_ctl_b(state)
         }
     }
 
     fn set_ctl_c(&mut self, state: PinState) {
         self.stored_c = state;
-        if self.on || off_tolerant(state){
+        if self.on || off_tolerant(state) {
             self._set_ctl_c(state)
         }
     }
 
-
     fn set_ctl_d(&mut self, state: PinState) {
         self.stored_d = state;
-        if self.on || off_tolerant(state){
+        if self.on || off_tolerant(state) {
             self._set_ctl_d(state)
         }
     }
 
     fn set_reset(&mut self, state: PinState) {
         self.stored_reset = state;
-        if self.on || off_tolerant(state){
+        if self.on || off_tolerant(state) {
             self._set_reset(state)
         }
     }
@@ -269,7 +313,7 @@ where
         self._set_ctl_c(self.stored_c);
         self._set_ctl_d(self.stored_d);
         self._set_reset(self.stored_reset);
-        if on_seq.len() == 0 || (on_seq.len()>0 && on_seq[0] == b'\0') {
+        if on_seq.len() == 0 || (on_seq.len() > 0 && on_seq[0] == b'\0') {
             self.power.set_high().ok();
         } else {
             self._run_sequence(on_seq);
@@ -278,7 +322,7 @@ where
     }
 
     fn power_off(&mut self, on_seq: &[u8]) {
-        if on_seq.len() == 0 || (on_seq.len()>0 && on_seq[0] == b'\0') {
+        if on_seq.len() == 0 || (on_seq.len() > 0 && on_seq[0] == b'\0') {
             // we set the control pins to floating while in power off, so power is not drawn
             // from the output pins into the carried board
             self._float_not_off_tolerant();
@@ -290,4 +334,3 @@ where
         self.on = false;
     }
 }
-

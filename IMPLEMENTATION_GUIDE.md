@@ -30,6 +30,7 @@ echo "Monorepo directory structure created successfully!"
 ### 1.2 Create Workspace Configuration Files
 
 **pyproject.toml (Root)**
+
 ```toml
 [build-system]
 requires = ["hatchling"]
@@ -81,6 +82,7 @@ python_functions = "test_*"
 ```
 
 **go.work (Root)**
+
 ```go
 go 1.22
 
@@ -91,6 +93,7 @@ use (
 ```
 
 **Makefile (Root)**
+
 ```makefile
 .DEFAULT_GOAL := help
 .PHONY: help build test clean lint fmt install setup
@@ -326,32 +329,32 @@ declare -A COMPONENTS=(
 migrate_component() {
     local repo_name=$1
     local target_path=$2
-    
+
     log "Migrating ${repo_name} to ${target_path}..."
-    
+
     # Create temporary directory
     mkdir -p "${TEMP_DIR}"
-    
+
     # Clone repository
     log "Cloning ${GITHUB_ORG}/${repo_name}..."
     git clone "https://github.com/${GITHUB_ORG}/${repo_name}.git" "${TEMP_DIR}/${repo_name}"
-    
+
     # Create target directory
     mkdir -p "${target_path}"
-    
+
     # Copy files (excluding .git)
     log "Copying files to ${target_path}..."
     rsync -av --exclude='.git' "${TEMP_DIR}/${repo_name}/" "${target_path}/"
-    
+
     # Clean up temporary directory
     rm -rf "${TEMP_DIR}/${repo_name}"
-    
+
     log "✓ Successfully migrated ${repo_name}"
 }
 
 update_go_modules() {
     log "Updating Go module paths..."
-    
+
     # Update controller module
     if [ -f "core/controller/go.mod" ]; then
         cd core/controller
@@ -359,7 +362,7 @@ update_go_modules() {
         go mod tidy
         cd ../..
     fi
-    
+
     # Update lab-config module
     if [ -f "lab-config/go.mod" ]; then
         cd lab-config
@@ -367,57 +370,57 @@ update_go_modules() {
         go mod tidy
         cd ..
     fi
-    
+
     log "✓ Go modules updated"
 }
 
 update_python_configs() {
     log "Updating Python configurations..."
-    
+
     # Update jumpstarter pyproject.toml
     if [ -f "core/jumpstarter/pyproject.toml" ]; then
         sed -i 's|name = "jumpstarter"|name = "jumpstarter-core"|g' core/jumpstarter/pyproject.toml
     fi
-    
+
     # Update driver template pyproject.toml
     if [ -f "templates/driver/pyproject.toml" ]; then
         sed -i 's|name = .*|name = "jumpstarter-driver-template"|g' templates/driver/pyproject.toml
     fi
-    
+
     log "✓ Python configurations updated"
 }
 
 update_imports() {
     log "Updating import paths..."
-    
+
     # Update Python imports (basic pattern matching)
     find core/jumpstarter -name "*.py" -type f -exec sed -i 's|from jumpstarter|from jumpstarter_core|g' {} \;
     find templates/driver -name "*.py" -type f -exec sed -i 's|from jumpstarter|from jumpstarter_core|g' {} \;
-    
+
     # Update Go imports
     find core/controller -name "*.go" -type f -exec sed -i 's|github.com/jumpstarter-dev/jumpstarter-controller|github.com/the78mole/jumpstarter-mono/core/controller|g' {} \;
     find lab-config -name "*.go" -type f -exec sed -i 's|github.com/jumpstarter-dev/jumpstarter-lab-config|github.com/the78mole/jumpstarter-mono/lab-config|g' {} \;
-    
+
     log "✓ Import paths updated"
 }
 
 # Main migration process
 main() {
     log "Starting Jumpstarter monorepo migration..."
-    
+
     # Migrate all components
     for repo in "${!COMPONENTS[@]}"; do
         migrate_component "$repo" "${COMPONENTS[$repo]}"
     done
-    
+
     # Update configurations
     update_go_modules
     update_python_configs
     update_imports
-    
+
     # Clean up
     rm -rf "${TEMP_DIR}"
-    
+
     log "✓ Migration completed successfully!"
     warn "Please review the migrated files and update any remaining references manually."
     warn "Don't forget to test builds: make build"
@@ -441,70 +444,70 @@ log() {
 
 setup_python_workspace() {
     log "Setting up Python workspace..."
-    
+
     # Install UV if not present
     if ! command -v uv &> /dev/null; then
         curl -LsSf https://astral.sh/uv/install.sh | sh
         source $HOME/.local/bin/env
     fi
-    
+
     # Sync workspace
     uv sync
-    
+
     log "✓ Python workspace configured"
 }
 
 setup_go_workspace() {
     log "Setting up Go workspace..."
-    
+
     # Initialize Go workspace
     go work init
     go work use ./core/controller
     go work use ./lab-config
-    
+
     # Download dependencies
     cd core/controller && go mod download && cd ../..
     cd lab-config && go mod download && cd ..
-    
+
     log "✓ Go workspace configured"
 }
 
 setup_rust_environment() {
     log "Setting up Rust environment..."
-    
+
     # Check if Rust is installed
     if ! command -v cargo &> /dev/null; then
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
         source $HOME/.cargo/env
     fi
-    
+
     # Fetch dependencies
     cd hardware/dutlink-firmware && cargo fetch && cd ../..
-    
+
     log "✓ Rust environment configured"
 }
 
 setup_node_environment() {
     log "Setting up Node.js environment..."
-    
+
     # Setup VS Code extension
     if [ -d "integrations/vscode" ]; then
         cd integrations/vscode
         npm install
         cd ../..
     fi
-    
+
     log "✓ Node.js environment configured"
 }
 
 setup_pre_commit() {
     log "Setting up pre-commit hooks..."
-    
+
     # Install pre-commit if not present
     if ! command -v pre-commit &> /dev/null; then
         uv tool install pre-commit
     fi
-    
+
     # Create pre-commit config
     cat > .pre-commit-config.yaml << 'EOF'
 repos:
@@ -541,23 +544,23 @@ repos:
       - id: rustfmt
         files: \.rs$
 EOF
-    
+
     # Install hooks
     pre-commit install
-    
+
     log "✓ Pre-commit hooks configured"
 }
 
 # Main setup
 main() {
     log "Setting up build system for Jumpstarter monorepo..."
-    
+
     setup_python_workspace
     setup_go_workspace
     setup_rust_environment
     setup_node_environment
     setup_pre_commit
-    
+
     log "✓ Build system setup completed!"
     log "Run 'make help' to see available commands"
 }
@@ -575,9 +578,9 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 env:
   CARGO_TERM_COLOR: always
@@ -716,8 +719,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
           cache-dependency-path: integrations/vscode/package-lock.json
       - name: Install dependencies
         run: cd integrations/vscode && npm ci
@@ -750,7 +753,7 @@ jobs:
           curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
           chmod +x ./kind
           sudo mv ./kind /usr/local/bin/kind
-          
+
           # Create test cluster
           kind create cluster --name jumpstarter-test
       - name: Install dependencies
@@ -790,18 +793,21 @@ jobs:
 ## Usage Instructions
 
 1. **Run the setup script**:
+
    ```bash
    chmod +x setup-monorepo-structure.sh
    ./setup-monorepo-structure.sh
    ```
 
 2. **Migrate components**:
+
    ```bash
    chmod +x migrate-components.sh
    ./migrate-components.sh
    ```
 
 3. **Setup build system**:
+
    ```bash
    chmod +x setup-build-system.sh
    ./setup-build-system.sh

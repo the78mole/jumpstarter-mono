@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import click
 
-from jumpstarter_core.client import DriverClient
+from jumpstarter.client import DriverClient
 
 
 @dataclass(kw_only=True)

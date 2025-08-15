@@ -72,9 +72,7 @@
   },
   "exposePort": null,
   "fault": null,
-  "patches": [
-    "jailbroken"
-  ],
+  "patches": ["jailbroken"],
   "createdBy": {
     "id": "2eadc0a4-bd23-44dd-9a2c-0aef784d0c43",
     "username": "some@user.email",

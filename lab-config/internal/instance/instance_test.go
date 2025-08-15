@@ -7,11 +7,11 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/the78mole/jumpstarter-mono/core/controller/api/v1alpha1"
 	v1alphaConfig "github.com/the78mole/jumpstarter-mono/lab-config/api/v1alpha1"
 	"github.com/the78mole/jumpstarter-mono/lab-config/internal/config"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 

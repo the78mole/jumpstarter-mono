@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 import click
-from jumpstarter_core_driver_power.client import PowerClient
+from jumpstarter_driver_power.client import PowerClient
 
 
 @dataclass(kw_only=True)

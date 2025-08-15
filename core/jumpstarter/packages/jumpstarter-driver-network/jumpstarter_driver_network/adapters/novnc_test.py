@@ -6,8 +6,8 @@ from websocket import create_connection
 
 from ..driver import TcpNetwork
 from .novnc import NovncAdapter
-from jumpstarter_core.common import TemporaryTcpListener
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common import TemporaryTcpListener
+from jumpstarter.common.utils import serve
 
 
 async def echo_handler(stream):

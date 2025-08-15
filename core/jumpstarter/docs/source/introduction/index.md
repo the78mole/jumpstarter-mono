@@ -50,7 +50,7 @@ the gap between development and deployment environments.
 ## Operation Modes
 
 Building on these components, Jumpstarter implements two operation modes that
-provide flexibility for different scenarios: *local* and *distributed* modes.
+provide flexibility for different scenarios: _local_ and _distributed_ modes.
 
 ### Local Mode
 
@@ -159,15 +159,15 @@ To address these security needs, the distributed mode implements a comprehensive
 authentication system that secures access through:
 
 - **Client Registration** - Clients register in the Kubernetes cluster with
-   unique identities
+  unique identities
 - **Token Issuance** - Controller issues JWT tokens to authenticated clients and
-   exporters
+  exporters
 - **Secure Communication** - All gRPC communication between components uses
-   token authentication
+  token authentication
 - **Access Control** - Controller enforces permissions based on token identity:
-   - Which exporters a client can lease
-   - What actions a client can perform
-   - Which driver packages can be loaded
+  - Which exporters a client can lease
+  - What actions a client can perform
+  - Which driver packages can be loaded
 
 This security model enables dynamic registration of clients and exporters,
 allowing fine-grained access control in multi-user environments. For example, CI

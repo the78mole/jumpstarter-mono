@@ -1,6 +1,10 @@
 from typing import Annotated, Any, Dict
 
-from kubernetes_asyncio.client.models import V1Condition, V1ObjectMeta, V1ObjectReference
+from kubernetes_asyncio.client.models import (
+    V1Condition,
+    V1ObjectMeta,
+    V1ObjectReference,
+)
 from pydantic import WrapSerializer
 
 

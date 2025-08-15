@@ -5,9 +5,15 @@ import pytest
 
 os.environ["TERM"] = "dumb"
 
+# Pytest plugins configuration
+pytest_plugins = ["pytester"]
+
 try:
-    from jumpstarter_core.common.utils import serve
-    from jumpstarter_core.config.exporter import ExporterConfigV1Alpha1, ExporterConfigV1Alpha1DriverInstance
+    from jumpstarter.common.utils import serve
+    from jumpstarter.config.exporter import (
+        ExporterConfigV1Alpha1,
+        ExporterConfigV1Alpha1DriverInstance,
+    )
 except ImportError:
     # some packages in the workspace does not depend on jumpstarter
     pass

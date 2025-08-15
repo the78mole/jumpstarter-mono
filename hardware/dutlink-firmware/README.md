@@ -9,9 +9,9 @@ Dutlink is based on the [STM32F411](https://www.st.com/en/microcontrollers-micro
 microcontroller and the [Rust](https://www.rust-lang.org/) programming language.
 
 The firmware is written in Rust, and it is made of two parts:
- * The bootloader, which enables seamless firmware updates via the [fwupd](https://fwupd.org) project.
- * The application, which provides the functionality described in the following sections.
 
+- The bootloader, which enables seamless firmware updates via the [fwupd](https://fwupd.org) project.
+- The application, which provides the functionality described in the following sections.
 
 you can find out more about jumpstarter in https://jumpstarter.dev
 
@@ -31,12 +31,14 @@ The easiest way to flash firmware to your DUTLink device is using the provided `
 ### Flashing Process
 
 1. **Download the flash script:**
+
    ```bash
    wget https://raw.githubusercontent.com/jumpstarter-dev/dutlink-firmware/main/flash-dutlink.sh
    chmod +x flash-dutlink.sh
    ```
 
 2. **Run the script as root:**
+
    ```bash
    sudo ./flash-dutlink.sh
    ```
@@ -45,7 +47,7 @@ The easiest way to flash firmware to your DUTLink device is using the provided `
    - Connect your DUTLink device via USB
    - Put the device in DFU mode:
      - Hold the **FACTORY_DFU** button
-     - Press and release the **RESET** button  
+     - Press and release the **RESET** button
      - Release the **FACTORY_DFU** button
    - Press Enter when ready
 
@@ -60,6 +62,7 @@ The script handles the entire flashing process, including downloading the latest
 # Devel environment
 
 ## Environment setup
+
 For development environment in this case, we recommend a Fedora machine with the following
 packages installed:
 
@@ -75,6 +78,7 @@ $ rustup target add thumbv7em-none-eabihf
 ```
 
 One hack to install gcab in RHEL9 is:
+
 ```bash
 sudo subscription-manager repos --enable=codeready-builder-for-rhel-9-x86_64-rpms
 cd /tmp
@@ -114,24 +118,21 @@ and very fast lifecycles for testing.
 In addition DUTLink can control power, provide console access via TX/RX UART, and measure power
 consumption. See features for a more detailed insight.
 
-
 ## Features
 
-* USB Storage sharing
-  * A storage device can be connected to the Testing host, and then passed down to the DUT
-  * USB3.1 (up to 5Gbps, Do not use 10Gbps devices, we exceed the USB3 spec trace lengths, and the signal is degraded) capable
-  * USB3.0 and 2.0 capable for backwards compatibility
-  * Storage device power cycling
+- USB Storage sharing
+  - A storage device can be connected to the Testing host, and then passed down to the DUT
+  - USB3.1 (up to 5Gbps, Do not use 10Gbps devices, we exceed the USB3 spec trace lengths, and the signal is degraded) capable
+  - USB3.0 and 2.0 capable for backwards compatibility
+  - Storage device power cycling
 
-* DUT Power management:
-  * ON/OFF, Reset, Reboot
-  * Power consumption measurement and logging in watts
-  * 5-25V power supply support
-  * USB-PD power supply support 5-20V with DUT power negotiation
- 
-* DUT Control (3.3v I/O)
-  * UART Serial port TX/RX (for logging and tracing)
-  * 4 customizable control signals
-  * RESET signal
+- DUT Power management:
+  - ON/OFF, Reset, Reboot
+  - Power consumption measurement and logging in watts
+  - 5-25V power supply support
+  - USB-PD power supply support 5-20V with DUT power negotiation
 
-
+- DUT Control (3.3v I/O)
+  - UART Serial port TX/RX (for logging and tracing)
+  - 4 customizable control signals
+  - RESET signal

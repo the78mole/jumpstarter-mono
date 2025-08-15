@@ -5,10 +5,10 @@ from typing import Optional
 import anyio
 import anyio.from_thread
 from aiohttp import web
-from jumpstarter_core_driver_opendal.driver import Opendal
+from jumpstarter_driver_opendal.driver import Opendal
 
-from jumpstarter_core.common.ipaddr import get_ip_address
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.common.ipaddr import get_ip_address
+from jumpstarter.driver import Driver, export
 
 
 class HttpServerError(Exception):
@@ -68,6 +68,12 @@ class HttpServer(Driver):
 
         site = web.TCPSite(self.runner, self.host, self.port)
         await site.start()
+
+        # Update port if auto-assigned (port=0)
+        if self.port == 0 and site._server:
+            socket_info = site._server.sockets[0].getsockname()
+            self.port = socket_info[1]
+
         self.logger.info(f"HTTP server started at http://{self.host}:{self.port}")
 
     @export

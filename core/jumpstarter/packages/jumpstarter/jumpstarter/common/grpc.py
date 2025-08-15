@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 import grpc
 from anyio import fail_after
 
-from jumpstarter_core.common.exceptions import ConfigurationError, ConnectionError
+from jumpstarter.common.exceptions import ConfigurationError, ConnectionError
 
 
 async def ssl_channel_credentials(target: str, tls_config, timeout=5):

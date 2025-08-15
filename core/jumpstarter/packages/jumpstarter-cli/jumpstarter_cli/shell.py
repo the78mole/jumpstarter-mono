@@ -2,14 +2,14 @@ import sys
 from datetime import timedelta
 
 import click
-from jumpstarter_core_cli_common.config import opt_config
-from jumpstarter_core_cli_common.exceptions import handle_exceptions_with_reauthentication
+from jumpstarter_cli_common.config import opt_config
+from jumpstarter_cli_common.exceptions import handle_exceptions_with_reauthentication
 
 from .common import opt_duration_partial, opt_selector
 from .login import relogin_client
-from jumpstarter_core.common.utils import launch_shell
-from jumpstarter_core.config.client import ClientConfigV1Alpha1
-from jumpstarter_core.config.exporter import ExporterConfigV1Alpha1
+from jumpstarter.common.utils import launch_shell
+from jumpstarter.config.client import ClientConfigV1Alpha1
+from jumpstarter.config.exporter import ExporterConfigV1Alpha1
 
 
 @click.command("shell")
@@ -39,6 +39,7 @@ def shell(config, command: tuple[str, ...], lease_name, selector, duration, expo
     match config:
         case ClientConfigV1Alpha1():
             exit_code = 0
+
             def _launch_remote_shell(path: str) -> int:
                 return launch_shell(
                     path,

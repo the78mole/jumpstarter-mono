@@ -7,8 +7,14 @@ import isotp
 from pydantic import ConfigDict, validate_call
 from pydantic.dataclasses import dataclass
 
-from .common import CanMessage, IsoTpAddress, IsoTpAsymmetricAddress, IsoTpMessage, IsoTpParams
-from jumpstarter_core.driver import Driver, export
+from .common import (
+    CanMessage,
+    IsoTpAddress,
+    IsoTpAsymmetricAddress,
+    IsoTpMessage,
+    IsoTpParams,
+)
+from jumpstarter.driver import Driver, export
 
 
 @dataclass(kw_only=True, config=ConfigDict(arbitrary_types_allowed=True))

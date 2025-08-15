@@ -12,7 +12,6 @@ development workflow. The guides cover:
 - [Integration Patterns](integration-patterns.md): Integrate Jumpstarter into
   your existing workflows and systems
 
-
 ```{toctree}
 :maxdepth: 1
 :hidden:

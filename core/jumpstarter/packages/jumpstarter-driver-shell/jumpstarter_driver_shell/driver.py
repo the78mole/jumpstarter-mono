@@ -2,7 +2,7 @@ import os
 import subprocess
 from dataclasses import dataclass, field
 
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.driver import Driver, export
 
 
 @dataclass(kw_only=True)

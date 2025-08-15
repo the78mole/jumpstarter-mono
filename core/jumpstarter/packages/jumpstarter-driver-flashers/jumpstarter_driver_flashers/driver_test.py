@@ -2,13 +2,13 @@ import os
 import tempfile
 
 import pytest
-from jumpstarter_core_driver_power.driver import MockPower
-from jumpstarter_core_driver_pyserial.driver import PySerial
+from jumpstarter_driver_power.driver import MockPower
+from jumpstarter_driver_pyserial.driver import PySerial
 
 from .driver import BaseFlasher
-from jumpstarter_core.client.core import DriverInvalidArgument
-from jumpstarter_core.common.exceptions import ConfigurationError
-from jumpstarter_core.common.utils import serve
+from jumpstarter.client.core import DriverInvalidArgument
+from jumpstarter.common.exceptions import ConfigurationError
+from jumpstarter.common.utils import serve
 
 
 @pytest.fixture(scope="session")

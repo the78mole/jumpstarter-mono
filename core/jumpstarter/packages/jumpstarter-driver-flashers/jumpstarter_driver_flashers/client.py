@@ -13,15 +13,19 @@ from urllib.parse import urlparse
 
 import click
 import requests
-from jumpstarter_core_driver_composite.client import CompositeClient
-from jumpstarter_core_driver_opendal.client import FlasherClient, OpendalClient, operator_for_path
-from jumpstarter_core_driver_opendal.common import PathBuf
-from jumpstarter_core_driver_pyserial.client import Console
+from jumpstarter_driver_composite.client import CompositeClient
+from jumpstarter_driver_opendal.client import (
+    FlasherClient,
+    OpendalClient,
+    operator_for_path,
+)
+from jumpstarter_driver_opendal.common import PathBuf
+from jumpstarter_driver_pyserial.client import Console
 from opendal import Metadata, Operator
 
-from jumpstarter_core_driver_flashers.bundle import FlasherBundleManifestV1Alpha1
+from jumpstarter_driver_flashers.bundle import FlasherBundleManifestV1Alpha1
 
-from jumpstarter_core.common.exceptions import ArgumentError
+from jumpstarter.common.exceptions import ArgumentError
 
 debug_console_option = click.option("--console-debug", is_flag=True, help="Enable console debug mode")
 

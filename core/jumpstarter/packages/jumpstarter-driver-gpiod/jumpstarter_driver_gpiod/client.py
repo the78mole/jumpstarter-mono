@@ -3,7 +3,7 @@ from enum import Enum
 
 import click
 
-from jumpstarter_core.client import DriverClient
+from jumpstarter.client import DriverClient
 
 
 class PinState(Enum):
@@ -91,7 +91,6 @@ class DigitalInputClient(DriverClient):
         def wait_for_edge(edge_type: str, timeout: str | None = None):
             """Wait for edge"""
             self.wait_for_edge(edge_type, float(timeout))
-
 
         @gpio.command()
         @click.option("--timeout", "-t", default="3600", help="Timeout in seconds")

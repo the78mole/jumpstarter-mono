@@ -3,9 +3,9 @@ from contextlib import ExitStack, asynccontextmanager, contextmanager
 
 from anyio.from_thread import start_blocking_portal
 
-from jumpstarter_core.client import client_from_path
-from jumpstarter_core.config.client import ClientConfigV1Alpha1Drivers
-from jumpstarter_core.config.env import JUMPSTARTER_HOST
+from jumpstarter.client import client_from_path
+from jumpstarter.config.client import ClientConfigV1Alpha1Drivers
+from jumpstarter.config.env import JUMPSTARTER_HOST
 
 
 @asynccontextmanager

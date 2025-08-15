@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from pexpect.fdpexpect import fdspawn
 
 from .portforward import TcpPortforwardAdapter
-from jumpstarter_core.client import DriverClient
+from jumpstarter.client import DriverClient
 
 
 @contextmanager

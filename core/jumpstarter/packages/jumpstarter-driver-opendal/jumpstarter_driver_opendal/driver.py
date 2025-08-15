@@ -14,7 +14,7 @@ from pydantic import validate_call
 
 from .adapter import AsyncFileStream
 from .common import Capability, HashAlgo, Metadata, Mode, PresignedRequest
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.driver import Driver, export
 
 
 @dataclass(kw_only=True)

@@ -1,0 +1,276 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release"
+        required: true
+        type: string
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # Build all components for release
+  build-python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Build Python packages
+        run: uv build
+
+      - name: Upload Python artifacts
+        if: ${{ !env.ACT }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-packages
+          path: dist/
+
+  build-go:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component:
+          - name: controller
+            path: core/controller
+            binary: manager
+          - name: lab-config
+            path: lab-config
+            binary: lab-config
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+          cache-dependency-path: |
+            core/controller/go.sum
+            lab-config/go.sum
+
+      - name: Build binary
+        working-directory: ${{ matrix.component.path }}
+        run: |
+          GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o ${{ matrix.component.binary }}-linux-amd64 ./...
+          GOOS=darwin GOARCH=amd64 go build -ldflags "-s -w" -o ${{ matrix.component.binary }}-darwin-amd64 ./...
+          GOOS=darwin GOARCH=arm64 go build -ldflags "-s -w" -o ${{ matrix.component.binary }}-darwin-arm64 ./...
+          GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -o ${{ matrix.component.binary }}-windows-amd64.exe ./...
+
+      - name: Upload Go artifacts
+        if: ${{ !env.ACT }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-${{ matrix.component.name }}-binaries
+          path: ${{ matrix.component.path }}/${{ matrix.component.binary }}-*
+
+  build-rust:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: thumbv7em-none-eabihf
+
+      - name: Cache cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            hardware/dutlink-firmware/target
+          key: ${{ runner.os }}-cargo-release-${{ hashFiles('hardware/dutlink-firmware/**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-release-
+
+      - name: Build firmware
+        working-directory: hardware/dutlink-firmware
+        run: |
+          cd application && cargo build --release
+          cd ../bootloader && cargo build --release
+
+      - name: Upload Rust artifacts
+        if: ${{ !env.ACT }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-firmware
+          path: |
+            hardware/dutlink-firmware/application/target/thumbv7em-none-eabihf/release/
+            hardware/dutlink-firmware/bootloader/target/thumbv7em-none-eabihf/release/
+
+  build-web:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: integrations/vscode/package-lock.json
+
+      - name: Install dependencies
+        working-directory: integrations/vscode
+        run: npm ci
+
+      - name: Build extension
+        working-directory: integrations/vscode
+        run: |
+          npm run compile
+          npx vsce package
+
+      - name: Upload web artifacts
+        if: ${{ !env.ACT }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-extension
+          path: integrations/vscode/*.vsix
+
+  # Build container images
+  build-containers:
+    runs-on: ubuntu-latest
+    needs: [build-python, build-go]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        if: ${{ !env.ACT }}
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        if: ${{ !env.ACT }}
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=tag
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push container images
+        if: ${{ !env.ACT }}
+        working-directory: packages/container
+        run: |
+          if [ -f "build.sh" ]; then
+            chmod +x build.sh
+            ./build.sh
+          else
+            echo "Container build script not found, skipping"
+          fi
+
+  # Create GitHub release
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [build-python, build-go, build-rust, build-web]
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        if: ${{ !env.ACT }}
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts/
+
+      - name: Generate release notes
+        id: release-notes
+        run: |
+          if [ -f "CHANGELOG.md" ]; then
+            # Extract changelog for this version
+            awk '/^## \[.*\]/{if(p) exit; p=1} p' CHANGELOG.md > release_notes.md
+          else
+            echo "Release ${GITHUB_REF#refs/tags/}" > release_notes.md
+            echo "" >> release_notes.md
+            echo "## Changes" >> release_notes.md
+            git log --oneline --since="$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo '1970-01-01')" >> release_notes.md
+          fi
+
+      - name: Create GitHub Release
+        if: ${{ !env.ACT }}
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: release_notes.md
+          files: |
+            release-artifacts/**/*
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
+
+  # Publish packages
+  publish-python:
+    runs-on: ubuntu-latest
+    needs: [build-python, create-release]
+    if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')
+    environment: pypi
+    steps:
+      - name: Download Python artifacts
+        if: ${{ !env.ACT }}
+        uses: actions/download-artifact@v4
+        with:
+          name: python-packages
+          path: dist/
+
+      - name: Publish to PyPI
+        if: ${{ !env.ACT }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+
+  publish-vscode:
+    runs-on: ubuntu-latest
+    needs: [build-web, create-release]
+    if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref_name, '-')
+    environment: vscode-marketplace
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download VSCode extension
+        if: ${{ !env.ACT }}
+        uses: actions/download-artifact@v4
+        with:
+          name: vscode-extension
+          path: integrations/vscode/
+
+      - name: Publish to VSCode Marketplace
+        if: ${{ !env.ACT }}
+        working-directory: integrations/vscode
+        run: |
+          npx vsce publish --packagePath *.vsix
+        env:
+          VSCE_PAT: ${{ secrets.VSCODE_MARKETPLACE_TOKEN }}

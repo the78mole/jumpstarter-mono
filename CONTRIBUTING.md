@@ -24,24 +24,28 @@ This is a monorepo containing all Jumpstarter components:
 - Go 1.21+ for controller and lab-config components
 - Rust for firmware development (optional)
 - Node.js and pnpm for VSCode extension development (optional)
+- qemu & qemu-user
 
 ### Development Setup
 
 > **Note**: These manual setup steps will be automated with a devcontainer configuration in the near future to streamline the development experience.
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/jumpstarter-dev/jumpstarter-mono.git
    cd jumpstarter-mono
    ```
 
 2. Install pre-commit hooks:
+
    ```bash
    pip install pre-commit
    pre-commit install
    ```
 
 3. Set up Python environment:
+
    ```bash
    uv sync
    ```

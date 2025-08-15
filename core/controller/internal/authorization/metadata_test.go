@@ -17,7 +17,8 @@ func TestNormalizeName(t *testing.T) {
 			output: "oidc-foo-2c26b4",
 		},
 		{
-			input:  "foo@example.com",
+			input: "foo@example.com",
+			// cspell:disable-next-line
 			output: "oidc-foo-example-com-321ba1",
 		},
 		{

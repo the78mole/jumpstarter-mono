@@ -1,6 +1,6 @@
 # Ported from https://github.com/kubernetes/apimachinery/blob/v0.31.1/pkg/api/meta/conditions.go
 
-from jumpstarter_core_protocol import kubernetes_pb2
+from jumpstarter_protocol import kubernetes_pb2
 
 
 def condition_present_and_equal(

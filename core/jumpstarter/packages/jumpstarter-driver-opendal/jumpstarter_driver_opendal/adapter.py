@@ -7,11 +7,11 @@ from anyio.abc import ObjectStream
 from opendal import AsyncFile, Metadata, Operator
 from opendal.exceptions import Error
 
-from jumpstarter_core.client import DriverClient
-from jumpstarter_core.client.adapters import blocking
-from jumpstarter_core.common.resources import PresignedRequestResource
-from jumpstarter_core.streams.encoding import Compression
-from jumpstarter_core.streams.progress import ProgressAttribute
+from jumpstarter.client import DriverClient
+from jumpstarter.client.adapters import blocking
+from jumpstarter.common.resources import PresignedRequestResource
+from jumpstarter.streams.encoding import Compression
+from jumpstarter.streams.progress import ProgressAttribute
 
 
 @dataclass(frozen=True, kw_only=True, slots=True)

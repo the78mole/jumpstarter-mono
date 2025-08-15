@@ -18,7 +18,7 @@ from anyio._backends._asyncio import SocketStream, StreamProtocol
 from anyio.streams.stapled import StapledObjectStream
 
 from .streams.websocket import WebsocketClientStream
-from jumpstarter_core.driver import Driver, exportstream
+from jumpstarter.driver import Driver, exportstream
 
 
 class NetworkInterface(metaclass=ABCMeta):
@@ -233,7 +233,7 @@ class EchoNetwork(NetworkInterface, Driver):
     @exportstream
     @asynccontextmanager
     async def connect(self):
-        tx, rx = create_memory_object_stream[bytes](32) # ty: ignore[call-non-callable]
+        tx, rx = create_memory_object_stream[bytes](32)  # ty: ignore[call-non-callable]
         self.logger.debug("Connecting Echo")
         async with StapledObjectStream(tx, rx) as stream:
             yield stream
@@ -241,17 +241,18 @@ class EchoNetwork(NetworkInterface, Driver):
 
 @dataclass(kw_only=True)
 class WebsocketNetwork(NetworkInterface, Driver):
-    '''
+    """
     Handles websocket connections from a given url.
-    '''
+    """
+
     url: str
 
     @exportstream
     @asynccontextmanager
     async def connect(self):
-        '''
+        """
         Create a websocket connection to `self.url` and srreams its output.
-        '''
+        """
         self.logger.info("Connecting to %s", self.url)
 
         async with websockets.connect(self.url) as websocket:

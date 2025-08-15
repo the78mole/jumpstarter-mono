@@ -10,8 +10,8 @@ from anyio.from_thread import start_blocking_portal
 
 from .adapters import TcpPortforwardAdapter, UnixPortforwardAdapter
 from .driver import DbusNetwork, TcpNetwork, UdpNetwork, UnixNetwork, WebsocketNetwork
-from jumpstarter_core.common import TemporaryUnixListener
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common import TemporaryUnixListener
+from jumpstarter.common.utils import serve
 
 
 async def echo_handler(stream):
@@ -150,6 +150,6 @@ async def test_websocket_network_connect():
     ws.__aenter__.return_value = ws
 
     with patch("websockets.connect", return_value=ws) as m:
-        client =  WebsocketNetwork(url="ws://localhost/something")
+        client = WebsocketNetwork(url="ws://localhost/something")
         async with client.connect():
             m.assert_called_once_with("ws://localhost/something")

@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = ">=3.12"
 
 [manifest]
@@ -41,7 +41,6 @@ members = [
     "jumpstarter-example-soc-pytest",
     "jumpstarter-imagehash",
     "jumpstarter-kubernetes",
-    "jumpstarter-mono",
     "jumpstarter-protocol",
     "jumpstarter-testing",
 ]
@@ -1992,11 +1991,6 @@ dev = [
     { name = "pytest-asyncio", specifier = ">=0.0.0" },
     { name = "pytest-cov", specifier = ">=5.0.0" },
 ]
-
-[[package]]
-name = "jumpstarter-mono"
-version = "0.1.0"
-source = { editable = "." }
 
 [[package]]
 name = "jumpstarter-protocol"

@@ -5,12 +5,12 @@ metadata:
     control-plane: controller-manager
     app.kubernetes.io/name: jumpstarter-controller
   name: controller-manager-metrics-service
-  namespace: {{ default .Release.Namespace .Values.namespace }}
+  namespace: { { default .Release.Namespace .Values.namespace } }
 spec:
   ports:
-  - name: http
-    port: 8080
-    protocol: TCP
-    targetPort: 8080
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
   selector:
     control-plane: controller-manager

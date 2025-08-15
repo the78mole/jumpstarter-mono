@@ -1,7 +1,7 @@
-from jumpstarter_core_driver_power.driver import MockPower
+from jumpstarter_driver_power.driver import MockPower
 
 from .driver import Composite, Proxy
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 def test_drivers_composite():

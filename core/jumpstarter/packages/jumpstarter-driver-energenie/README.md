@@ -29,11 +29,11 @@ export:
 
 ### Config parameters
 
-| Parameter | Description | Type | Required | Default |
-|-----------|-------------|------|----------|---------|
-| host | The ip address of the EnerGenie system | string | yes | None |
-| password | The password of the EnerGenie system | string | no | None |
-| slot | The slot number to be managed, 1, 2, 3, 4 | int | yes | 1 |
+| Parameter | Description                               | Type   | Required | Default |
+| --------- | ----------------------------------------- | ------ | -------- | ------- |
+| host      | The ip address of the EnerGenie system    | string | yes      | None    |
+| password  | The password of the EnerGenie system      | string | no       | None    |
+| slot      | The slot number to be managed, 1, 2, 3, 4 | int    | yes      | 1       |
 
 ### PowerClient API
 

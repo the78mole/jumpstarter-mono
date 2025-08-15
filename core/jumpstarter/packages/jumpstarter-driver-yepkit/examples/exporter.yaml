@@ -26,4 +26,3 @@ export:
     type: jumpstarter_driver_yepkit.driver.Ykush
     config:
       port: "all"
-

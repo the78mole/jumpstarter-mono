@@ -2,12 +2,17 @@ from socketserver import BaseRequestHandler, TCPServer
 from threading import Thread
 from time import sleep
 
-from paramiko import AUTH_SUCCESSFUL, OPEN_SUCCEEDED, ServerInterface, Transport  # ty: ignore[unresolved-import]
+from paramiko import (  # ty: ignore[unresolved-import]
+    AUTH_SUCCESSFUL,
+    OPEN_SUCCEEDED,
+    ServerInterface,
+    Transport,
+)
 from paramiko.rsakey import RSAKey
 
 from ..driver import TcpNetwork
 from .fabric import FabricAdapter
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 class SSHServer(ServerInterface):

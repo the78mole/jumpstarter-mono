@@ -6,27 +6,27 @@ on:
       go-version:
         required: false
         type: string
-        default: '1.24'
+        default: "1.24"
       working-directory:
         required: true
         type: string
       golangci-lint-version:
         required: false
         type: string
-        default: 'latest'
+        default: "latest"
   workflow_dispatch:
     inputs:
       go-version:
         required: false
         type: string
-        default: '1.24'
+        default: "1.24"
       working-directory:
         required: true
         type: string
       golangci-lint-version:
         required: false
         type: string
-        default: 'latest'
+        default: "latest"
 
 jobs:
   lint:
@@ -41,7 +41,7 @@ jobs:
           go-version: ${{ inputs.go-version }}
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v6
         with:
           version: ${{ inputs.golangci-lint-version }}
           working-directory: ${{ inputs.working-directory }}

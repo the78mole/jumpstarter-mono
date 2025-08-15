@@ -9,12 +9,13 @@ different sources are prioritized.
 
 ## User Configuration
 
-**File**: `config.yaml`  
-**Location**: `/home/<user>/.config/jumpstarter/config.yaml`  
+**File**: `config.yaml`
+**Location**: `/home/<user>/.config/jumpstarter/config.yaml`
 **Description**: Defines global user settings including current client
-selection.  
+selection.
 
 **Format**:
+
 ```yaml
 apiVersion: jumpstarter.dev/v1alpha1
 kind: UserConfig
@@ -26,12 +27,13 @@ config:
 
 ## Client Configuration
 
-**File**: All valid client configuration files with a `.yaml` extension.  
-**Location**: `/home/<user>/.config/jumpstarter/clients/*.yaml`  
+**File**: All valid client configuration files with a `.yaml` extension.
+**Location**: `/home/<user>/.config/jumpstarter/clients/*.yaml`
 **Description**: Stores client configurations including endpoints, access
 tokens, and driver settings.
 
 **Format**:
+
 ```yaml
 apiVersion: jumpstarter.dev/v1alpha1
 kind: ClientConfig
@@ -61,7 +63,8 @@ drivers:
 - `JUMPSTARTER_FORCE_SYSTEM_CERTS` - Set to `1` to force system CA certificates
 
 **CLI Commands**:
-```{code-block}  console
+
+```{code-block} console
 $ jmp config client create <alias>  # Create new empty client config
 $ jmp config client use <alias>     # Switch to a different client config
 $ jmp config client list            # List available client configs
@@ -70,12 +73,13 @@ $ jmp config client delete <alias>  # Remove a client config locally
 
 ## Exporter Configuration
 
-**File**: All valid exporter configuration files with a `.yaml` extension  
-**Location**: `/etc/jumpstarter/exporters/*.yaml`  
+**File**: All valid exporter configuration files with a `.yaml` extension
+**Location**: `/etc/jumpstarter/exporters/*.yaml`
 **Description**: Defines exporter settings including connection details and
-driver configurations.  
+driver configurations.
 
 **Format**:
+
 ```yaml
 apiVersion: jumpstarter.dev/v1alpha1
 kind: ExporterConfig
@@ -103,6 +107,7 @@ export: # Configure drivers to expose to the clients
 ```
 
 **Environment Variables**:
+
 - `JUMPSTARTER_GRPC_INSECURE` - Set to `1` to disable TLS verification
 - `JMP_ENDPOINT` - gRPC endpoint (overrides config file)
 - `JMP_TOKEN` - Auth token (overrides config file)
@@ -110,7 +115,8 @@ export: # Configure drivers to expose to the clients
 - `JMP_NAME` - Exporter name
 
 **CLI Commands**:
-```{code-block}  console
+
+```{code-block} console
 $ jmp config exporter create <alias>  # Create new empty exporter config
 $ jmp config exporter list            # List available exporter configs
 $ jmp config exporter delete <alias>  # Remove a local exporter config

@@ -1,9 +1,7 @@
 {
   "$defs": {
     "AudienceMatchPolicy": {
-      "enum": [
-        "MatchAny"
-      ],
+      "enum": ["MatchAny"],
       "title": "AudienceMatchPolicy",
       "type": "string"
     },
@@ -127,9 +125,7 @@
           "title": "Expression"
         }
       },
-      "required": [
-        "claim"
-      ],
+      "required": ["claim"],
       "title": "ClaimOrExpression1",
       "type": "object"
     },
@@ -153,9 +149,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "expression"
-      ],
+      "required": ["expression"],
       "title": "ClaimOrExpression2",
       "type": "object"
     },
@@ -679,18 +673,12 @@
       "type": "object"
     },
     "Mode": {
-      "enum": [
-        "ingress",
-        "route"
-      ],
+      "enum": ["ingress", "route"],
       "title": "Mode",
       "type": "string"
     },
     "Mode1": {
-      "enum": [
-        "passthrough",
-        "reencrypt"
-      ],
+      "enum": ["passthrough", "reencrypt"],
       "title": "Mode1",
       "type": "string"
     },
@@ -776,10 +764,7 @@
           "title": "Expression"
         }
       },
-      "required": [
-        "claim",
-        "prefix"
-      ],
+      "required": ["claim", "prefix"],
       "title": "PrefixedClaimOrExpression1",
       "type": "object"
     },
@@ -807,10 +792,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "prefix",
-        "expression"
-      ],
+      "required": ["prefix", "expression"],
       "title": "PrefixedClaimOrExpression2",
       "type": "object"
     },
@@ -1064,10 +1046,7 @@
       "default": null
     }
   },
-  "required": [
-    "image",
-    "imagePullPolicy"
-  ],
+  "required": ["image", "imagePullPolicy"],
   "title": "Model",
   "type": "object"
 }

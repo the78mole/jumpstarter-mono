@@ -1,0 +1,57 @@
+# Typos configuration for jumpstarter-mono
+
+[default.extend-words]
+# Hardware/technical terms that should not be flagged as typos
+ba = "ba"               # Used in test IDs and technical strings
+fo = "fo"               # vim configuration parameter
+mosquitto = "mosquitto" # MQTT broker name
+oen = "oen"             # Technical abbreviation
+te = "te"               # Technical abbreviation
+nd = "nd"               # Technical abbreviation
+ser = "ser"             # Serialization prefix in Python Pydantic
+Pn = "Pn"               # ISO 8601 duration format pattern
+
+[files]
+# Exclude certain file patterns
+extend-exclude = [
+    # KiCad files contain technical abbreviations
+    "*.kicad_*",
+    "*.pretty",
+    "fp-info-cache",
+    # Lock files contain hashes and encoded content
+    "*.lock",
+    "uv.lock",
+    "flake.lock",
+    "pnpm-lock.yaml",
+    # Temporary files
+    "tmp/",
+    # Binary files
+    "*.bin",
+    "*.hex",
+    # Generated protocol buffers
+    "*.pb.go",
+    # Generated Kubernetes CRDs
+    "**/templates/crds/*.yaml",
+    # Test files with hashes
+    "core/controller/internal/authorization/metadata_test.go",
+    # Vim config files
+    "core/controller/.goreleaser.yaml",
+    ".goreleaser.yaml",
+    "*/.goreleaser.yaml",
+]
+
+[type.kicad]
+# KiCad specific technical terms
+extend-glob = ["*.kicad_*", "*.pretty/*"]
+
+[type.kicad.extend-words]
+THT = "THT" # Through-hole technology
+BRE = "BRE" # Board routing element
+Ded = "Ded" # Dedicated (in KiCad context)
+
+[type.mqtt]
+# MQTT related files
+extend-glob = ["**/tasmota/**"]
+
+[type.mqtt.extend-words]
+mosquitto = "mosquitto"

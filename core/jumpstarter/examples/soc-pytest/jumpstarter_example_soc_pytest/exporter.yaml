@@ -16,12 +16,12 @@ export:
     type: jumpstarter_driver_ustreamer.driver.UStreamer
     config:
       args:
-        device: '/dev/v4l/by-path/pci-0000:00:14.0-usbv2-0:3:1.0-video-index0'
+        device: "/dev/v4l/by-path/pci-0000:00:14.0-usbv2-0:3:1.0-video-index0"
         resolution: 1920x1080
   # a USB camera pointing to the DUT
   camera:
     type: jumpstarter_driver_ustreamer.driver.UStreamer
     config:
       args:
-        device: '/dev/v4l/by-path/pci-0000:00:14.0-usbv2-0:4:1.0-video-index0'
+        device: "/dev/v4l/by-path/pci-0000:00:14.0-usbv2-0:4:1.0-video-index0"
         resolution: 1280x720

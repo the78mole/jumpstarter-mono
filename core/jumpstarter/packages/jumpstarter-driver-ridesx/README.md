@@ -25,31 +25,30 @@ The RideSX driver supports two main components:
 Example configuration for the RideSX driver:
 
 ```yaml
-  storage:
-    type: "jumpstarter_driver_ridesx.driver.RideSXDriver"
-    config:
-    children:
-      # fastboot management serial port
-      serial:
-        type: "jumpstarter_driver_pyserial.driver.PySerial"
-        config:
-          url: "/dev/serial/by-id/usb-QUALCOMM_Inc._Embedded_Power_Measurement__EPM__device_98000205101B0224-if01"
-          baudrate: 115200
-  power:
-    type: "jumpstarter_driver_ridesx.driver.RideSXPowerDriver"
-    config:
-    children:
-      serial:
-        type: "jumpstarter_driver_pyserial.driver.PySerial"
-        config:
-          url: "/dev/serial/by-id/usb-QUALCOMM_Inc._Embedded_Power_Measurement__EPM__device_98000205101B0224-if01"
-          baudrate: 115200
-  serial:
-    type: "jumpstarter_driver_pyserial.driver.PySerial"
-    config:
-      url: "/dev/serial/by-id/usb-FTDI_Qualcomm_AIR_8775_AI208U7YXA-if01-port01"
-      baudrate: 115200
-
+storage:
+  type: "jumpstarter_driver_ridesx.driver.RideSXDriver"
+  config:
+  children:
+    # fastboot management serial port
+    serial:
+      type: "jumpstarter_driver_pyserial.driver.PySerial"
+      config:
+        url: "/dev/serial/by-id/usb-QUALCOMM_Inc._Embedded_Power_Measurement__EPM__device_98000205101B0224-if01"
+        baudrate: 115200
+power:
+  type: "jumpstarter_driver_ridesx.driver.RideSXPowerDriver"
+  config:
+  children:
+    serial:
+      type: "jumpstarter_driver_pyserial.driver.PySerial"
+      config:
+        url: "/dev/serial/by-id/usb-QUALCOMM_Inc._Embedded_Power_Measurement__EPM__device_98000205101B0224-if01"
+        baudrate: 115200
+serial:
+  type: "jumpstarter_driver_pyserial.driver.PySerial"
+  config:
+    url: "/dev/serial/by-id/usb-FTDI_Qualcomm_AIR_8775_AI208U7YXA-if01-port01"
+    baudrate: 115200
 ```
 
 ### CLI usage
@@ -66,8 +65,8 @@ $$ j serial start-console
 
 #### RideSXDriver
 
-| Parameter   | Description                                           | Type | Required | Default                     |
-| ----------- | ----------------------------------------------------- | ---- | -------- | --------------------------- |
+| Parameter   | Description                                            | Type | Required | Default                     |
+| ----------- | ------------------------------------------------------ | ---- | -------- | --------------------------- |
 | storage_dir | Directory to store firmware images and temporary files | str  | no       | /var/lib/jumpstarter/ridesx |
 
 #### RideSXPowerDriver
@@ -78,9 +77,9 @@ The power driver requires a `serial` child instance for communication.
 
 Both drivers require:
 
-| Child  | Description                                                  | Required |
-| ------ | ------------------------------------------------------------ | -------- |
-| serial | PySerial driver instance for communicating with the device  | yes      |
+| Child  | Description                                                | Required |
+| ------ | ---------------------------------------------------------- | -------- |
+| serial | PySerial driver instance for communicating with the device | yes      |
 
 ## API Reference
 

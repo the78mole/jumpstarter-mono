@@ -65,7 +65,7 @@ trap cleanup EXIT
 echo -e "${BLUE}Fetching latest release information...${NC}"
 RELEASE_INFO=$(curl -s "$GITHUB_API_URL")
 
-if [[ $? -ne 0 ]]; then
+if ! curl -s "$GITHUB_API_URL" > /dev/null; then
     echo -e "${RED}Error: Failed to fetch release information from GitHub${NC}"
     exit 1
 fi
@@ -110,7 +110,7 @@ echo "   - Press and release the RESET button"
 echo "   - Release the FACTORY_DFU button"
 echo "3. The device should now be in the MCU Factory DFU mode"
 echo ""
-read -p "Press Enter when the device is ready in DFU mode..."
+read -r -p "Press Enter when the device is ready in DFU mode..."
 
 # Check if DFU device is detected
 echo -e "${BLUE}Checking for DFU device...${NC}"

@@ -9,7 +9,7 @@ from pysnmp.entity import config, engine
 from pysnmp.entity.rfc3413 import cmdgen
 from pysnmp.proto import rfc1902
 
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.driver import Driver, export
 
 
 class AuthProtocol(str, Enum):

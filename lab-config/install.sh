@@ -10,7 +10,7 @@ BINARY_NAME="jumpstarter-lab-config"
 detect_platform() {
     local os=""
     local arch=""
-    
+
     # Detect OS
     case "$(uname -s)" in
         Darwin*)
@@ -27,7 +27,7 @@ detect_platform() {
             exit 1
             ;;
     esac
-    
+
     # Detect architecture
     case "$(uname -m)" in
         x86_64|amd64)
@@ -41,14 +41,14 @@ detect_platform() {
             exit 1
             ;;
     esac
-    
+
     echo "${os}-${arch}"
 }
 
 # Get latest release version from GitHub API
 get_latest_version() {
     local latest_url="https://api.github.com/repos/${REPO}/releases/latest"
-    
+
     if command -v curl >/dev/null 2>&1; then
         curl -s "${latest_url}" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/'
     elif command -v wget >/dev/null 2>&1; then
@@ -64,22 +64,22 @@ install_binary() {
     local platform="$1"
     local version="$2"
     local extension=""
-    
+
     # Add .exe extension for Windows
     if [[ "${platform}" == windows-* ]]; then
         extension=".exe"
     fi
-    
+
     local binary_filename="${BINARY_NAME}-${version}-${platform}${extension}"
     local download_url="https://github.com/${REPO}/releases/download/${version}/${binary_filename}"
     local install_dir="${HOME}/.local/bin"
     local install_path="${install_dir}/${BINARY_NAME}${extension}"
-    
+
     echo "Downloading ${binary_filename}..."
-    
+
     # Create install directory if it doesn't exist
     mkdir -p "${install_dir}"
-    
+
     # Download the binary
     if command -v curl >/dev/null 2>&1; then
         curl -L -o "${install_path}" "${download_url}"
@@ -89,12 +89,12 @@ install_binary() {
         echo "Error: Neither curl nor wget is available"
         exit 1
     fi
-    
+
     # Make it executable (not needed for Windows)
     if [[ "${platform}" != windows-* ]]; then
         chmod +x "${install_path}"
     fi
-    
+
     echo "Successfully installed ${BINARY_NAME} to ${install_path}"
     echo ""
     echo "Make sure ${install_dir} is in your PATH:"
@@ -107,15 +107,15 @@ install_binary() {
 # Main function
 main() {
     local version="$1"
-    
+
     echo "Installing ${BINARY_NAME}..."
     echo ""
-    
+
     # Detect platform
     local platform
     platform=$(detect_platform)
     echo "Detected platform: ${platform}"
-    
+
     # Get version (use provided version or fetch latest)
     if [[ -n "${version}" ]]; then
         echo "Using specified version: ${version}"
@@ -128,7 +128,7 @@ main() {
         echo "Latest version: ${version}"
     fi
     echo ""
-    
+
     # Install binary
     install_binary "${platform}" "${version}"
 }
@@ -156,4 +156,3 @@ fi
 
 # Run main function with provided arguments
 main "$1"
-

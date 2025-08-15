@@ -1,4 +1,6 @@
-# Binaries for programs and plugins
+# Go build outputs
+lab-config
+lab-config-test
 *.exe
 *.exe~
 *.dll

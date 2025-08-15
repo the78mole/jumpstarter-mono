@@ -8,14 +8,14 @@ import pyudev
 import usb.core
 import usb.util
 from anyio import sleep
-from jumpstarter_core_driver_composite.driver import CompositeInterface
-from jumpstarter_core_driver_opendal.driver import StorageMuxFlasherInterface
-from jumpstarter_core_driver_power.driver import PowerInterface, PowerReading
-from jumpstarter_core_driver_pyserial.driver import PySerial
+from jumpstarter_driver_composite.driver import CompositeInterface
+from jumpstarter_driver_opendal.driver import StorageMuxFlasherInterface
+from jumpstarter_driver_power.driver import PowerInterface, PowerReading
+from jumpstarter_driver_pyserial.driver import PySerial
 from serial.serialutil import SerialException
 
-from jumpstarter_core.common.storage import read_from_storage_device, write_to_storage_device
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.common.storage import read_from_storage_device, write_to_storage_device
+from jumpstarter.driver import Driver, export
 
 
 @dataclass(kw_only=True)

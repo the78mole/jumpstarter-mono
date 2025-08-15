@@ -54,8 +54,8 @@ HELM_SETS="${HELM_SETS} --set jumpstarter-controller.grpc.endpoint=${GRPC_ENDPOI
 HELM_SETS="${HELM_SETS} --set jumpstarter-controller.grpc.routerEndpoint=${GRPC_ROUTER_ENDPOINT}"
 
 
-IMAGE_REPO=$(echo ${IMG} | cut -d: -f1)
-IMAGE_TAG=$(echo ${IMG} | cut -d: -f2)
+IMAGE_REPO=$(echo "${IMG}" | cut -d: -f1)
+IMAGE_TAG=$(echo "${IMG}" | cut -d: -f2)
 HELM_SETS="${HELM_SETS} --set jumpstarter-controller.image=${IMAGE_REPO}"
 HELM_SETS="${HELM_SETS} --set jumpstarter-controller.tag=${IMAGE_TAG}"
 
@@ -74,8 +74,7 @@ kind_load_image() {
   fi
 
   # Save to tar file
-  podman save "${image}" | ${KIND} load image-archive /dev/stdin --name jumpstarter
-  if [ $? -eq 0 ]; then
+  if podman save "${image}" | ${KIND} load image-archive /dev/stdin --name jumpstarter; then
     echo "Image loaded successfully."
   else
     echo "Error loading image ${image}."
@@ -85,7 +84,7 @@ kind_load_image() {
 
 echo -e "${GREEN}Loading the ${IMG} in kind ...${NC}"
 # load the docker image into the kind cluster
-kind_load_image ${IMG}
+kind_load_image "${IMG}"
 
 
 # if we have an existing deployment, try to upgrade it instead
@@ -98,8 +97,8 @@ echo -e "${GREEN}Performing helm ${METHOD} ...${NC}"
 # install/update with helm
 helm ${METHOD} --namespace jumpstarter-lab \
                --create-namespace \
-               ${HELM_SETS} \
-               --set global.timestamp=$(date +%s) \
+               "${HELM_SETS}" \
+               --set global.timestamp="$(date +%s)" \
                --values ./deploy/helm/jumpstarter/values.kind.yaml jumpstarter \
             ./deploy/helm/jumpstarter/
 
@@ -109,7 +108,7 @@ echo -e "${GREEN}Waiting for grpc endpoints to be ready:${NC}"
 for ep in ${GRPC_ENDPOINT} ${GRPC_ROUTER_ENDPOINT}; do
     RETRIES=60
     echo -e "${GREEN} * Checking ${ep} ... ${NC}"
-    while ! ${GRPCURL} -insecure ${ep} list; do
+    while ! ${GRPCURL} -insecure "${ep}" list; do
         sleep 2
         RETRIES=$((RETRIES-1))
         if [ ${RETRIES} -eq 0 ]; then

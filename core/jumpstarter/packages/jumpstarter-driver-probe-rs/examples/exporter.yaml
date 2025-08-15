@@ -11,4 +11,3 @@ export:
     config:
       probe_rs_path: /home/majopela/.cargo/bin/probe-rs
       protocol: "swd"
-

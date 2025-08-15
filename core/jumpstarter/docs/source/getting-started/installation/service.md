@@ -66,12 +66,12 @@ metadata:
     argocds.argoproj.io/namespace: openshift-gitops
   name: openshift-gitops-argocd-appcontroller-crd
 rules:
-- apiGroups:
-  - 'apiextensions.k8s.io'
-  resources:
-  - 'customresourcedefinitions'
-  verbs:
-  - '*'
+  - apiGroups:
+      - "apiextensions.k8s.io"
+    resources:
+      - "customresourcedefinitions"
+    verbs:
+      - "*"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -85,9 +85,9 @@ roleRef:
   kind: ClusterRole
   name: openshift-gitops-argocd-appcontroller-crd
 subjects:
-- kind: ServiceAccount
-  name: openshift-gitops-argocd-application-controller
-  namespace: openshift-gitops
+  - kind: ServiceAccount
+    name: openshift-gitops-argocd-application-controller
+    namespace: openshift-gitops
 ```
 
 Create an ArgoCD Application to deploy Jumpstarter:

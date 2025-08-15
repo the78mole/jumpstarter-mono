@@ -5,7 +5,6 @@ gpiod GPIO pins for digital input/output operations.
 
 This requires the /dev/gpiochip[0..N] device available on the system, and you can use the `gpioinfo` gpiod tool to list the available GPIO lines.
 
-
 ## Installation
 
 ```{code-block} console
@@ -66,15 +65,15 @@ export:
 
 ### Config parameters
 
-| Parameter      | Description                                                                                                                                          | Type | Required | Default | Driver Types |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | -------- | ------- | ------------ |
-| device         | The GPIO device to use (can be integer or string like "/dev/gpiochip0")                                                                            | str | no | "/dev/gpiochip0" | All |
-| line            | The GPIO line number to use                                                                              | int | yes | | All |
-| drive          | The drive mode for the GPIO line. Options: "push_pull", "open_drain", "open_source"                                                                 | str | no | null | DigitalOutput, PowerSwitch |
-| active_low     | Whether the pin is active low (True) or active high (False)                                                                                         | bool | no | False | All |
-| bias           | The bias configuration for the GPIO line. Options: "as_is", "pull_up", "pull_down", "disabled"                                                      | str | no | null | All |
-| initial_value  | The initial value for output pins. Options: "active", "inactive", "on", "off", True, False                                                          | str/bool | no | "inactive" | DigitalOutput, PowerSwitch |
-| mode           | The mode for PowerSwitch (same as drive parameter)                                                                                                   | str | no | "push_pull" | PowerSwitch |
+| Parameter     | Description                                                                                    | Type     | Required | Default          | Driver Types               |
+| ------------- | ---------------------------------------------------------------------------------------------- | -------- | -------- | ---------------- | -------------------------- |
+| device        | The GPIO device to use (can be integer or string like "/dev/gpiochip0")                        | str      | no       | "/dev/gpiochip0" | All                        |
+| line          | The GPIO line number to use                                                                    | int      | yes      |                  | All                        |
+| drive         | The drive mode for the GPIO line. Options: "push_pull", "open_drain", "open_source"            | str      | no       | null             | DigitalOutput, PowerSwitch |
+| active_low    | Whether the pin is active low (True) or active high (False)                                    | bool     | no       | False            | All                        |
+| bias          | The bias configuration for the GPIO line. Options: "as_is", "pull_up", "pull_down", "disabled" | str      | no       | null             | All                        |
+| initial_value | The initial value for output pins. Options: "active", "inactive", "on", "off", True, False     | str/bool | no       | "inactive"       | DigitalOutput, PowerSwitch |
+| mode          | The mode for PowerSwitch (same as drive parameter)                                             | str      | no       | "push_pull"      | PowerSwitch                |
 
 ## API Reference
 
@@ -97,6 +96,7 @@ export:
 ### Digital Output Examples
 
 Basic LED control:
+
 ```
 # Turn LED on
 led_output.on()
@@ -112,6 +112,7 @@ print(f"LED state: {state}")
 ### Digital Input Examples
 
 Button input with edge detection:
+
 ```
 # Read current input state
 state = button_input.read()
@@ -130,10 +131,10 @@ button_input.wait_for_edge("rising", timeout=10.0)
 button_input.wait_for_edge("falling", timeout=10.0)
 ```
 
-
 ### Power Switch Examples
 
 Power control for devices:
+
 ```
 # Turn power on
 power_switch.on()
@@ -169,6 +170,7 @@ print(f"Power state: {state}")
 ### Initial Values
 
 For output pins, you can set the initial state:
+
 - **"inactive"** or **"off"** or **False**: Start with pin LOW
 - **"active"** or **"on"** or **True**: Start with pin HIGH
 
@@ -181,6 +183,7 @@ For output pins, you can set the initial state:
 ## Error Handling
 
 The driver includes comprehensive error handling for:
+
 - Invalid pin numbers
 - Invalid drive/bias configurations
 - Hardware access errors

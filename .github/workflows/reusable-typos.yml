@@ -6,13 +6,13 @@ on:
       exclude-paths:
         required: false
         type: string
-        default: ''
+        default: ""
   workflow_dispatch:
     inputs:
       exclude-paths:
         required: false
         type: string
-        default: ''
+        default: ""
 
 jobs:
   typos:

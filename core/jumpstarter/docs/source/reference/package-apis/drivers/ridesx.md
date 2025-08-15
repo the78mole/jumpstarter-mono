@@ -56,8 +56,8 @@ export:
 
 #### RideSXDriver
 
-| Parameter   | Description                                           | Type | Required | Default                     |
-| ----------- | ----------------------------------------------------- | ---- | -------- | --------------------------- |
+| Parameter   | Description                                            | Type | Required | Default                     |
+| ----------- | ------------------------------------------------------ | ---- | -------- | --------------------------- |
 | storage_dir | Directory to store firmware images and temporary files | str  | no       | /var/lib/jumpstarter/ridesx |
 
 #### RideSXPowerDriver
@@ -68,9 +68,9 @@ The power driver requires a `serial` child instance for communication.
 
 Both drivers require:
 
-| Child  | Description                                                  | Required |
-| ------ | ------------------------------------------------------------ | -------- |
-| serial | PySerial driver instance for communicating with the device  | yes      |
+| Child  | Description                                                | Required |
+| ------ | ---------------------------------------------------------- | -------- |
+| serial | PySerial driver instance for communicating with the device | yes      |
 
 ## API Reference
 

@@ -4,7 +4,7 @@ from base64 import b64decode
 from PIL import Image
 
 from .common import UStreamerState
-from jumpstarter_core.client import DriverClient
+from jumpstarter.client import DriverClient
 
 
 class UStreamerClient(DriverClient):

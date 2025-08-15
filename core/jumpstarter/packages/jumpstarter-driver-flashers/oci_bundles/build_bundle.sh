@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # oras login quay.io -u mangelajo
 
@@ -13,15 +13,16 @@ set -x
 
 cd "${BUNDLE_FILES}"
 MANIFESTS=
-for file in $(ls -1 *.yaml); do
+for file in *.yaml; do
 	MANIFESTS="${MANIFESTS} ${file}:application/yaml "
 done
 DATA_FILES=
-for file in $(find ./data -type f -prune -a -not -name .gitkeep); do
+while IFS= read -r -d '' file; do
 	DATA_FILES="${DATA_FILES} ${file}:application/octet-stream "
-done
+done < <(find ./data -type f -not -name .gitkeep -print0)
 
-oras push $FLASHER_OCI_CONTAINER \
+# shellcheck disable=SC2086  # Variables contain space-separated file arguments that must be expanded
+oras push "$FLASHER_OCI_CONTAINER" \
 	--artifact-type application/vnd.oci.bundle.v1 \
-	$MANIFESTS \
-	$DATA_FILES
+	${MANIFESTS} \
+	${DATA_FILES}

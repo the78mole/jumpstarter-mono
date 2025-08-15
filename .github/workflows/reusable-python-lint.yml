@@ -6,7 +6,7 @@ on:
       python-version:
         required: false
         type: string
-        default: '3.12'
+        default: "3.12"
       working-directory:
         required: true
         type: string
@@ -15,7 +15,7 @@ on:
       python-version:
         required: false
         type: string
-        default: '3.12'
+        default: "3.12"
       working-directory:
         required: true
         type: string
@@ -36,7 +36,6 @@ jobs:
         uses: astral-sh/setup-uv@v3
 
       - name: Install dependencies
-        working-directory: ${{ inputs.working-directory }}
         run: uv sync
 
       - name: Run ruff check

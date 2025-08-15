@@ -3,9 +3,9 @@ from pathlib import Path
 from typing import Dict, Optional
 
 import click
-from jumpstarter_core_driver_composite.client import CompositeClient
-from jumpstarter_core_driver_opendal.client import FlasherClient, operator_for_path
-from jumpstarter_core_driver_power.client import PowerClient
+from jumpstarter_driver_composite.client import CompositeClient
+from jumpstarter_driver_opendal.client import FlasherClient, operator_for_path
+from jumpstarter_driver_power.client import PowerClient
 from opendal import Operator
 
 PROMPT = "CMD >> "

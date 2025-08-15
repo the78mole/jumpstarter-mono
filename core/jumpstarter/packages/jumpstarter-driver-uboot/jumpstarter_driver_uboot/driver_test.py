@@ -4,11 +4,11 @@ import platform
 import pytest
 import requests
 import rpmfile
-from jumpstarter_core_driver_composite.driver import Composite, Proxy
-from jumpstarter_core_driver_qemu.driver import Qemu
+from jumpstarter_driver_composite.driver import Composite, Proxy
+from jumpstarter_driver_qemu.driver import Qemu
 
 from .driver import UbootConsole
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 @pytest.fixture(scope="session")
@@ -32,8 +32,12 @@ def uboot_image(tmpdir_factory):
 
 
 @pytest.mark.xfail(
+    os.getenv("GITHUB_ACTIONS") == "true",
+    reason="QEMU-based U-Boot tests are resource-intensive and may be flaky in CI",
+)
+@pytest.mark.xfail(
     platform.system() == "Darwin" and os.getenv("GITHUB_ACTIONS") == "true",
-    reason="QEMU-based U-Boot tests are flaky on macOS in GitHub CI"
+    reason="QEMU-based U-Boot tests are flaky on macOS in GitHub CI",
 )
 def test_driver_uboot_console(uboot_image):
     print(uboot_image)

@@ -3,10 +3,18 @@ import socket
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-from jumpstarter_core_driver_opendal.driver import Opendal
-from rtslib_fb import LUN, TPG, BlockStorageObject, FileIOStorageObject, NetworkPortal, RTSRoot, Target
+from jumpstarter_driver_opendal.driver import Opendal
+from rtslib_fb import (
+    LUN,
+    TPG,
+    BlockStorageObject,
+    FileIOStorageObject,
+    NetworkPortal,
+    RTSRoot,
+    Target,
+)
 
-from jumpstarter_core.driver import Driver, export
+from jumpstarter.driver import Driver, export
 
 
 class ISCSIError(Exception):
@@ -228,7 +236,7 @@ class ISCSI(Driver):
         else:
             normalized_path = os.path.normpath(file_path)
 
-            if normalized_path.startswith('..') or os.path.isabs(normalized_path):
+            if normalized_path.startswith("..") or os.path.isabs(normalized_path):
                 raise ISCSIError(f"Invalid file path: {file_path}")
 
             full_path = os.path.join(self.root_dir, normalized_path)

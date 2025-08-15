@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from jumpstarter_core_driver_composite.client import CompositeClient
-from jumpstarter_core_driver_opendal.common import PathBuf
+from jumpstarter_driver_composite.client import CompositeClient
+from jumpstarter_driver_opendal.common import PathBuf
 from opendal import Operator
 from yarl import URL
 

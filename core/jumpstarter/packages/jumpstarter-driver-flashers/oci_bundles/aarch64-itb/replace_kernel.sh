@@ -16,14 +16,14 @@ KMOD=(
 [ $# -ne 1 ] && { echo "$0 [target_overlay_dir]"; exit 1; }
 ODIR=$1
 mkdir -p ./kernel-automotive
-pushd ./kernel-automotive
+pushd ./kernel-automotive || exit
 
 url="https://cbs.centos.org/kojifiles/packages/kernel-automotive"
 url="$url/$(echo $KVER | sed -r 's|-|/|; s|\.([^.]*)$|/\1|')"
 pkgs=(
-	kernel-automotive-core-$KVER.rpm
-	kernel-automotive-modules-$KVER.rpm
-	kernel-automotive-modules-core-$KVER.rpm
+	"kernel-automotive-core-$KVER.rpm"
+	"kernel-automotive-modules-$KVER.rpm"
+	"kernel-automotive-modules-core-$KVER.rpm"
 )
 
 
@@ -35,35 +35,34 @@ done
 # extract kernel rpm packages
 for pkg in "${pkgs[@]}"; do
 	echo -n "extracting $pkg ... "
-	rpm2cpio $pkg | cpio -id
+	rpm2cpio "$pkg" | cpio -id
 done
 echo "extracting kernel ..."
 unzboot lib/modules/$KVER/vmlinuz vmlinuz
 ln -sfn lib/modules/$KVER/dtb dtb
 echo "updating module deps ..."
-depmod --errsyms --filesyms lib/modules/$KVER/System.map --basedir $PWD $KVER
+depmod --errsyms --filesyms lib/modules/$KVER/System.map --basedir "$PWD" $KVER
 echo "building required modules list ..."
-for mod in ${KMOD[@]}; do
-	modprobe -d $PWD -S $KVER --show-depends $mod
+for mod in "${KMOD[@]}"; do
+	modprobe -d "$PWD" -S $KVER --show-depends "$mod"
 done | sed "s|$PWD||; s|^builtin|# builtin|; s|\\.ko\\.zst|.ko|" > modlist
 
-popd
+popd || exit
 
 echo "installing modules into overlay dir ..."
-mkdir -p $ODIR/lib/modules $ODIR/etc/init.d || exit 1
-sed -nr 's|^insmod ||p' < ./kernel-automotive/modlist | while read mod; do
-	mkdir -p "$ODIR$(dirname $mod)"
+mkdir -p "$ODIR"/lib/modules "$ODIR"/etc/init.d || exit 1
+sed -nr 's|^insmod ||p' < ./kernel-automotive/modlist | while read -r mod; do
+	mkdir -p "$ODIR$(dirname "$mod")"
 	zstd -d "./kernel-automotive$mod.zst" -o "$ODIR$mod"
 done
 
 echo "adding modules start-up script to overlay ..."
 script=$ODIR/etc/init.d/S01modules
-cat >$script <<EOF
+cat >"$script" <<EOF
 #!/bin/sh
 
 if [ "\$1" = "start" ]; then
 $(cat ./kernel-automotive/modlist)
 fi
 EOF
-chmod +x $script
-
+chmod +x "$script"

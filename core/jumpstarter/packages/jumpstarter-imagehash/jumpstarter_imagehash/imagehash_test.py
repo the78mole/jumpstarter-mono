@@ -4,7 +4,7 @@ import imagehash
 import pytest
 from PIL import Image
 
-from jumpstarter_core_imagehash import ImageHash
+from jumpstarter_imagehash import ImageHash
 
 
 def _image_path(filename):

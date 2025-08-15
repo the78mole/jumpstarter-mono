@@ -2,11 +2,11 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import click
-from jumpstarter_core_driver_opendal.adapter import OpendalAdapter
+from jumpstarter_driver_opendal.adapter import OpendalAdapter
 from opendal import Operator
 
-from jumpstarter_core.client import DriverClient
-from jumpstarter_core.common.exceptions import ArgumentError
+from jumpstarter.client import DriverClient
+from jumpstarter.common.exceptions import ArgumentError
 
 
 @dataclass(kw_only=True)

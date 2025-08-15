@@ -3,12 +3,13 @@ import tempfile
 from pathlib import Path
 
 import pytest
+import pytest_asyncio
 from opendal import AsyncOperator
 
-from jumpstarter_core_driver_tftp.server import Opcode, TftpServer
+from jumpstarter_driver_tftp.server import Opcode, TftpServer
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def tftp_server():
     with tempfile.TemporaryDirectory() as temp_dir:
         test_file_path = Path(temp_dir) / "test.txt"
@@ -26,7 +27,7 @@ async def tftp_server():
             server_task.cancel()
             raise RuntimeError("Failed to bind TFTP server to a port.")
 
-        yield server, temp_dir, server.address[1] # ty: ignore[possibly-unbound-implicit-call]
+        yield server, temp_dir, server.address[1]  # ty: ignore[possibly-unbound-implicit-call]
 
         await server.shutdown()
         await server_task
@@ -245,7 +246,7 @@ async def test_retry_mechanism(tftp_server):
         assert 1 in block_numbers, "First block number should be 1"
 
     except Exception as e:
-        pytest.fail(f"Test failed with error: {str(e)}") # ty: ignore[call-non-callable]
+        pytest.fail(f"Test failed with error: {str(e)}")  # ty: ignore[call-non-callable]
 
     finally:
         if transport is not None:

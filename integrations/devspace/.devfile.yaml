@@ -12,11 +12,11 @@ projects:
       remotes:
         origin: https://github.com/jumpstarter-dev/jumpstarter-devspace.git
 components:
-   - name: runtime
-     container:
-       image: quay.io/jumpstarter-dev/jumpstarter-devspace:latest
-       mountSources: true
-       env: # use insecure TLS connection for now, you can remove this if your jumpstarter deployment has trusted TLS certs
+  - name: runtime
+    container:
+      image: quay.io/jumpstarter-dev/jumpstarter-devspace:latest
+      mountSources: true
+      env: # use insecure TLS connection for now, you can remove this if your jumpstarter deployment has trusted TLS certs
         - name: JUMPSTARTER_GRPC_INSECURE
           value: "1"
 

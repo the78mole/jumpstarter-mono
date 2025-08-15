@@ -1,7 +1,7 @@
 import pytest
 
 from .driver import Shell
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 @pytest.fixture

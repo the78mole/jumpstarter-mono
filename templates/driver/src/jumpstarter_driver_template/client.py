@@ -1,6 +1,7 @@
-from jumpstarter_core.client import DriverClient
-from contextlib import contextmanager
 from collections.abc import AsyncGenerator
+from contextlib import contextmanager
+
+from jumpstarter_core.client import DriverClient
 
 
 # client classes are based on the DriverClient base class

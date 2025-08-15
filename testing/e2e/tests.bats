@@ -51,7 +51,7 @@ wait_for_exporter() {
     --endpoint "$ENDPOINT" --namespace default --name test-client-sa \
     --issuer https://dex.dex.svc.cluster.local:5556 \
     --connector-id kubernetes \
-    --token $(kubectl create -n default token test-client-sa) --unsafe
+    --token "$(kubectl create -n default token test-client-sa)" --unsafe
 
   jmp login --exporter test-exporter-oidc \
     --endpoint "$ENDPOINT" --namespace default --name test-exporter-oidc \
@@ -62,7 +62,7 @@ wait_for_exporter() {
     --endpoint "$ENDPOINT" --namespace default --name test-exporter-sa \
     --issuer https://dex.dex.svc.cluster.local:5556 \
     --connector-id kubernetes \
-    --token $(kubectl create -n default token test-exporter-sa)
+    --token "$(kubectl create -n default token test-exporter-sa)"
 
   go run github.com/mikefarah/yq/v4@latest -i ". * load(\"$GITHUB_ACTION_PATH/exporter.yaml\")" \
     /etc/jumpstarter/exporters/test-exporter-oidc.yaml
@@ -70,7 +70,7 @@ wait_for_exporter() {
     /etc/jumpstarter/exporters/test-exporter-sa.yaml
   go run github.com/mikefarah/yq/v4@latest -i ". * load(\"$GITHUB_ACTION_PATH/exporter.yaml\")" \
     /etc/jumpstarter/exporters/test-exporter-legacy.yaml
- 
+
   jmp config client   list
   jmp config exporter list
 }
@@ -101,7 +101,7 @@ EOF
 @test "can specify client config only using environment variables" {
   wait_for_exporter
 
-  JMP_NAMEPSACE=default \
+  JMP_NAMESPACE=default \
   JMP_NAME=test-exporter-legacy \
   JMP_ENDPOINT=$(kubectl get clients.jumpstarter.dev -n default test-client-legacy -o 'jsonpath={.status.endpoint}') \
   JMP_TOKEN=$(kubectl get secrets -n default test-client-legacy-client -o 'jsonpath={.data.token}' | base64 -d) \

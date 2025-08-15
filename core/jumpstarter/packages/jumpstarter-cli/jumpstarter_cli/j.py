@@ -6,11 +6,11 @@ from typing import cast
 import click
 from anyio import create_task_group, get_cancelled_exc_class, run, to_thread
 from anyio.from_thread import BlockingPortal
-from jumpstarter_core_cli_common.exceptions import async_handle_exceptions, leaf_exceptions
-from jumpstarter_core_cli_common.signal import signal_handler
+from jumpstarter_cli_common.exceptions import async_handle_exceptions, leaf_exceptions
+from jumpstarter_cli_common.signal import signal_handler
 from rich import traceback
 
-from jumpstarter_core.utils.env import env_async
+from jumpstarter.utils.env import env_async
 
 
 async def j_async():

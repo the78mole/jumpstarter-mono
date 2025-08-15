@@ -12,10 +12,10 @@ from pydantic import BaseModel, ConfigDict, Field, RootModel
 from .common import ObjectMeta
 from .grpc import call_credentials
 from .tls import TLSConfigV1Alpha1
-from jumpstarter_core.common.exceptions import ConfigurationError
-from jumpstarter_core.common.grpc import aio_secure_channel, ssl_channel_credentials
-from jumpstarter_core.common.importlib import import_class
-from jumpstarter_core.driver import Driver
+from jumpstarter.common.exceptions import ConfigurationError
+from jumpstarter.common.grpc import aio_secure_channel, ssl_channel_credentials
+from jumpstarter.common.importlib import import_class
+from jumpstarter.driver import Driver
 
 
 class ExporterConfigV1Alpha1DriverInstanceProxy(BaseModel):
@@ -49,14 +49,14 @@ class ExporterConfigV1Alpha1DriverInstance(RootModel):
                 return driver_class(children=children, **self.root.config)
 
             case ExporterConfigV1Alpha1DriverInstanceComposite():
-                from jumpstarter_core_driver_composite.driver import Composite
+                from jumpstarter_driver_composite.driver import Composite
 
                 children = {name: child.instantiate() for name, child in self.root.children.items()}
 
                 return Composite(children=children)
 
             case ExporterConfigV1Alpha1DriverInstanceProxy():
-                from jumpstarter_core_driver_composite.driver import Proxy
+                from jumpstarter_driver_composite.driver import Proxy
 
                 return Proxy(ref=self.root.ref)
 
@@ -118,7 +118,7 @@ class ExporterConfigV1Alpha1(BaseModel):
         return ExporterConfigListV1Alpha1(items=exporters)
 
     @classmethod
-    def dump_yaml(self, config: Self) -> str:
+    def dump_yaml(cls, config: Self) -> str:
         return yaml.safe_dump(config.model_dump(mode="json", exclude={"alias", "path"}), sort_keys=False)
 
     @classmethod
@@ -142,7 +142,7 @@ class ExporterConfigV1Alpha1(BaseModel):
     @asynccontextmanager
     async def serve_unix_async(self):
         # dynamic import to avoid circular imports
-        from jumpstarter_core.exporter import Session
+        from jumpstarter.exporter import Session
 
         with Session(
             root_device=ExporterConfigV1Alpha1DriverInstance(children=self.export).instantiate(),
@@ -158,7 +158,7 @@ class ExporterConfigV1Alpha1(BaseModel):
 
     async def serve(self):
         # dynamic import to avoid circular imports
-        from jumpstarter_core.exporter import Exporter
+        from jumpstarter.exporter import Exporter
 
         async def channel_factory():
             if self.endpoint is None or self.token is None:

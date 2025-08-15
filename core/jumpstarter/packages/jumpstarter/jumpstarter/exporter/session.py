@@ -1,6 +1,11 @@
 import logging
 from collections import deque
-from contextlib import AbstractContextManager, asynccontextmanager, contextmanager, suppress
+from contextlib import (
+    AbstractContextManager,
+    asynccontextmanager,
+    contextmanager,
+    suppress,
+)
 from dataclasses import dataclass, field
 from logging.handlers import QueueHandler
 from uuid import UUID
@@ -8,19 +13,19 @@ from uuid import UUID
 import grpc
 from anyio import Event, TypedAttributeLookupError, sleep
 from anyio.from_thread import start_blocking_portal
-from jumpstarter_core_protocol import (
+from jumpstarter_protocol import (
     jumpstarter_pb2,
     jumpstarter_pb2_grpc,
     router_pb2_grpc,
 )
 
 from .logging import LogHandler
-from jumpstarter_core.common import Metadata, TemporarySocket
-from jumpstarter_core.common.streams import StreamRequestMetadata
-from jumpstarter_core.driver import Driver
-from jumpstarter_core.streams.common import forward_stream
-from jumpstarter_core.streams.metadata import MetadataStreamAttributes
-from jumpstarter_core.streams.router import RouterStream
+from jumpstarter.common import Metadata, TemporarySocket
+from jumpstarter.common.streams import StreamRequestMetadata
+from jumpstarter.driver import Driver
+from jumpstarter.streams.common import forward_stream
+from jumpstarter.streams.metadata import MetadataStreamAttributes
+from jumpstarter.streams.router import RouterStream
 
 logger = logging.getLogger(__name__)
 

@@ -4,7 +4,7 @@ use std::io::Write;
 use std::path::PathBuf;
 
 fn main() {
-    let version = match env::var("VERSION"){
+    let version = match env::var("VERSION") {
         Ok(v) => v,
         Err(_) => "0.0".to_string(),
     };

@@ -11,7 +11,7 @@ from can.bus import _SelfRemovingCyclicTask
 from pydantic import ConfigDict, validate_call
 
 from .common import CanMessage, IsoTpAddress, IsoTpAsymmetricAddress, IsoTpMessage
-from jumpstarter_core.client import DriverClient
+from jumpstarter.client import DriverClient
 
 
 @dataclass(kw_only=True)

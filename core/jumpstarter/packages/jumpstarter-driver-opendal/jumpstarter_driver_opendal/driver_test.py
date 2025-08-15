@@ -12,7 +12,7 @@ from opendal import Operator
 
 from .common import PresignedRequest
 from .driver import MockFlasher, MockStorageMux, MockStorageMuxFlasher, Opendal
-from jumpstarter_core.common.utils import serve
+from jumpstarter.common.utils import serve
 
 
 @pytest.fixture(scope="function")
@@ -224,14 +224,17 @@ def test_drivers_mock_storage_mux_http():
             self.wfile.write(b"testcontent" * 1000)
 
     with serve(MockStorageMux()) as client:
-        # start the HTTP server
-        server = HTTPServer(("127.0.0.1", 8080), StaticHandler)
+        # start the HTTP server with auto port assignment
+        server = HTTPServer(("127.0.0.1", 0), StaticHandler)
         server_thread = Thread(target=server.serve_forever)
         server_thread.daemon = True
         server_thread.start()
 
+        # Get the actual port assigned
+        server_port = server.server_address[1]
+
         # write a remote file from the http server to the exporter
-        fs = Operator("http", endpoint="http://127.0.0.1:8080")
+        fs = Operator("http", endpoint=f"http://127.0.0.1:{server_port}")
         client.write_file(fs, "test")
 
         server.shutdown()

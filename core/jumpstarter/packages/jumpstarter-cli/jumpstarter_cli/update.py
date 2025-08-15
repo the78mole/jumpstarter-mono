@@ -1,10 +1,10 @@
 from datetime import timedelta
 
 import click
-from jumpstarter_core_cli_common.config import opt_config
-from jumpstarter_core_cli_common.exceptions import handle_exceptions_with_reauthentication
-from jumpstarter_core_cli_common.opt import OutputType, opt_output_all
-from jumpstarter_core_cli_common.print import model_print
+from jumpstarter_cli_common.config import opt_config
+from jumpstarter_cli_common.exceptions import handle_exceptions_with_reauthentication
+from jumpstarter_cli_common.opt import OutputType, opt_output_all
+from jumpstarter_cli_common.print import model_print
 
 from .common import opt_duration_partial
 from .login import relogin_client

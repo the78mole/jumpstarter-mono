@@ -3,6 +3,7 @@
 This Tekton task acquires a lease from the [Jumpstarter](https://github.com/jumpstarter-dev/jumpstarter) system using label-based selection and returns the lease ID.
 
 ## Parameters
+
 - **client-name**: The client intending to acquire the lease. (_default:_: default)
 - **exporter-labels**: A list of label selectors in the format key=value used to identify exporters. (Required)
 - **timeout**: Max wait time (in seconds) before lease request times out. (_default:_: 3600)
@@ -10,6 +11,7 @@ This Tekton task acquires a lease from the [Jumpstarter](https://github.com/jump
 - **client-config**: Jumpstarter client config contents, can be used instead of the workspace.
 
 ## Results
+
 - **jmp-lease-id**: The acquired Jumpstarter lease ID.
 
 ## Secrets
@@ -24,7 +26,7 @@ metadata:
   name: default
 endpoint: grpc.jumpstarter.apps.cluster.com:443
 tls:
-  ca: ''
+  ca: ""
   insecure: true
 token: token
 grpcOptions: {}
@@ -32,6 +34,7 @@ drivers:
   allow: []
   unsafe: true
 ```
+
 The ClientConfig can be created using the jmp CLI. For additional information, please see [Create a Client](https://docs.jumpstarter.dev/getting-started/setup-exporter-client.html#create-a-client).
 
 ```yaml
@@ -45,12 +48,15 @@ type: Opaque
 ```
 
 ## Workspaces
+
 - **jumpstarter-client-secret**: Mounts the Jumpstarter opaque secret containing the client config data. The secret should include a key named default.yaml with the client config content as its value (optional).
 
 ## Platforms
+
 The Task can be run on `linux/amd64` and `linux/arm64` platforms.
 
 ## Usage
+
 ```yaml
 apiVersion: tekton.dev/v1
 kind: TaskRun

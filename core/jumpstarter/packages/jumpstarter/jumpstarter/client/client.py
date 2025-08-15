@@ -8,8 +8,8 @@ from anyio.from_thread import BlockingPortal
 from google.protobuf import empty_pb2
 
 from .grpc import MultipathExporterStub
-from jumpstarter_core.client import DriverClient
-from jumpstarter_core.common.importlib import import_class
+from jumpstarter.client import DriverClient
+from jumpstarter.common.importlib import import_class
 
 
 @asynccontextmanager

@@ -101,16 +101,23 @@ func splitYAMLDocuments(content string) []string {
 	lines := strings.Split(content, "\n")
 	var documents []string
 	var currentDoc strings.Builder
+	foundSeparator := false
 
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line)
 		// Check if this line is a document separator (starts with ---)
 		if strings.HasPrefix(trimmed, "---") {
 			// Save current document if it has content
+			docContent := currentDoc.String()
 			if currentDoc.Len() > 0 {
-				documents = append(documents, currentDoc.String())
+				// Only add non-empty documents, or empty documents if they have meaningful content
+				// (not just whitespace after pre-commit processing)
+				if strings.TrimSpace(docContent) != "" || (!foundSeparator && currentDoc.Len() > 0) {
+					documents = append(documents, docContent)
+				}
 				currentDoc.Reset()
 			}
+			foundSeparator = true
 			continue // Skip the separator line itself
 		}
 

@@ -7,7 +7,6 @@
 from __future__ import annotations
 
 import json
-
 from enum import Enum
 from typing import List, Optional, Union
 

@@ -166,7 +166,7 @@ func TestSplitYAMLDocuments_SeparatorWithSpaces(t *testing.T) {
 kind: ConfigMap
 metadata:
   name: config1
----   
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -319,14 +319,13 @@ metadata:
 	assert.Equal(t, expected2, documents[1])
 }
 
-func TestSplitYAMLDocuments_WhitespaceOnlyDocument(t *testing.T) {
+func TestSplitYAMLDocuments_EmptyDocumentSkipped(t *testing.T) {
 	content := `apiVersion: v1
 kind: ConfigMap
 metadata:
   name: config1
 ---
-   
-   
+
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -335,25 +334,21 @@ metadata:
 
 	documents := splitYAMLDocuments(content)
 
-	// The function includes the whitespace-only section as a separate document
-	require.Len(t, documents, 3)
+	// The function skips empty documents (e.g., after pre-commit removes trailing whitespace)
+	require.Len(t, documents, 2)
 
 	expected1 := `apiVersion: v1
 kind: ConfigMap
 metadata:
   name: config1`
 
-	expected2 := `   
-   `
-
-	expected3 := `apiVersion: v1
+	expected2 := `apiVersion: v1
 kind: ConfigMap
 metadata:
   name: config2`
 
 	assert.Equal(t, expected1, documents[0])
 	assert.Equal(t, expected2, documents[1])
-	assert.Equal(t, expected3, documents[2])
 }
 
 func TestSplitYAMLDocuments_ComplexMultiDocument(t *testing.T) {

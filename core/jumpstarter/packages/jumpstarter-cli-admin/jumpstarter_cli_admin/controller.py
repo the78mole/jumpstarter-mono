@@ -1,7 +1,7 @@
 import aiohttp
 import click
 import semver
-from jumpstarter_core_cli_common.version import get_client_version
+from jumpstarter_cli_common.version import get_client_version
 from packaging.version import Version
 
 
