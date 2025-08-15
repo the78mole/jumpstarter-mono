@@ -156,6 +156,10 @@ jobs:
     uses: ./.github/workflows/reusable-web-build.yml
     with:
       working-directory: integrations/vscode
+      package-manager: pnpm
+      build-command: pnpm run compile
+      test-command: echo "Tests skipped - VSCode extension tests require GUI environment"
+      lint-command: pnpm run lint
 
   # Documentation build
   docs-build:
