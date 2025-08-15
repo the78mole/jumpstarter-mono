@@ -53,7 +53,7 @@ dev = [
     { name = "typos", specifier = ">=1.23.6" },
 ]
 docs = [
-    { name = "esbonio", specifier = ">=0.16.4" },
+    { name = "esbonio", specifier = ">=0.16.5" },
     { name = "furo", specifier = ">=2024.8.6" },
     { name = "myst-parser", specifier = ">=4.0.0" },
     { name = "requests", specifier = ">=2.32.3" },
