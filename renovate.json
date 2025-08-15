@@ -11,42 +11,60 @@
   "prConcurrentLimit": 10,
   "branchConcurrentLimit": 5,
   "prHourlyLimit": 2,
-  "stabilityDays": 3,
+  "minimumReleaseAge": "3 days",
   "rangeStrategy": "bump",
   "packageRules": [
     {
       "description": "Group Python dependencies",
-      "matchManagers": ["pip_requirements", "pip_setup", "pipenv", "poetry"],
+      "matchManagers": [
+        "pip_requirements",
+        "pip_setup",
+        "pipenv",
+        "poetry"
+      ],
       "groupName": "python dependencies"
     },
     {
       "description": "Group Go dependencies",
-      "matchManagers": ["gomod"],
+      "matchManagers": [
+        "gomod"
+      ],
       "groupName": "go dependencies"
     },
     {
       "description": "Group Rust dependencies",
-      "matchManagers": ["cargo"],
+      "matchManagers": [
+        "cargo"
+      ],
       "groupName": "rust dependencies"
     },
     {
       "description": "Group Node.js dependencies",
-      "matchManagers": ["npm", "pnpm"],
+      "matchManagers": [
+        "npm",
+        "pnpm"
+      ],
       "groupName": "nodejs dependencies"
     },
     {
       "description": "Group GitHub Actions",
-      "matchManagers": ["github-actions"],
+      "matchManagers": [
+        "github-actions"
+      ],
       "groupName": "github actions"
     },
     {
       "description": "Group pre-commit hooks",
-      "matchManagers": ["pre-commit"],
+      "matchManagers": [
+        "pre-commit"
+      ],
       "groupName": "pre-commit hooks"
     },
     {
       "description": "Automerge patch updates for stable packages",
-      "matchUpdateTypes": ["patch"],
+      "matchUpdateTypes": [
+        "patch"
+      ],
       "matchCurrentVersion": "!/^0\\./",
       "automerge": true
     }
