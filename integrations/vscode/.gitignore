@@ -3,3 +3,7 @@ dist
 node_modules
 .vscode-test/
 *.vsix
+
+# pnpm
+.pnpm-debug.log*
+.pnpm-store

@@ -62,6 +62,9 @@
 - [x] Configure formatters (ruff, gofmt, rustfmt)
 - [x] Setup linters (ruff, golangci-lint, clippy)
 - [ ] Test unified build orchestration
+- [ ] Create docker images for performance tests with
+  - [ ] python (uv), go and rust pre-installed
+  - [ ] packages used in this project for python, rust and go pre-installed
 
 ### Monorepo Consolidation
 

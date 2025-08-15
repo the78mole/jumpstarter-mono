@@ -18,7 +18,7 @@ jobs:
       matrix:
         component:
           - name: python
-            path: .
+            path: core/jumpstarter
             setup-cmd: "uv sync"
             build-cmd: "uv build"
             cache-paths: |
@@ -38,8 +38,16 @@ jobs:
             cache-paths: |
               ~/go/pkg/mod
               ~/.cache/go-build
-          - name: rust
-            path: hardware/dutlink-firmware
+          - name: rust-application
+            path: hardware/dutlink-firmware/application
+            setup-cmd: "cargo fetch"
+            build-cmd: "cargo build --release"
+            cache-paths: |
+              ~/.cargo/registry
+              ~/.cargo/git
+              target
+          - name: rust-bootloader
+            path: hardware/dutlink-firmware/bootloader
             setup-cmd: "cargo fetch"
             build-cmd: "cargo build --release"
             cache-paths: |
@@ -57,11 +65,15 @@ jobs:
               pip install uv
               ;;
             go-*)
-              # Go is pre-installed
+              # Go is pre-installed on GitHub runners
+              go version
               ;;
-            rust)
-              rustup update stable
+            rust-*)
+              # Set up Rust with embedded target
               rustup default stable
+              rustup target add thumbv7em-none-eabihf
+              rustc --version
+              cargo --version
               ;;
           esac
 
@@ -70,7 +82,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ matrix.component.cache-paths }}
-          key: perf-${{ matrix.component.name }}-${{ runner.os }}-${{ hashFiles(format('{0}/**/package*.json', matrix.component.path), format('{0}/**/go.sum', matrix.component.path), format('{0}/**/Cargo.lock', matrix.component.path), format('{0}/**/uv.lock', matrix.component.path)) }}
+          key: perf-${{ matrix.component.name }}-${{ runner.os }}-${{ hashFiles(format('{0}/**/pnpm-lock.yaml', matrix.component.path), format('{0}/**/go.sum', matrix.component.path), format('{0}/**/Cargo.lock', matrix.component.path), format('{0}/**/uv.lock', matrix.component.path)) }}
           restore-keys: |
             perf-${{ matrix.component.name }}-${{ runner.os }}-
 
@@ -101,7 +113,7 @@ jobs:
               go clean -cache -modcache -testcache || true
               make clean || true
               ;;
-            rust)
+            rust-*)
               cargo clean --release
               ;;
           esac
@@ -147,14 +159,20 @@ jobs:
           # Python/uv
           pip install uv
 
-          # Go is pre-installed
+          # Go is pre-installed on GitHub runners
+          go version
 
-          # Rust
-          rustup update stable
+          # Rust - set up with embedded target
           rustup default stable
           rustup target add thumbv7em-none-eabihf
+          rustc --version
+          cargo --version
 
-          # Node.js is pre-installed
+          # Node.js and pnpm
+          node --version
+          npm --version
+          npm install -g pnpm
+          pnpm --version
 
       - name: Setup caches
         uses: actions/cache@v4
@@ -165,8 +183,8 @@ jobs:
             ~/go/pkg/mod
             ~/.cargo/registry
             ~/.cargo/git
-            ~/.npm
-          key: parallel-build-${{ runner.os }}-${{ hashFiles('**/uv.lock', '**/go.sum', '**/Cargo.lock', '**/package-lock.json') }}
+            ~/.pnpm-store
+          key: parallel-build-${{ runner.os }}-${{ hashFiles('**/uv.lock', '**/go.sum', '**/Cargo.lock', '**/pnpm-lock.yaml') }}
           restore-keys: |
             parallel-build-${{ runner.os }}-
 
@@ -174,33 +192,37 @@ jobs:
         run: |
           echo "SEQUENTIAL_START=$(date +%s)" >> $GITHUB_ENV
 
-          # Build each component sequentially
-          uv sync && uv build
-          cd core/controller && make build
-          cd ../../lab-config && go build ./...
-          cd ../hardware/dutlink-firmware && cargo build --release
-          cd ../../integrations/vscode && npm ci && npm run compile
+          # Build each component sequentially - using absolute paths from workspace root
+          (cd core/jumpstarter && uv sync && uv build)
+          (cd core/controller && make build)
+          (cd lab-config && go build ./...)
+          (cd hardware/dutlink-firmware/application && cargo build --release)
+          (cd hardware/dutlink-firmware/bootloader && cargo build --release)
+          (cd integrations/vscode && pnpm install && pnpm run compile)
 
           echo "SEQUENTIAL_END=$(date +%s)" >> $GITHUB_ENV
 
       - name: Clean for parallel test
         run: |
-          rm -rf dist/ build/ *.egg-info/
-          cd core/controller && make clean || true
-          cd ../../lab-config && go clean -cache || true
-          cd ../hardware/dutlink-firmware && cargo clean
-          cd ../../integrations/vscode && rm -rf out/
+          # Clean builds - using absolute paths from workspace root
+          (cd core/jumpstarter && rm -rf dist/ build/ *.egg-info/)
+          (cd core/controller && make clean || true)
+          (cd lab-config && go clean -cache || true)
+          (cd hardware/dutlink-firmware/application && cargo clean || true)
+          (cd hardware/dutlink-firmware/bootloader && cargo clean || true)
+          (cd integrations/vscode && rm -rf out/ node_modules/ || true)
 
       - name: Parallel build test
         run: |
           echo "PARALLEL_START=$(date +%s)" >> $GITHUB_ENV
 
           # Build components in parallel using background jobs
-          (uv sync && uv build) &
+          (cd core/jumpstarter && uv sync && uv build) &
           (cd core/controller && make build) &
           (cd lab-config && go build ./...) &
-          (cd hardware/dutlink-firmware && cargo build --release) &
-          (cd integrations/vscode && npm ci && npm run compile) &
+          (cd hardware/dutlink-firmware/application && cargo build --release) &
+          (cd hardware/dutlink-firmware/bootloader && cargo build --release) &
+          (cd integrations/vscode && pnpm install && pnpm run compile) &
 
           # Wait for all jobs to complete
           wait
@@ -230,12 +252,20 @@ jobs:
       - name: Analyze Python dependencies
         run: |
           pip install uv
+          cd core/jumpstarter
           uv sync
 
           echo "## Dependency Analysis" >> $GITHUB_STEP_SUMMARY
           echo "### Python Dependencies" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          du -sh .venv/ >> $GITHUB_STEP_SUMMARY
+          # Check for .venv in current directory or parent directory
+          if [ -d ".venv" ]; then
+            du -sh .venv/ >> $GITHUB_STEP_SUMMARY
+          elif [ -d "../../.venv" ]; then
+            du -sh ../../.venv/ >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Virtual environment not found" >> $GITHUB_STEP_SUMMARY
+          fi
           uv pip list | wc -l | xargs echo "Packages installed:" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
@@ -251,20 +281,34 @@ jobs:
 
       - name: Analyze Rust dependencies
         run: |
-          cd hardware/dutlink-firmware
+          # Set up Rust with embedded target
+          rustup default stable
+          rustup target add thumbv7em-none-eabihf
+
+          cd hardware/dutlink-firmware/application
           cargo fetch
-          echo "### Rust Dependencies" >> $GITHUB_STEP_SUMMARY
+          echo "### Rust Dependencies (Application)" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           du -sh ~/.cargo/registry/ >> $GITHUB_STEP_SUMMARY
           cargo tree --depth 1 | wc -l | xargs echo "Direct dependencies:" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
+          cd ../bootloader
+          cargo fetch
+          echo "### Rust Dependencies (Bootloader)" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          cargo tree --depth 1 | wc -l | xargs echo "Direct dependencies:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
       - name: Analyze Node.js dependencies
         run: |
+          # Install pnpm
+          npm install -g pnpm
+
           cd integrations/vscode
-          npm ci
+          pnpm install
           echo "### Node.js Dependencies" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           du -sh node_modules/ >> $GITHUB_STEP_SUMMARY
-          npm list --depth=0 | grep -c "├\|└" | xargs echo "Packages:" >> $GITHUB_STEP_SUMMARY
+          pnpm list --depth=0 | grep -c "├\|└" | xargs echo "Packages:" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
