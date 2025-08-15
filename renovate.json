@@ -6,6 +6,8 @@
     ":semanticCommits",
     "group:monorepos"
   ],
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "📦 Renovate Dependency Dashboard",
   "prConcurrentLimit": 10,
   "branchConcurrentLimit": 5,
   "prHourlyLimit": 2,
