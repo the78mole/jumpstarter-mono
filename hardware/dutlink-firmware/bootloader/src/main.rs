@@ -43,15 +43,12 @@ use panic_halt as _;
 
 use cortex_m_rt::entry;
 
-use stm32f4xx_hal::{
-    pac,
-    prelude::*,
-};
+use stm32f4xx_hal::{pac, prelude::*};
 
+use stm32f4xx_hal::flash::{flash_sectors, FlashExt, LockedFlash};
 use stm32f4xx_hal::gpio::{gpioc, Output, PushPull};
+use stm32f4xx_hal::otg_fs::{UsbBus, UsbBusType, USB};
 use stm32f4xx_hal::pac::{interrupt, GPIOA, RCC};
-use stm32f4xx_hal::otg_fs::{UsbBus, USB, UsbBusType};
-use stm32f4xx_hal::flash::{FlashExt, LockedFlash, flash_sectors};
 use usb_device::{bus::UsbBusAllocator, prelude::*};
 use usbd_dfu::*;
 
@@ -73,12 +70,12 @@ static mut USB_BUS: MaybeUninit<UsbBusAllocator<UsbBusType>> = MaybeUninit::unin
 static mut USB_DEVICE: MaybeUninit<UsbDevice<UsbBusType>> = MaybeUninit::uninit();
 static mut USB_DFU: MaybeUninit<DFUClass<UsbBusType, STM32Mem>> = MaybeUninit::uninit();
 
-pub struct STM32Mem{
+pub struct STM32Mem {
     flash: LockedFlash,
     buffer: [u8; TRANSFER_SIZE],
 }
 
-impl STM32Mem{
+impl STM32Mem {
     fn new(flash: LockedFlash) -> Self {
         Self {
             flash,
@@ -100,11 +97,10 @@ impl<'a> DFUMemIO for STM32Mem {
     // The bootloader only takes 16kb so far, but we leave a few 16kB sectors at the start for config
     const MEM_INFO_STRING: &'static str = "@Flash/0x08010000/01*064Kg,03*128Kg";
     const HAS_DOWNLOAD: bool = true; // download from host into the device is enabled
-    const HAS_UPLOAD: bool = false;  // upload from the device to the host is disabled, also read code is commented out
+    const HAS_UPLOAD: bool = false; // upload from the device to the host is disabled, also read code is commented out
     const MANIFESTATION_TOLERANT: bool = false;
 
     fn read(&mut self, address: u32, length: usize) -> core::result::Result<&[u8], DFUMemError> {
-
         let flash_top: u32 = (self.flash.address() + self.flash.len()) as u32;
 
         if address < FW_ADDRESS {
@@ -119,11 +115,9 @@ impl<'a> DFUMemIO for STM32Mem {
         let mem = unsafe { &*core::ptr::slice_from_raw_parts(address as *const u8, len) };
 
         Ok(mem)
-
     }
 
     fn erase(&mut self, address: u32) -> core::result::Result<(), DFUMemError> {
-
         if address < self.flash.address() as u32 + BOOTLOADER_SIZE_BYTES {
             return Err(DFUMemError::Address);
         }
@@ -145,15 +139,14 @@ impl<'a> DFUMemIO for STM32Mem {
                 unlocked_flash.erase(sector.number).unwrap();
                 return Ok(());
             }
-            None => return Ok(())
+            None => return Ok(()),
         }
     }
 
     fn erase_all(&mut self) -> Result<(), DFUMemError> {
-
         for sector in flash_sectors(self.flash.len(), self.flash.dual_bank()) {
-             // skip erasing bootloader sectors
-             if sector.offset < BOOTLOADER_SIZE_BYTES as usize {
+            // skip erasing bootloader sectors
+            if sector.offset < BOOTLOADER_SIZE_BYTES as usize {
                 continue;
             }
             let mut unlocked_flash = self.flash.unlocked();
@@ -161,7 +154,7 @@ impl<'a> DFUMemIO for STM32Mem {
             unlocked_flash.erase(sector.number).unwrap();
         }
 
-        return Ok(())
+        return Ok(());
     }
 
     fn store_write_buffer(&mut self, src: &[u8]) -> core::result::Result<(), ()> {
@@ -170,7 +163,6 @@ impl<'a> DFUMemIO for STM32Mem {
     }
 
     fn program(&mut self, address: u32, length: usize) -> core::result::Result<(), DFUMemError> {
-
         if address < self.flash.address() as u32 {
             return Err(DFUMemError::Address);
         }
@@ -189,9 +181,11 @@ impl<'a> DFUMemIO for STM32Mem {
 
         let mut unlocked_flash = self.flash.unlocked();
         // TO-DO: perform better error translation here
-        unlocked_flash.program(offset as usize, self.buffer[..length].iter()).unwrap();
+        unlocked_flash
+            .program(offset as usize, self.buffer[..length].iter())
+            .unwrap();
 
-        return Ok(())
+        return Ok(());
     }
 
     fn manifestation(&mut self) -> Result<(), DFUManifestationError> {
@@ -259,18 +253,24 @@ fn dfu_init() -> LedType {
     let mut usb_dp = gpioa.pa12.into_push_pull_output();
 
     usb_dp.set_low();
-    cortex_m::asm::delay(1024*50);
+    cortex_m::asm::delay(1024 * 50);
 
     /* USB Peripheral */
 
     let usb_periph = USB::new(
-        (device.OTG_FS_GLOBAL, device.OTG_FS_DEVICE, device.OTG_FS_PWRCLK),
+        (
+            device.OTG_FS_GLOBAL,
+            device.OTG_FS_DEVICE,
+            device.OTG_FS_PWRCLK,
+        ),
         (gpioa.pa11.into_alternate(), usb_dp.into_alternate()),
         &clocks,
     );
 
     let bus = unsafe {
-        USB_BUS.as_mut_ptr().write(UsbBus::new(usb_periph, &mut EP_MEMORY ));
+        USB_BUS
+            .as_mut_ptr()
+            .write(UsbBus::new(usb_periph, &mut EP_MEMORY));
         &*USB_BUS.as_ptr()
     };
 
@@ -284,17 +284,18 @@ fn dfu_init() -> LedType {
     /* USB device */
 
     let usb_dev = UsbDeviceBuilder::new(&bus, UsbVidPid(0x2b23, 0x1012))
-        .strings(&[
-            StringDescriptors::default()
+        .strings(&[StringDescriptors::default()
             .manufacturer("Red Hat Inc.")
             .product("Dutlink DFU Mode")
-            .serial_number(get_serial_str())
-        ]).unwrap()
-        .device_release(0x0001)// Intentionally keep a very low version 0.1, so that the main firmware
-                                // will always have a higher version number.
+            .serial_number(get_serial_str())])
+        .unwrap()
+        .device_release(0x0001) // Intentionally keep a very low version 0.1, so that the main firmware
+        // will always have a higher version number.
         .self_powered(false)
-        .max_power(250).unwrap()
-        .max_packet_size_0(64).unwrap()
+        .max_power(250)
+        .unwrap()
+        .max_packet_size_0(64)
+        .unwrap()
         .build();
 
     unsafe {
@@ -350,7 +351,10 @@ fn jump_to_app() -> ! {
     unsafe {
         cortex_m::asm::dsb();
         cortex_m::asm::isb();
-        cortex_m::peripheral::Peripherals::steal().SCB.vtor.write(vt as u32);
+        cortex_m::peripheral::Peripherals::steal()
+            .SCB
+            .vtor
+            .write(vt as u32);
         cortex_m::asm::dsb();
         cortex_m::asm::isb();
         cortex_m::asm::bootload(vt);
@@ -408,7 +412,7 @@ fn main() -> ! {
     unsafe { cortex_m::interrupt::enable() };
 
     loop {
-        cortex_m::asm::delay(24*1024*1024);
+        cortex_m::asm::delay(24 * 1024 * 1024);
         led.toggle();
     }
 }

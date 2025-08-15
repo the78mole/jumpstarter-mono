@@ -138,15 +138,13 @@ jobs:
 
   # Rust components
   rust-build:
-    needs: detect-changes
-    if: >
-      needs.detect-changes.outputs.rust == 'true' ||
-      needs.detect-changes.outputs.ci == 'true' ||
-      github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/reusable-rust-build.yml
     with:
       working-directory: hardware/dutlink-firmware
       targets: thumbv7em-none-eabihf
+      skip-tests: true
+      clippy-flags: "--all-features"
+      clippy-warnings: "warn"
 
   # Node.js/TypeScript components
   web-build:

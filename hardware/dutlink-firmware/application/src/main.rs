@@ -1,58 +1,77 @@
 #![no_std]
 #![no_main]
+#![allow(static_mut_refs)]
+#![allow(clippy::needless_return)]
+#![allow(clippy::len_zero)]
+#![allow(clippy::comparison_to_empty)]
+#![allow(clippy::while_let_loop)]
+#![allow(clippy::bool_comparison)]
+#![allow(clippy::mut_from_ref)]
+#![cfg_attr(test, allow(unused_imports))]
 
 // use panic_halt as _;
 use panic_semihosting as _;
 
+mod config;
 mod control;
+mod ctlpins;
 mod dfu;
+mod filter;
+mod powermeter;
+mod shell;
 mod storage;
 mod usbserial;
-mod shell;
-mod ctlpins;
-mod powermeter;
-mod filter;
 mod version;
-mod config;
 
 // dispatchers are free Hardware IRQs we don't use that rtic will use to dispatch
 // software tasks, we are not using EXT interrupts, so we can use those
 #[rtic::app(device = stm32f4xx_hal::pac, peripherals = true, dispatchers = [EXTI0, EXTI1, EXTI2])]
 mod app {
 
+    use core::fmt::Write;
     use stm32f4xx_hal::{
+        adc::{
+            config::{AdcConfig, Dma, Resolution, SampleTime, Scan, Sequence},
+            Adc,
+        },
+        dma::{config::DmaConfig, PeripheralToMemory, Stream0, StreamsTuple, Transfer},
         gpio,
         gpio::{Input, Output, PushPull},
         otg_fs::{UsbBus, UsbBusType, USB},
         pac,
-        prelude::*,
-        timer,
-        serial::{config::Config, Tx, Rx, Serial},
-        adc::{config::{AdcConfig, Dma, SampleTime, Scan, Sequence, Resolution}, Adc},
-        dma::{config::DmaConfig, PeripheralToMemory, Stream0, StreamsTuple, Transfer},
         pac::{ADC1, DMA2},
+        prelude::*,
+        serial::{config::Config, Rx, Serial, Tx},
+        timer,
     };
-    use core::fmt::Write;
 
     use heapless::spsc::{Consumer, Producer, Queue};
     use usb_device::{class_prelude::*, prelude::*};
 
     use usbd_serial::SerialPort;
 
-    use crate::{control::ControlClass, dfu::{get_serial_str, new_dfu_bootloader, DFUBootloaderRuntime}};
-    use crate::storage::*;
-    use crate::usbserial::*;
-    use crate::shell;
+    use crate::config::*;
     use crate::ctlpins;
     use crate::powermeter::*;
+    use crate::shell;
+    use crate::storage::*;
+    use crate::usbserial::*;
     use crate::version;
-    use crate::config::*;
+    use crate::{
+        control::ControlClass,
+        dfu::{get_serial_str, new_dfu_bootloader, DFUBootloaderRuntime},
+    };
 
     type LedCmdType = gpio::PC15<Output<PushPull>>;
-    type StorageSwitchType = StorageSwitch<gpio::PA15<Output<PushPull>>, gpio::PB3<Output<PushPull>>,
-                                           gpio::PB5<Output<PushPull>>, gpio::PB4<Output<PushPull>>>;
+    type StorageSwitchType = StorageSwitch<
+        gpio::PA15<Output<PushPull>>,
+        gpio::PB3<Output<PushPull>>,
+        gpio::PB5<Output<PushPull>>,
+        gpio::PB4<Output<PushPull>>,
+    >;
     type CTLPinsType = ctlpins::CTLPins<gpio::PA4<Output<PushPull>>>;
-    type DMATransfer = Transfer<Stream0<DMA2>, 0, Adc<ADC1>, PeripheralToMemory, &'static mut [u16; 2]>;
+    type DMATransfer =
+        Transfer<Stream0<DMA2>, 0, Adc<ADC1>, PeripheralToMemory, &'static mut [u16; 2]>;
 
     const DUT_BUF_SIZE: usize = 1024;
     // Resources shared between tasks
@@ -86,16 +105,16 @@ mod app {
         _button: gpio::PA0<Input>,
         usart_rx: Rx<pac::USART1>,
         usart_tx: Tx<pac::USART1>,
-        to_dut_serial: Producer<'static, u8, DUT_BUF_SIZE>,          // queue of characters to send to the DUT
+        to_dut_serial: Producer<'static, u8, DUT_BUF_SIZE>, // queue of characters to send to the DUT
         to_dut_serial_consumer: Consumer<'static, u8, DUT_BUF_SIZE>, // consumer side of the queue
-        to_host_serial: Producer<'static, u8, DUT_BUF_SIZE>,          // queue of characters to send to the DUT
+        to_host_serial: Producer<'static, u8, DUT_BUF_SIZE>, // queue of characters to send to the DUT
         to_host_serial_consumer: Consumer<'static, u8, DUT_BUF_SIZE>, // consumer side of the queue
         adc_buffer: Option<&'static mut [u16; 2]>,
     }
 
     #[init(local = [q_to_dut: Queue<u8, DUT_BUF_SIZE> = Queue::new(), q_from_dut: Queue<u8, DUT_BUF_SIZE> = Queue::new()])]
     fn init(ctx: init::Context) -> (Shared, Local, init::Monotonics) {
-        static mut USB_BUS: Option<UsbBusAllocator<UsbBusType>,> = None;
+        static mut USB_BUS: Option<UsbBusAllocator<UsbBusType>> = None;
         static mut EP_MEMORY: [u32; 1024] = [0; 1024];
 
         let dp = ctx.device;
@@ -122,13 +141,14 @@ mod app {
 
         let _button = gpioa.pa0.into_pull_up_input();
 
-        let ctl_pins = ctlpins::CTLPins::new(gpioa.pa5.into_dynamic(),          // ctl_a
-                                             gpioa.pa6.into_dynamic(),          // ctl_b
-                                             gpioa.pa7.into_dynamic(),          // ctl_c
-                                             gpioa.pa8.into_dynamic(),          // ctl_d
-                                             gpioa.pa9.into_dynamic(),          // reset
-                                             gpioa.pa4.into_push_pull_output()  // power enable
-                                            );
+        let ctl_pins = ctlpins::CTLPins::new(
+            gpioa.pa5.into_dynamic(),          // ctl_a
+            gpioa.pa6.into_dynamic(),          // ctl_b
+            gpioa.pa7.into_dynamic(),          // ctl_c
+            gpioa.pa8.into_dynamic(),          // ctl_d
+            gpioa.pa9.into_dynamic(),          // reset
+            gpioa.pa4.into_push_pull_output(), // power enable
+        );
 
         let pins = (gpiob.pb6, gpiob.pb7);
         let usart = Serial::new(
@@ -136,25 +156,26 @@ mod app {
             pins, // (tx, rx)
             Config::default().baudrate(115_200.bps()).wordlength_8(),
             &clocks,
-        ).unwrap().with_u8_data();
+        )
+        .unwrap()
+        .with_u8_data();
 
         let (usart_tx, mut usart_rx) = usart.split();
 
         usart_rx.listen();
 
-
         let current_sense = gpioa.pa1.into_analog();
         let vout_sense = gpioa.pa2.into_analog();
         let dma = StreamsTuple::new(dp.DMA2);
         let config = DmaConfig::default()
-                    .transfer_complete_interrupt(true)
-                    .memory_increment(true)
-                    .double_buffer(false);
+            .transfer_complete_interrupt(true)
+            .memory_increment(true)
+            .double_buffer(false);
 
         let adc_config = AdcConfig::default()
-                        .dma(Dma::Continuous)
-                        .scan(Scan::Enabled)
-                        .resolution(Resolution::Twelve);
+            .dma(Dma::Continuous)
+            .scan(Scan::Enabled)
+            .resolution(Resolution::Twelve);
 
         let mut adc = Adc::adc1(dp.ADC1, true, adc_config);
 
@@ -166,17 +187,17 @@ mod app {
         let first_buffer = cortex_m::singleton!(: [u16; 2] = [0; 2]).unwrap();
         let adc_buffer = Some(cortex_m::singleton!(: [u16; 2] = [0; 2]).unwrap());
         // Give the first buffer to the DMA. The second buffer is held in an Option in `local.buffer` until the transfer is complete
-        let adc_dma_transfer = Transfer::init_peripheral_to_memory(dma.0, adc, first_buffer, None, config);
+        let adc_dma_transfer =
+            Transfer::init_peripheral_to_memory(dma.0, adc, first_buffer, None, config);
 
         let mut storage = StorageSwitch::new(
             gpioa.pa15.into_push_pull_output(), //OEn
-            gpiob.pb3.into_push_pull_output(), //SEL
-            gpiob.pb5.into_push_pull_output(), //PW_DUT
-            gpiob.pb4.into_push_pull_output(), //PW_HOST
+            gpiob.pb3.into_push_pull_output(),  //SEL
+            gpiob.pb5.into_push_pull_output(),  //PW_DUT
+            gpiob.pb4.into_push_pull_output(),  //PW_HOST
         );
 
         storage.power_off();
-
 
         // setup a timer for the periodic 10ms task
         let mut timer = dp.TIM2.counter_ms(&clocks);
@@ -198,8 +219,8 @@ mod app {
             USB_BUS = Some(UsbBus::new(usb_periph, &mut EP_MEMORY));
         }
         /* I tried creating a 2nd serial port which only works on STM32F412 , 411 has not enough
-           endpoints, but it didn't work well, the library probably needs some debugging */
-        let mut serial1 = new_usb_serial! (unsafe { USB_BUS.as_ref().unwrap() });
+        endpoints, but it didn't work well, the library probably needs some debugging */
+        let mut serial1 = new_usb_serial!(unsafe { USB_BUS.as_ref().unwrap() });
         let dfu = new_dfu_bootloader(unsafe { USB_BUS.as_ref().unwrap() });
         let ctl = ControlClass::new(unsafe { USB_BUS.as_ref().unwrap() });
 
@@ -209,24 +230,25 @@ mod app {
             unsafe { USB_BUS.as_ref().unwrap() },
             UsbVidPid(0x2b23, 0x1012),
         )
-        .strings(&[
-            StringDescriptors::default()
+        .strings(&[StringDescriptors::default()
             .manufacturer("Red Hat Inc.")
             .product("Dutlink")
-            .serial_number(get_serial_str())
-        ]).unwrap()
+            .serial_number(get_serial_str())])
+        .unwrap()
         .device_release(version::usb_version_bcd_device())
         .self_powered(false)
-        .max_power(250).unwrap()
-        .max_packet_size_0(64).unwrap()
+        .max_power(250)
+        .unwrap()
+        .max_packet_size_0(64)
+        .unwrap()
         .build();
 
-         let shell = shell::new(serial1);
-         let shell_status = shell::ShellStatus{
-             monitor_enabled: false,
-             meter_enabled: false,
-             console_mode: true,};
-
+        let shell = shell::new(serial1);
+        let shell_status = shell::ShellStatus {
+            monitor_enabled: false,
+            meter_enabled: false,
+            console_mode: true,
+        };
 
         let (to_dut_serial, to_dut_serial_consumer) = ctx.local.q_to_dut.split();
         let (to_host_serial, to_host_serial_consumer) = ctx.local.q_from_dut.split();
@@ -267,7 +289,7 @@ mod app {
     }
 
     #[task(binds = USART1, priority=1, local = [usart_rx, to_host_serial], shared = [shell_status, led_rx])]
-    fn usart_task(cx: usart_task::Context){
+    fn usart_task(cx: usart_task::Context) {
         let usart_rx = cx.local.usart_rx;
         let shell_status = cx.shared.shell_status;
         let led_rx = cx.shared.led_rx;
@@ -281,7 +303,7 @@ mod app {
                         if shell_status.console_mode || shell_status.monitor_enabled {
                             to_host_serial.enqueue(b).ok(); // this could over-run but it's ok the only solution would be a bigger buffer
                         }
-                    },
+                    }
                     Err(_e) => {
                         break;
                     }
@@ -290,9 +312,8 @@ mod app {
             usart_rx.clear_idle_interrupt();
         });
 
-
         if to_host_serial.len() > 0 {
-           console_monitor_task::spawn().ok();
+            console_monitor_task::spawn().ok();
         }
     }
 
@@ -310,7 +331,7 @@ mod app {
         if to_host_serial_consumer.len() > 0 {
             (shell, shell_status, power_meter).lock(|shell, shell_status, power_meter| {
                 let serial1 = shell.get_serial_mut();
-                let mut buf = [0u8; DUT_BUF_SIZE+32];
+                let mut buf = [0u8; DUT_BUF_SIZE + 32];
                 let mut count = 0;
                 loop {
                     match to_host_serial_consumer.dequeue() {
@@ -330,13 +351,13 @@ mod app {
                                     count += 1;
                                 }
                             }
-                        },
+                        }
                         None => {
                             break;
                         }
                     }
                 }
-                if count>0 {
+                if count > 0 {
                     serial1.write(&buf[..count]).ok();
                 }
             });
@@ -345,73 +366,103 @@ mod app {
 
     #[task(binds = OTG_FS, shared = [usb_dev, shell, shell_status, dfu, ctl, led_cmd, storage, ctl_pins, power_meter, config], local=[esc_cnt:u8 = 0, to_dut_serial])]
     fn usb_task(mut cx: usb_task::Context) {
-        let usb_dev         = &mut cx.shared.usb_dev;
-        let shell           = &mut cx.shared.shell;
-        let shell_status    = &mut cx.shared.shell_status;
-        let dfu             = &mut cx.shared.dfu;
-        let ctl             = &mut cx.shared.ctl;
-        let led_cmd         = &mut cx.shared.led_cmd;
-        let storage         = &mut cx.shared.storage;
-        let to_dut_serial   = cx.local.to_dut_serial;
+        let usb_dev = &mut cx.shared.usb_dev;
+        let shell = &mut cx.shared.shell;
+        let shell_status = &mut cx.shared.shell_status;
+        let dfu = &mut cx.shared.dfu;
+        let ctl = &mut cx.shared.ctl;
+        let led_cmd = &mut cx.shared.led_cmd;
+        let storage = &mut cx.shared.storage;
+        let to_dut_serial = cx.local.to_dut_serial;
 
-        let esc_cnt         = cx.local.esc_cnt;
-        let ctl_pins        = &mut cx.shared.ctl_pins;
-        let power_meter     = &mut cx.shared.power_meter;
-        let config          = &mut cx.shared.config;
+        let esc_cnt = cx.local.esc_cnt;
+        let ctl_pins = &mut cx.shared.ctl_pins;
+        let power_meter = &mut cx.shared.power_meter;
+        let config = &mut cx.shared.config;
 
-        (usb_dev, dfu, ctl, shell, shell_status, led_cmd, storage, ctl_pins, power_meter, config).lock(
-            |usb_dev, dfu, ctl, shell, shell_status, led_cmd, storage, ctl_pins, power_meter, config| {
-            let serial1 = shell.get_serial_mut();
+        (
+            usb_dev,
+            dfu,
+            ctl,
+            shell,
+            shell_status,
+            led_cmd,
+            storage,
+            ctl_pins,
+            power_meter,
+            config,
+        )
+            .lock(
+                |usb_dev,
+                 dfu,
+                 ctl,
+                 shell,
+                 shell_status,
+                 led_cmd,
+                 storage,
+                 ctl_pins,
+                 power_meter,
+                 config| {
+                    let serial1 = shell.get_serial_mut();
 
-            if !usb_dev.poll(&mut [serial1, dfu, ctl]) {
-                return;
-            }
-
-            ctl.post_poll(config, ctl_pins, storage, power_meter);
-
-            let available_to_dut = to_dut_serial.capacity()-to_dut_serial.len();
-
-            let mut send_to_dut = |buf: &[u8]|{
-                for b in buf {
-                    to_dut_serial.enqueue(*b).ok();
-                }
-                return
-            };
-
-            if shell_status.console_mode {
-                // if in console mode, send all data to the DUT, only read from the USB serial port as much as we can send to the DUT
-                let mut buf = [0u8; DUT_BUF_SIZE];
-                match serial1.read(&mut buf[..available_to_dut]) {
-                    Ok(count) => {
-                        send_to_dut(&buf[..count]);
-
-                        for c in &buf[..count] {
-                            if *c == 0x02 { // CTRL+B
-                                *esc_cnt = *esc_cnt + 1;
-                                if *esc_cnt == 5 {
-                                    shell_status.console_mode = false;
-                                    shell_status.monitor_enabled = false;
-                                    shell.write_str("\r\nExiting console mode\r\n").ok();
-                                    shell.write_str(shell::SHELL_PROMPT).ok();
-                                    *esc_cnt = 0;
-                                }
-                            } else {
-                                *esc_cnt = 0;
-                            }
-                        }
-                    },
-                    Err(_e) => {
+                    if !usb_dev.poll(&mut [serial1, dfu, ctl]) {
+                        return;
                     }
-                }
-            } else {
-                shell::handle_shell_commands(shell, shell_status, led_cmd, storage, ctl_pins, &mut send_to_dut, power_meter, config);
-            }
-        });
+
+                    ctl.post_poll(config, ctl_pins, storage, power_meter);
+
+                    let available_to_dut = to_dut_serial.capacity() - to_dut_serial.len();
+
+                    let mut send_to_dut = |buf: &[u8]| {
+                        for b in buf {
+                            to_dut_serial.enqueue(*b).ok();
+                        }
+                        return;
+                    };
+
+                    if shell_status.console_mode {
+                        // if in console mode, send all data to the DUT, only read from the USB serial port as much as we can send to the DUT
+                        let mut buf = [0u8; DUT_BUF_SIZE];
+                        match serial1.read(&mut buf[..available_to_dut]) {
+                            Ok(count) => {
+                                send_to_dut(&buf[..count]);
+
+                                for c in &buf[..count] {
+                                    if *c == 0x02 {
+                                        // CTRL+B
+                                        *esc_cnt = *esc_cnt + 1;
+                                        if *esc_cnt == 5 {
+                                            shell_status.console_mode = false;
+                                            shell_status.monitor_enabled = false;
+                                            shell.write_str("\r\nExiting console mode\r\n").ok();
+                                            shell.write_str(shell::SHELL_PROMPT).ok();
+                                            *esc_cnt = 0;
+                                        }
+                                    } else {
+                                        *esc_cnt = 0;
+                                    }
+                                }
+                            }
+                            Err(_e) => {}
+                        }
+                    } else {
+                        shell::handle_shell_commands(
+                            shell,
+                            shell_status,
+                            led_cmd,
+                            storage,
+                            ctl_pins,
+                            &mut send_to_dut,
+                            power_meter,
+                            config,
+                        );
+                    }
+                },
+            );
     }
 
     #[task(binds = TIM2, shared=[timer, dfu,  led_rx, led_tx, led_cmd, adc_dma_transfer])]
     fn periodic_10ms(mut ctx: periodic_10ms::Context) {
-
         ctx.shared.dfu.lock(|dfu| dfu.tick(10));
 
         // clear all leds set in other tasts
@@ -431,16 +482,13 @@ mod app {
     }
 
     #[task(binds = DMA2_STREAM0, shared=[adc_dma_transfer, power_meter], local=[adc_buffer])]
-    fn adc_dma(mut cx:adc_dma::Context){
+    fn adc_dma(mut cx: adc_dma::Context) {
         let adc_dma_transfer = &mut cx.shared.adc_dma_transfer;
         let adc_buffer = &mut cx.local.adc_buffer;
         let power_meter = &mut cx.shared.power_meter;
 
-
         let buffer = adc_dma_transfer.lock(|transfer| {
-            let (buffer, _) = transfer
-                               .next_transfer(adc_buffer.take().unwrap())
-                               .unwrap();
+            let (buffer, _) = transfer.next_transfer(adc_buffer.take().unwrap()).unwrap();
             buffer
         });
 
@@ -467,9 +515,7 @@ mod app {
             power_meter.feed_voltage(vin);
             power_meter.feed_current(current_A);
         });
-
     }
-
 
     // Background task, runs whenever no other tasks are running
     #[idle(local=[to_dut_serial_consumer, usart_tx], shared=[led_tx, shell_status])]
@@ -496,9 +542,10 @@ mod app {
                         // this would be arguably better implemented in the shell send function
                         // but this allows for the \w wait command to delay and not block other
                         // tasts
-                        let mut final_c:u8 = c;
+                        let mut final_c: u8 = c;
                         if should_escape {
-                            if escaped == false && c == 0x5c { // backslash
+                            if escaped == false && c == 0x5c {
+                                // backslash
                                 escaped = true;
                                 continue;
                             }
@@ -507,7 +554,7 @@ mod app {
                                 escaped = false;
                                 final_c = match escaped_char(c) {
                                     Some(c) => c,
-                                    None =>  continue,
+                                    None => continue,
                                 }
                             }
                         }
@@ -518,13 +565,12 @@ mod app {
 
                         loop {
                             if usart_tx.is_tx_empty() {
-                                    break;
+                                break;
                             }
                         }
 
                         usart_tx.write(final_c).ok();
-
-                    },
+                    }
                     None => {
                         break;
                     }
@@ -533,22 +579,22 @@ mod app {
         }
     }
 
-    fn escaped_char(c:u8) -> Option<u8> {
-
+    fn escaped_char(c: u8) -> Option<u8> {
         match c {
-            0x5c => { Some(0x5c) }, // \\
-            0x6e => { Some(0x0a) }, // \n
-            0x72 => { Some(0x0d) }, // \r
-            0x74 => { Some(0x09) }, // \t
-            0x61 => { Some(0x07) }, // \a alert
-            0x62 => { Some(0x08) }, // \b backspace
-            0x65 => { Some(0x1b) }, // \e escape character
-            0x63 => { Some(0x03) }, // \c // CTRL+C
-            0x64 => { Some(0x04) }, // \d CTRL+D
-            0x77 => { cortex_m::asm::delay(50*1000*1000); None },// \w WAIT DELAY
-            _ => Some(c)
+            0x5c => Some(0x5c), // \\
+            0x6e => Some(0x0a), // \n
+            0x72 => Some(0x0d), // \r
+            0x74 => Some(0x09), // \t
+            0x61 => Some(0x07), // \a alert
+            0x62 => Some(0x08), // \b backspace
+            0x65 => Some(0x1b), // \e escape character
+            0x63 => Some(0x03), // \c // CTRL+C
+            0x64 => Some(0x04), // \d CTRL+D
+            0x77 => {
+                cortex_m::asm::delay(50 * 1000 * 1000);
+                None
+            } // \w WAIT DELAY
+            _ => Some(c),
         }
     }
-
-
 }

@@ -4,37 +4,66 @@ on:
   workflow_call:
     inputs:
       working-directory:
+        description: "Working directory for the Rust project"
         required: true
         type: string
       rust-toolchain:
+        description: "Rust toolchain version"
         required: false
         type: string
         default: "stable"
       targets:
+        description: "Additional target platforms (comma-separated)"
         required: false
         type: string
         default: ""
       build-flags:
+        description: "Additional build flags for cargo build"
         required: false
         type: string
         default: "--release"
+      skip-tests:
+        description: "Skip running tests (useful for no_std projects)"
+        required: false
+        type: boolean
+        default: false
+      clippy-flags:
+        description: "Additional flags for cargo clippy"
+        required: false
+        type: string
+        default: "--all-targets --all-features"
+      clippy-warnings:
+        description: "How to handle clippy warnings: 'deny' to fail on warnings, 'warn' to allow warnings"
+        required: false
+        type: string
+        default: "deny"
+
   workflow_dispatch:
     inputs:
       working-directory:
+        description: "Working directory for the Rust project"
         required: true
         type: string
       rust-toolchain:
+        description: "Rust toolchain version"
         required: false
         type: string
         default: "stable"
       targets:
+        description: "Additional target platforms (comma-separated)"
         required: false
         type: string
         default: ""
       build-flags:
+        description: "Additional build flags for cargo build"
         required: false
         type: string
         default: "--release"
+      skip-tests:
+        description: "Skip running tests (useful for no_std projects)"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -76,16 +105,69 @@ jobs:
 
       - name: Check formatting
         working-directory: ${{ inputs.working-directory }}
-        run: cargo fmt --all -- --check
+        run: |
+          # Check if we're in a directory with Cargo.toml or need to search subdirectories
+          if [ -f "Cargo.toml" ]; then
+            cargo fmt --all -- --check
+          else
+            # Find all Cargo.toml files in subdirectories and format each project
+            for dir in */; do
+              if [ -f "${dir}Cargo.toml" ]; then
+                echo "Checking formatting in ${dir}"
+                (cd "$dir" && cargo fmt --all -- --check)
+              fi
+            done
+          fi
 
       - name: Run clippy
         working-directory: ${{ inputs.working-directory }}
-        run: cargo clippy --all-targets --all-features -- -D warnings
+        run: |
+          CLIPPY_WARNING_FLAG="-D warnings"
+          if [ "${{ inputs.clippy-warnings }}" = "warn" ]; then
+            CLIPPY_WARNING_FLAG=""
+          fi
+
+          echo "DEBUG: clippy-warnings input = '${{ inputs.clippy-warnings }}'"
+          echo "DEBUG: CLIPPY_WARNING_FLAG = '$CLIPPY_WARNING_FLAG'"
+
+          if [ -f "Cargo.toml" ]; then
+            echo "DEBUG: Running: cargo clippy ${{ inputs.clippy-flags }} -- $CLIPPY_WARNING_FLAG"
+            cargo clippy ${{ inputs.clippy-flags }} -- $CLIPPY_WARNING_FLAG
+          else
+            for dir in */; do
+              if [ -f "${dir}Cargo.toml" ]; then
+                echo "Running clippy in ${dir}"
+                echo "DEBUG: Running: cargo clippy ${{ inputs.clippy-flags }} -- $CLIPPY_WARNING_FLAG"
+                (cd "$dir" && cargo clippy ${{ inputs.clippy-flags }} -- $CLIPPY_WARNING_FLAG)
+              fi
+            done
+          fi
 
       - name: Run tests
+        if: ${{ !inputs.skip-tests }}
         working-directory: ${{ inputs.working-directory }}
-        run: cargo test
+        run: |
+          if [ -f "Cargo.toml" ]; then
+            cargo test
+          else
+            for dir in */; do
+              if [ -f "${dir}Cargo.toml" ]; then
+                echo "Running tests in ${dir}"
+                (cd "$dir" && cargo test)
+              fi
+            done
+          fi
 
       - name: Build
         working-directory: ${{ inputs.working-directory }}
-        run: cargo build ${{ inputs.build-flags }}
+        run: |
+          if [ -f "Cargo.toml" ]; then
+            cargo build ${{ inputs.build-flags }}
+          else
+            for dir in */; do
+              if [ -f "${dir}Cargo.toml" ]; then
+                echo "Building in ${dir}"
+                (cd "$dir" && cargo build ${{ inputs.build-flags }})
+              fi
+            done
+          fi
