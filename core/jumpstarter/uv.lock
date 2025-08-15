@@ -63,7 +63,7 @@ docs = [
     { name = "sphinx-copybutton", specifier = ">=0.5.2" },
     { name = "sphinx-inline-tabs", specifier = ">=2023.4.21" },
     { name = "sphinx-substitution-extensions", specifier = ">=2024.10.17" },
-    { name = "sphinxcontrib-mermaid", specifier = ">=0.9.2" },
+    { name = "sphinxcontrib-mermaid", specifier = ">=1.0.0" },
     { name = "sphinxcontrib-programoutput", specifier = ">=0.18" },
 ]
 
