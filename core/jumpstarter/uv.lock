@@ -1360,7 +1360,7 @@ dev = [
     { name = "pytest-asyncio", specifier = ">=0.25.3" },
     { name = "pytest-cov", specifier = ">=5.0.0" },
     { name = "requests-mock" },
-    { name = "trio", specifier = ">=0.28.0" },
+    { name = "trio", specifier = ">=0.30.0" },
 ]
 
 [[package]]
@@ -1707,7 +1707,7 @@ requires-dist = [
 dev = [
     { name = "pytest", specifier = ">=8.3.2" },
     { name = "pytest-cov", specifier = ">=5.0.0" },
-    { name = "trio", specifier = ">=0.28.0" },
+    { name = "trio", specifier = ">=0.30.0" },
 ]
 
 [[package]]
