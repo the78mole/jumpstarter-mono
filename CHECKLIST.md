@@ -42,6 +42,8 @@
 
 ## Phase 3: Build System Integration
 
+Always run tests with `act` to ensure, it will more likely run in GH Actions as well.
+
 ### Python Workspace
 
 - [ ] Consolidate Python packages under UV workspace
