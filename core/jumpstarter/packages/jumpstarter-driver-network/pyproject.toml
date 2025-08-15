@@ -35,7 +35,7 @@ dev = [
   "pytest>=8.3.2",
   "pytest-asyncio>=0.26.0",
   "pytest-cov>=5.0.0",
-  "types-paramiko>=3.5.0.20250801",
+  "types-paramiko>=4.0.0.20250809",
   "types-pexpect>=4.9.0.20250809",
   "websocket-client>=1.8.0",
 ]

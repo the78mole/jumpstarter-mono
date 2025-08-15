@@ -1645,7 +1645,7 @@ dev = [
     { name = "pytest", specifier = ">=8.3.2" },
     { name = "pytest-asyncio", specifier = ">=0.26.0" },
     { name = "pytest-cov", specifier = ">=5.0.0" },
-    { name = "types-paramiko", specifier = ">=3.5.0.20250801" },
+    { name = "types-paramiko", specifier = ">=4.0.0.20250809" },
     { name = "types-pexpect", specifier = ">=4.9.0.20250809" },
     { name = "websocket-client", specifier = ">=1.8.0" },
 ]
