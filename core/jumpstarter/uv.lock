@@ -1217,7 +1217,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "authlib", specifier = ">=1.6.1" },
-    { name = "click", specifier = ">=8.1.7.2" },
+    { name = "click", specifier = ">=8.2.1" },
     { name = "joserfc", specifier = ">=1.0.3" },
     { name = "jumpstarter", editable = "packages/jumpstarter" },
     { name = "pydantic", specifier = ">=2.8.2" },
@@ -1253,7 +1253,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "click", specifier = ">=8.1.7.2" },
+    { name = "click", specifier = ">=8.2.1" },
     { name = "jumpstarter-cli-common", editable = "packages/jumpstarter-cli-common" },
 ]
 
@@ -1312,7 +1312,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "click", specifier = ">=8.1.7.2" },
+    { name = "click", specifier = ">=8.2.1" },
     { name = "jumpstarter", editable = "packages/jumpstarter" },
 ]
 
@@ -1347,7 +1347,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "click", specifier = ">=8.1.7.2" },
+    { name = "click", specifier = ">=8.2.1" },
     { name = "jumpstarter", editable = "packages/jumpstarter" },
     { name = "jumpstarter-driver-composite", editable = "packages/jumpstarter-driver-composite" },
     { name = "jumpstarter-driver-network", editable = "packages/jumpstarter-driver-network" },
@@ -1388,7 +1388,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "click", specifier = ">=8.1.7.2" },
+    { name = "click", specifier = ">=8.2.1" },
     { name = "jumpstarter", editable = "packages/jumpstarter" },
     { name = "jumpstarter-driver-composite", editable = "packages/jumpstarter-driver-composite" },
     { name = "jumpstarter-driver-network", editable = "packages/jumpstarter-driver-network" },
@@ -1496,7 +1496,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "click", specifier = ">=8.1.7.2" },
+    { name = "click", specifier = ">=8.2.1" },
     { name = "gpiod", marker = "sys_platform == 'linux'" },
     { name = "jumpstarter", editable = "packages/jumpstarter" },
     { name = "jumpstarter-driver-power", editable = "packages/jumpstarter-driver-power" },
@@ -1633,7 +1633,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "click", specifier = ">=8.1.8" },
+    { name = "click", specifier = ">=8.2.1" },
     { name = "fabric", specifier = ">=3.2.2" },
     { name = "jumpstarter", editable = "packages/jumpstarter" },
     { name = "pexpect", specifier = ">=4.9.0" },
@@ -1669,7 +1669,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "click", specifier = ">=8.1.7.2" },
+    { name = "click", specifier = ">=8.2.1" },
     { name = "jumpstarter", editable = "packages/jumpstarter" },
     { name = "opendal", specifier = ">=0.45.8" },
 ]
@@ -1699,7 +1699,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "click", specifier = ">=8.1.7.2" },
+    { name = "click", specifier = ">=8.2.1" },
     { name = "jumpstarter", editable = "packages/jumpstarter" },
     { name = "pyserial", specifier = ">=3.5" },
 ]
@@ -1731,7 +1731,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "anyio", specifier = ">=4.6.2.post1" },
-    { name = "click", specifier = ">=8.1.7.2" },
+    { name = "click", specifier = ">=8.2.1" },
     { name = "jumpstarter", editable = "packages/jumpstarter" },
     { name = "jumpstarter-driver-opendal", editable = "packages/jumpstarter-driver-opendal" },
 ]
@@ -1764,7 +1764,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "click", specifier = ">=8.1.7.2" },
+    { name = "click", specifier = ">=8.2.1" },
     { name = "jumpstarter", editable = "packages/jumpstarter" },
     { name = "jumpstarter-driver-network", editable = "packages/jumpstarter-driver-network" },
     { name = "pyserial", specifier = ">=3.5" },
@@ -1929,7 +1929,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "click", specifier = ">=8.1.8" },
+    { name = "click", specifier = ">=8.2.1" },
     { name = "jumpstarter", editable = "packages/jumpstarter" },
     { name = "jumpstarter-driver-power", editable = "packages/jumpstarter-driver-power" },
     { name = "pysnmp", specifier = "==7.1.16" },
