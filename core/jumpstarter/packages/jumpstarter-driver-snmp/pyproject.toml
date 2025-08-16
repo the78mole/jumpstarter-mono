@@ -8,7 +8,7 @@ license = "Apache-2.0"
 authors = [{ name = "Benny Zlotnik", email = "bzlotnik@redhat.com" }]
 
 dependencies = [
-    "click>=8.1.8",
+    "click>=8.2.1",
     "jumpstarter",
     "jumpstarter-driver-power",
     "pysnmp==7.1.16",
