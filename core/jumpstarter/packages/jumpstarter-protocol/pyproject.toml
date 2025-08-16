@@ -7,7 +7,7 @@ readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.11"
 dependencies = [
-  "googleapis-common-protos>=1.69.1",
+  "googleapis-common-protos>=1.70.0",
   "grpcio>=1.66.1",
   "protobuf>=6.30.1",
 ]
