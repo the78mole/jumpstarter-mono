@@ -6,7 +6,7 @@ on:
       go-version:
         required: false
         type: string
-        default: "1.22"
+        default: "1.24"
       working-directory:
         required: true
         type: string
@@ -34,7 +34,7 @@ on:
       go-version:
         required: false
         type: string
-        default: "1.22"
+        default: "1.24"
       working-directory:
         required: true
         type: string

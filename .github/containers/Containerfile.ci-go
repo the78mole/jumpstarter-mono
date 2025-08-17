@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Go
-ARG GO_VERSION=1.22.9
+ARG GO_VERSION=1.24.6
 RUN curl -k -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar -C /usr/local -xzf -
 
 # Set up workspace
