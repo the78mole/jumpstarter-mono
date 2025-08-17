@@ -1,0 +1,152 @@
+name: CI Container Builds
+
+on:
+  workflow_call:
+    inputs:
+      force-rebuild:
+        description: "Force rebuild all containers"
+        type: boolean
+        default: false
+      containers:
+        description: "Containers to build (json array)"
+        type: string
+        default: '["base", "python", "go", "rust", "node", "multi"]'
+  workflow_dispatch:
+    inputs:
+      force-rebuild:
+        description: "Force rebuild all containers"
+        type: boolean
+        default: false
+  schedule:
+    # Rebuild containers weekly on Sunday at 2 AM UTC to keep base images fresh
+    - cron: "0 2 * * 0"
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/ci
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-containers:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        container: ${{ fromJson(inputs.containers || '["base", "python", "go", "rust", "node", "multi"]') }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Container Registry
+        if: ${{ !env.ACT }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.container }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Check if rebuild needed
+        id: check-rebuild
+        run: |
+          NEED_REBUILD=false
+          
+          # Force rebuild if requested
+          if [ "${{ inputs.force-rebuild }}" = "true" ]; then
+            echo "Force rebuild requested"
+            NEED_REBUILD=true
+          fi
+          
+          # Check if container configuration changed
+          if git diff --name-only HEAD~1 2>/dev/null | grep -q ".github/containers/Containerfile.ci-${{ matrix.container }}"; then
+            echo "Container configuration changed"
+            NEED_REBUILD=true
+          fi
+          
+          # Check if base image needs update (weekly builds)
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "Scheduled rebuild"
+            NEED_REBUILD=true
+          fi
+          
+          echo "need-rebuild=$NEED_REBUILD" >> $GITHUB_OUTPUT
+
+      - name: Build and push container image
+        if: steps.check-rebuild.outputs.need-rebuild == 'true' || env.ACT
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: .github/containers/Containerfile.ci-${{ matrix.container }}
+          platforms: linux/amd64,linux/arm64
+          push: ${{ !env.ACT }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Generate summary
+        run: |
+          echo "## Container Build Summary - ${{ matrix.container }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.container }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Rebuild needed: ${{ steps.check-rebuild.outputs.need-rebuild }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Tags: ${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+  validate-containers:
+    needs: build-containers
+    runs-on: ubuntu-latest
+    if: always() && !cancelled()
+    strategy:
+      matrix:
+        container: ${{ fromJson(inputs.containers || '["base", "python", "go", "rust", "node", "multi"]') }}
+    steps:
+      - name: Test container functionality
+        run: |
+          IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.container }}:latest"
+          
+          case "${{ matrix.container }}" in
+            python)
+              docker run --rm $IMAGE python3.12 --version
+              docker run --rm $IMAGE uv --version
+              ;;
+            go)
+              docker run --rm $IMAGE go version
+              ;;
+            rust)
+              docker run --rm $IMAGE rustc --version
+              docker run --rm $IMAGE cargo --version
+              ;;
+            node)
+              docker run --rm $IMAGE node --version
+              docker run --rm $IMAGE npm --version
+              docker run --rm $IMAGE pnpm --version
+              ;;
+            multi)
+              docker run --rm $IMAGE python3.12 --version
+              docker run --rm $IMAGE go version
+              docker run --rm $IMAGE rustc --version
+              docker run --rm $IMAGE node --version
+              ;;
+            base)
+              docker run --rm $IMAGE git --version
+              docker run --rm $IMAGE make --version
+              ;;
+          esac

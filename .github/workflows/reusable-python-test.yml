@@ -14,6 +14,10 @@ on:
         required: false
         type: string
         default: "uv run pytest"
+      use-container:
+        required: false
+        type: boolean
+        default: true
   workflow_dispatch:
     inputs:
       python-version:
@@ -27,34 +31,52 @@ on:
         required: false
         type: string
         default: "uv run pytest"
+      use-container:
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    container: ${{ inputs.use-container && !env.ACT && 'ghcr.io/the78mole/jumpstarter-mono/ci-python:latest' || '' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup Python (if not using container)
+        if: ${{ !inputs.use-container || env.ACT }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ inputs.python-version }}
 
-      - name: Install QEMU
+      - name: Install QEMU (if not using container)
+        if: ${{ !inputs.use-container || env.ACT }}
         run: |
           sudo apt-get update
           sudo apt-get install -y qemu-system-x86 qemu-system-arm qemu-utils
 
-      - name: Install uv
+      - name: Install uv (if not using container)
+        if: ${{ !inputs.use-container || env.ACT }}
         uses: astral-sh/setup-uv@v3
 
       - name: Install buf
         run: |
           # Download and install buf
-          sudo curl -sSL \
-            "https://github.com/bufbuild/buf/releases/latest/download/buf-$(uname -s)-$(uname -m)" \
-            -o "/usr/local/bin/buf"
-          sudo chmod +x "/usr/local/bin/buf"
+          if [ "${{ inputs.use-container && !env.ACT }}" = "true" ]; then
+            # In container, install as regular user
+            curl -sSL \
+              "https://github.com/bufbuild/buf/releases/latest/download/buf-$(uname -s)-$(uname -m)" \
+              -o "/home/ci/.local/bin/buf"
+            chmod +x "/home/ci/.local/bin/buf"
+            echo "/home/ci/.local/bin" >> $GITHUB_PATH
+          else
+            # On regular runner, install with sudo
+            sudo curl -sSL \
+              "https://github.com/bufbuild/buf/releases/latest/download/buf-$(uname -s)-$(uname -m)" \
+              -o "/usr/local/bin/buf"
+            sudo chmod +x "/usr/local/bin/buf"
+          fi
 
       - name: Generate protobuf files
         working-directory: ${{ inputs.working-directory }}

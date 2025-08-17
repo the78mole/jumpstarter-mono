@@ -6,7 +6,7 @@ on:
       go-version:
         required: false
         type: string
-        default: "1.24"
+        default: "1.22"
       working-directory:
         required: true
         type: string
@@ -14,12 +14,16 @@ on:
         required: false
         type: string
         default: "latest"
+      use-container:
+        required: false
+        type: boolean
+        default: true
   workflow_dispatch:
     inputs:
       go-version:
         required: false
         type: string
-        default: "1.24"
+        default: "1.22"
       working-directory:
         required: true
         type: string
@@ -27,15 +31,21 @@ on:
         required: false
         type: string
         default: "latest"
+      use-container:
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+    container: ${{ inputs.use-container && !env.ACT && 'ghcr.io/the78mole/jumpstarter-mono/ci-go:latest' || '' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Go
+      - name: Setup Go (if not using container)
+        if: ${{ !inputs.use-container || env.ACT }}
         uses: actions/setup-go@v4
         with:
           go-version: ${{ inputs.go-version }}

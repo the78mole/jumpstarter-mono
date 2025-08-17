@@ -150,28 +150,21 @@ jobs:
   # Test parallel build efficiency
   parallel-build-test:
     runs-on: ubuntu-latest
+    container: ghcr.io/the78mole/jumpstarter-mono/ci-multi:latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup all tools
+      - name: Verify tools (container should have everything pre-installed)
         run: |
-          # Python/uv
-          pip install uv
-
-          # Go is pre-installed on GitHub runners
+          echo "Verifying tool installations:"
+          python3.12 --version
+          uv --version
           go version
-
-          # Rust - set up with embedded target
-          rustup default stable
-          rustup target add thumbv7em-none-eabihf
           rustc --version
           cargo --version
-
-          # Node.js and pnpm
           node --version
           npm --version
-          npm install -g pnpm
           pnpm --version
 
       - name: Setup caches

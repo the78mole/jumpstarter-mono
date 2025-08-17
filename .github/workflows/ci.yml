@@ -27,6 +27,7 @@ jobs:
       web: ${{ steps.changes.outputs.web }}
       docs: ${{ steps.changes.outputs.docs }}
       ci: ${{ steps.changes.outputs.ci }}
+      containers: ${{ steps.changes.outputs.containers }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -60,6 +61,20 @@ jobs:
             ci:
               - '.github/workflows/**'
               - 'Makefile'
+            containers:
+              - '.github/containers/**'
+              - '.github/workflows/ci-containers.yml'
+
+  # Build CI container images if needed
+  build-containers:
+    needs: detect-changes
+    if: >
+      needs.detect-changes.outputs.containers == 'true' ||
+      needs.detect-changes.outputs.ci == 'true' ||
+      github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/ci-containers.yml
+    with:
+      force-rebuild: ${{ github.event_name == 'workflow_dispatch' }}
 
   # Check for typos across the repository
   typos:
