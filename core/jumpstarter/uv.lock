@@ -1034,7 +1034,7 @@ requires-dist = [
     { name = "anyio", specifier = ">=4.4.0,!=4.6.2" },
     { name = "jumpstarter-protocol", editable = "packages/jumpstarter-protocol" },
     { name = "pydantic", specifier = ">=2.11.7" },
-    { name = "pydantic-settings", specifier = ">=2.9.1" },
+    { name = "pydantic-settings", specifier = ">=2.10.1" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "rich", specifier = ">=14.0.0" },
     { name = "xdg-base-dirs", specifier = ">=6.0.2" },
