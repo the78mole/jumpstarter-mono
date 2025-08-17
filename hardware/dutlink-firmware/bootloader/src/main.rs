@@ -36,6 +36,7 @@
 
 #![no_std]
 #![no_main]
+#![allow(static_mut_refs)]
 
 use core::str;
 
@@ -312,14 +313,14 @@ fn dfu_init() -> LedType {
 fn minimal_init() {
     unsafe {
         // enable PWR
-        (*RCC::ptr()).apb1enr.modify(|_, w| w.pwren().set_bit());
-        (*RCC::ptr()).ahb1enr.modify(|_, w| w.gpioaen().set_bit());
+        (*RCC::ptr()).apb1enr().modify(|_, w| w.pwren().set_bit());
+        (*RCC::ptr()).ahb1enr().modify(|_, w| w.gpioaen().set_bit());
     }
 
     unsafe {
         // setup PA0 as input with pull-up
-        (*GPIOA::ptr()).moder.modify(|_, w| w.moder0().input());
-        (*GPIOA::ptr()).pupdr.modify(|_, w| w.pupdr0().pull_up());
+        (*GPIOA::ptr()).moder().modify(|_, w| w.moder0().input());
+        (*GPIOA::ptr()).pupdr().modify(|_, w| w.pupdr0().pull_up());
     }
 
     cortex_m::asm::delay(100);
@@ -329,7 +330,7 @@ fn minimal_init() {
 /// Check KEY BUTTON state.
 fn dfu_enforced() -> bool {
     // check BOOT1, PA0 state
-    unsafe { (*GPIOA::ptr()).idr.read().idr0().bit_is_clear() }
+    unsafe { (*GPIOA::ptr()).idr().read().idr0().bit_is_clear() }
 }
 
 /// Reset registers that were used for a
@@ -337,10 +338,10 @@ fn dfu_enforced() -> bool {
 /// default values before starting main firmware.
 fn quick_uninit() {
     unsafe {
-        (*GPIOA::ptr()).moder.reset();
-        (*GPIOA::ptr()).pupdr.reset();
-        (*RCC::ptr()).apb1enr.reset();
-        (*RCC::ptr()).ahb1enr.reset();
+        (*GPIOA::ptr()).moder().reset();
+        (*GPIOA::ptr()).pupdr().reset();
+        (*RCC::ptr()).apb1enr().reset();
+        (*RCC::ptr()).ahb1enr().reset();
     }
 }
 

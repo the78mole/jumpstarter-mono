@@ -58,24 +58,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup environment
-        run: |
-          case "${{ matrix.component.name }}" in
-            python)
-              pip install uv
-              ;;
-            go-*)
-              # Go is pre-installed on GitHub runners
-              go version
-              ;;
-            rust-*)
-              # Set up Rust with embedded target
-              rustup default stable
-              rustup target add thumbv7em-none-eabihf
-              rustc --version
-              cargo --version
-              ;;
-          esac
+      - name: Setup Python environment
+        if: startsWith(matrix.component.name, 'python')
+        run: pip install uv
+
+      - name: Setup Go environment
+        if: startsWith(matrix.component.name, 'go-')
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+
+      - name: Setup Rust environment
+        if: startsWith(matrix.component.name, 'rust-')
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          target: thumbv7em-none-eabihf
 
       - name: Check cache hit rate (before)
         id: cache-before
@@ -154,25 +152,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup all tools
-        run: |
-          # Python/uv
-          pip install uv
+      - name: Setup Python tools
+        run: pip install uv
 
-          # Go is pre-installed on GitHub runners
-          go version
+      - name: Setup Go tools
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
 
-          # Rust - set up with embedded target
-          rustup default stable
-          rustup target add thumbv7em-none-eabihf
-          rustc --version
-          cargo --version
+      - name: Setup Rust tools
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          target: thumbv7em-none-eabihf
 
-          # Node.js and pnpm
-          node --version
-          npm --version
-          npm install -g pnpm
-          pnpm --version
+      - name: Setup Node.js tools
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       - name: Setup caches
         uses: actions/cache@v4
@@ -249,6 +249,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Python tools
+        run: pip install uv
+
+      - name: Setup Go tools
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+
+      - name: Setup Rust tools
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          target: thumbv7em-none-eabihf
+
+      - name: Setup Node.js tools
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
       - name: Analyze Python dependencies
         run: |
           pip install uv
@@ -281,10 +303,6 @@ jobs:
 
       - name: Analyze Rust dependencies
         run: |
-          # Set up Rust with embedded target
-          rustup default stable
-          rustup target add thumbv7em-none-eabihf
-
           cd hardware/dutlink-firmware/application
           cargo fetch
           echo "### Rust Dependencies (Application)" >> $GITHUB_STEP_SUMMARY
@@ -302,9 +320,6 @@ jobs:
 
       - name: Analyze Node.js dependencies
         run: |
-          # Install pnpm
-          npm install -g pnpm
-
           cd integrations/vscode
           pnpm install
           echo "### Node.js Dependencies" >> $GITHUB_STEP_SUMMARY

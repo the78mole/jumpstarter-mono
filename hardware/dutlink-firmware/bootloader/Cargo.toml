@@ -19,14 +19,14 @@ debug = true
 
 [dependencies]
 cortex-m = "0.7.7"
-cortex-m-rt = "0.7.3"
+cortex-m-rt = "0.7.5"
 embedded-hal = "1.0.0"
 panic-halt = "1.0.0"
 usbd-dfu = "0.4.0"
 embedded-storage = "0.3.1"
 
 [dependencies.stm32f4xx-hal]
-version = "0.21.0"
+version = "0.22.1"
 features = ["stm32f411", "usb_fs"]
 
 [dependencies.usb-device]
@@ -34,5 +34,5 @@ version = "0.3.2"
 features = ["control-buffer-256"]
 
 [dependencies.stm32f4]
-version = "0.15.1"
+version = "0.16.0"
 features = ["stm32f411", "rt"]
