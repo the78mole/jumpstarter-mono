@@ -4,6 +4,8 @@ This directory contains container definitions for optimized CI environments. The
 
 ## Available Images
 
+### CI Container Images (for development and testing)
+
 ### `ci-base`
 Basic CI environment with common system dependencies:
 - Ubuntu 24.04 base
@@ -21,7 +23,7 @@ Python development environment:
 ### `ci-go`
 Go development environment:
 - Everything from `ci-base`
-- Go 1.22.9
+- Go 1.24.6 (latest from golang.org)
 - Pre-configured GOPATH and build cache directories
 
 ### `ci-rust`
@@ -40,8 +42,22 @@ Node.js/TypeScript development environment:
 ### `ci-multi`
 All-in-one environment with all tools:
 - Everything from all above images
+- Go 1.24.6, Python 3.12, Rust stable, Node.js 18 LTS
 - Suitable for workflows that need multiple toolchains
 - Larger image size but maximum compatibility
+
+### Production Container Images (Red Hat UBI)
+
+The production applications also use containerized environments based on Red Hat Universal Base Images (UBI):
+
+#### Core Controller & Lab Config
+- **Base Image**: `registry.access.redhat.com/ubi9/go-toolset:1.24`
+- **Runtime**: `registry.access.redhat.com/ubi9/ubi-micro:9.5`
+- **Go Version**: 1.24.4 (Red Hat enterprise-ready distribution)
+- **Usage**: Production deployment of Jumpstarter controller and lab configuration services
+- **Security**: Red Hat UBI provides enterprise-grade security and support
+
+The production containers use Red Hat UBI for enhanced security, enterprise support, and compliance requirements. These images are automatically tested and validated against Red Hat's security policies.
 
 ## Usage
 
@@ -87,6 +103,20 @@ docker build -f .github/containers/Containerfile.ci-python -t ci-python .
 # Test the container
 docker run --rm ci-python python3.12 --version
 ```
+
+### Validating Red Hat Container Access
+
+To validate that Red Hat UBI containers are accessible and working correctly:
+
+```bash
+# Run the validation script
+./scripts/validate-redhat-containers.sh
+```
+
+This script verifies:
+- Red Hat container registry connectivity
+- Go toolset and runtime image availability
+- Container functionality with current environment
 
 ## ACT Integration
 
