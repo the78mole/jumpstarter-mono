@@ -1396,7 +1396,7 @@ requires-dist = [
     { name = "jumpstarter-driver-power", editable = "packages/jumpstarter-driver-power" },
     { name = "jumpstarter-driver-pyserial", editable = "packages/jumpstarter-driver-pyserial" },
     { name = "pyudev", specifier = ">=0.24.3" },
-    { name = "pyusb", specifier = ">=1.2.1" },
+    { name = "pyusb", specifier = ">=1.3.1" },
 ]
 
 [package.metadata.requires-dev]
@@ -1871,7 +1871,7 @@ requires-dist = [
     { name = "jumpstarter", editable = "packages/jumpstarter" },
     { name = "jumpstarter-driver-opendal", editable = "packages/jumpstarter-driver-opendal" },
     { name = "pyudev", specifier = ">=0.24.3" },
-    { name = "pyusb", specifier = ">=1.2.1" },
+    { name = "pyusb", specifier = ">=1.3.1" },
 ]
 
 [package.metadata.requires-dev]
@@ -2100,7 +2100,7 @@ requires-dist = [
     { name = "anyio", specifier = ">=4.6.2.post1" },
     { name = "jumpstarter", editable = "packages/jumpstarter" },
     { name = "jumpstarter-driver-power", editable = "packages/jumpstarter-driver-power" },
-    { name = "pyusb", specifier = ">=1.2.1" },
+    { name = "pyusb", specifier = ">=1.3.1" },
 ]
 
 [package.metadata.requires-dev]
