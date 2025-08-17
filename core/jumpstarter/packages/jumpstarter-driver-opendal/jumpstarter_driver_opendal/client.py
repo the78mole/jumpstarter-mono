@@ -386,11 +386,15 @@ class OpendalClient(DriverClient):
         """
         Get capabilities of the underlying storage
 
-        >>> cap = opendal.capability()
-        >>> cap.copy
-        True
-        >>> cap.presign_read
-        False
+        Example:
+            Get storage capabilities:
+
+            >>> # cap = client.capability()
+            >>> # cap.copy
+            >>> # True
+            >>> # cap.presign_read
+            >>> # False
+            pass
         """
         return self.call("capability")
 

@@ -188,7 +188,18 @@ class Opendal(Driver):
     @export
     @validate_call(validate_return=True)
     async def capability(self, /) -> Capability:
-        return Capability.model_validate(self._operator.capability(), from_attributes=True)
+        opendal_cap = self._operator.capability()
+        # Convert opendal.Capability to our Capability model
+        # Handle potential missing fields from newer opendal versions
+        cap_dict = {}
+        for field_name in Capability.model_fields.keys():
+            if hasattr(opendal_cap, field_name):
+                cap_dict[field_name] = getattr(opendal_cap, field_name)
+            else:
+                # Provide sensible defaults for missing fields
+                cap_dict[field_name] = False
+
+        return Capability.model_validate(cap_dict)
 
     async def copy_exporter_file(self, /, source: Path, target: str):
         """Copy a file from the exporter to the target path.
