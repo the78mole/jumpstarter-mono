@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install Node.js 18 LTS
 ARG NODE_VERSION=18
-RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - && \
+RUN curl -k -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - && \
     apt-get install -y nodejs
 
 # Install pnpm globally
