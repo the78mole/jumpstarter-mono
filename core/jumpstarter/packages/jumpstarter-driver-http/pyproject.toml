@@ -11,7 +11,7 @@ dependencies = [
     "jumpstarter",
     "jumpstarter-driver-composite",
     "jumpstarter-driver-opendal",
-    "yarl>=1.18.3",
+    "yarl>=1.20.1",
 ]
 
 [tool.hatch.metadata.hooks.vcs.urls]
