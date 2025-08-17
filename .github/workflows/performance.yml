@@ -205,9 +205,9 @@ jobs:
       - name: Clean for parallel test
         run: |
           # Clean builds - using absolute paths from workspace root
-          (cd core/jumpstarter && rm -rf dist/ build/ *.egg-info/)
+          (cd core/jumpstarter && rm -rf dist/ build/ *.egg-info/ .venv/ || true)
           (cd core/controller && make clean || true)
-          (cd lab-config && go clean -cache || true)
+          (cd lab-config && go clean -cache && rm -rf lab-config lab-config-test || true)
           (cd hardware/dutlink-firmware/application && cargo clean || true)
           (cd hardware/dutlink-firmware/bootloader && cargo clean || true)
           (cd integrations/vscode && rm -rf out/ node_modules/ || true)

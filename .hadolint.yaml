@@ -1,0 +1,19 @@
+---
+# Hadolint configuration for CI containers
+# We ignore some rules that are not critical for CI environments
+
+ignored:
+  # DL3008: Pin versions in apt get install
+  # Reason: CI containers are rebuilt regularly, and pinning makes updates harder
+  - DL3008
+
+  # DL3015: Avoid additional packages by specifying --no-install-recommends
+  # Reason: We already use --no-install-recommends where appropriate
+  - DL3015
+
+  # DL3016: Pin versions in npm
+  # Reason: We pin critical packages like pnpm but allow flexibility for others
+  - DL3016
+
+# Only fail on errors, not warnings
+failure-threshold: error

@@ -1,8 +1,8 @@
-# CI Python environment
+# Python CI image with uv package manager
 FROM ubuntu:24.04
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Install system dependencies for Python development
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
     wget \
@@ -18,24 +18,28 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-# Install uv for Python package management
+# Install uv - modern Python package manager
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
 # Set up workspace
 WORKDIR /workspace
 
-# Add environment variables
-ENV DEBIAN_FRONTEND=noninteractive
-ENV CI=true
-ENV VIRTUAL_ENV=/workspace/.venv
-ENV PATH="/workspace/.venv/bin:$PATH"
-
 # Create non-root user for CI operations
 RUN groupadd -r ci && useradd -r -g ci -m -s /bin/bash ci
 
-# Pre-create virtual environment as ci user
-USER ci
-RUN mkdir -p /home/ci/.local/bin
+# Create virtual environment for the ci user
 RUN python3.12 -m venv /home/ci/.venv
-ENV VIRTUAL_ENV=/home/ci/.venv
-ENV PATH="/home/ci/.venv/bin:/home/ci/.local/bin:$PATH"
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV CI=true
+ENV PATH="/home/ci/.venv/bin:/usr/local/bin:$PATH"
+ENV PYTHONPATH="/workspace"
+ENV UV_SYSTEM_PYTHON=1
+
+# Switch to non-root user
+USER ci
+
+# Verify Python installation
+RUN python3.12 --version && \
+    uv --version
