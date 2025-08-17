@@ -10,7 +10,7 @@ dependencies = [
   "jumpstarter",
   "pydantic>=2.8.2",
   "kubernetes>=33.1.0",
-  "kubernetes-asyncio>=31.1.1",
+  "kubernetes-asyncio>=33.3.0",
 ]
 
 [dependency-groups]

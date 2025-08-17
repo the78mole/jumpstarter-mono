@@ -2193,7 +2193,7 @@ dev = [
 requires-dist = [
     { name = "jumpstarter", editable = "packages/jumpstarter" },
     { name = "kubernetes", specifier = ">=33.1.0" },
-    { name = "kubernetes-asyncio", specifier = ">=31.1.1" },
+    { name = "kubernetes-asyncio", specifier = ">=33.3.0" },
     { name = "pydantic", specifier = ">=2.8.2" },
 ]
 
