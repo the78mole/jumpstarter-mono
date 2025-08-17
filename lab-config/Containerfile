@@ -4,17 +4,23 @@ ARG TARGETOS
 ARG TARGETARCH
 
 WORKDIR /workspace
-# Copy the Go Modules manifests
-COPY go.mod go.mod
-COPY go.sum go.sum
+# Copy the Go Modules manifests from lab-config directory
+COPY lab-config/go.mod go.mod
+COPY lab-config/go.sum go.sum
+# Copy the controller dependency that's needed by go.mod replace directive
+COPY core/controller/ core/controller/
+
+# Fix the replace directive to point to the correct location in the container
+RUN sed -i 's|../core/controller|./core/controller|g' go.mod
+
 # cache deps before building and copying source so that we don't need to re-download as much
 # and so that source changes don't invalidate our downloaded layer
 RUN go mod download
 
-# Copy the go source
-COPY cmd/main.go cmd/main.go
-COPY api/ api/
-COPY internal/ internal/
+# Copy the go source from lab-config directory
+COPY lab-config/cmd/main.go cmd/main.go
+COPY lab-config/api/ api/
+COPY lab-config/internal/ internal/
 
 # Build
 # the GOARCH has not a default value to allow the binary be built according to the host where the command
@@ -25,7 +31,7 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o ju
 
 FROM registry.access.redhat.com/ubi9/ubi-micro:9.5
 WORKDIR /
-COPY --from=builder /opt/app-root/src/jumpstarter-lab-config .
+COPY --from=builder /workspace/jumpstarter-lab-config .
 USER 65532:65532
 
 ENTRYPOINT ["/jumpstarter-lab-config"]

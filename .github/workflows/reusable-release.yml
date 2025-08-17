@@ -1,0 +1,249 @@
+name: Reusable Release
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+        description: "Version to release (e.g., 0.1.5)"
+      version_tag:
+        required: true
+        type: string
+        description: "Version tag to create/use (e.g., mono-v0.1.5)"
+      ci_run_id:
+        required: true
+        type: string
+        description: "CI run ID to download artifacts from"
+
+permissions:
+  contents: write      # Required for creating releases and uploading assets
+  packages: write      # Required for publishing container images
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if running in ACT (skip release in local testing)
+        run: |
+          if [ "$ACT" = "true" ]; then
+            echo "🧪 Running in ACT (local testing) - skipping release"
+            echo "skip-release=true" >> $GITHUB_OUTPUT
+          else
+            echo "☁️  Running in GitHub Actions - proceeding with release"
+            echo "skip-release=false" >> $GITHUB_OUTPUT
+          fi
+        id: act-check
+
+      - name: Checkout repository
+        if: steps.act-check.outputs.skip-release == 'false'
+        uses: actions/checkout@v4
+
+      - name: Download CI artifacts
+        if: steps.act-check.outputs.skip-release == 'false'
+        run: |
+          echo "Downloading artifacts from CI run ${{ inputs.ci_run_id }}..."
+
+          # Create artifacts directory
+          mkdir -p release-artifacts
+
+          # Try to download all artifacts from the CI run
+          if gh run download ${{ inputs.ci_run_id }} --dir release-artifacts 2>/dev/null; then
+            echo "✅ Successfully downloaded CI artifacts"
+          else
+            echo "ℹ️  No CI artifacts found (likely no component changes detected)"
+            echo "Release will be created without binary artifacts"
+          fi
+
+          # List any downloaded artifacts
+          echo "Available artifacts:"
+          find release-artifacts -type f -name "*" 2>/dev/null | head -20 || echo "No artifacts found"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prepare release assets
+        if: steps.act-check.outputs.skip-release == 'false'
+        run: |
+          # Organize artifacts for release
+          mkdir -p release-assets
+
+          # Copy Go binaries if available
+          if [ -d "release-artifacts/go-controller-binaries" ]; then
+            echo "Found controller binaries"
+            cp release-artifacts/go-controller-binaries/* release-assets/ 2>/dev/null || true
+          fi
+          if [ -d "release-artifacts/go-lab-config-binaries" ]; then
+            echo "Found lab-config binaries"
+            cp release-artifacts/go-lab-config-binaries/* release-assets/ 2>/dev/null || true
+          fi
+
+          # Copy Python packages if available
+          if [ -d "release-artifacts/python-packages" ]; then
+            echo "Found Python packages"
+            cp release-artifacts/python-packages/* release-assets/ 2>/dev/null || true
+          fi
+
+          # Copy Rust firmware if available
+          if [ -d "release-artifacts/rust-firmware" ]; then
+            echo "Found Rust firmware"
+            mkdir -p release-assets/firmware
+            cp -r release-artifacts/rust-firmware/* release-assets/firmware/ 2>/dev/null || true
+          fi
+
+          # Copy VSCode extension if available
+          if [ -d "release-artifacts/vscode-extension" ]; then
+            echo "Found VSCode extension"
+            cp release-artifacts/vscode-extension/*.vsix release-assets/ 2>/dev/null || true
+          fi
+
+          # Create a basic release info file
+          cat > release-assets/RELEASE_INFO.txt << EOF
+          Jumpstarter Mono ${{ inputs.version }}
+          Released: $(date -u +%Y-%m-%dT%H:%M:%SZ)
+          Commit: $(git rev-parse --short HEAD)
+
+          This release was built from CI run: ${{ inputs.ci_run_id }}
+          EOF
+
+          # List final assets
+          echo "Release assets prepared:"
+          find release-assets -type f | sort || echo "No release assets found"
+
+      - name: Create Release
+        if: steps.act-check.outputs.skip-release == 'false'
+        id: create-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.version_tag }}
+          name: "Jumpstarter Mono ${{ inputs.version }}"
+          body: |
+            ## Jumpstarter Mono ${{ inputs.version }}
+
+            Built from commit: `${{ github.sha }}`
+            CI Run: [${{ inputs.ci_run_id }}](https://github.com/${{ github.repository }}/actions/runs/${{ inputs.ci_run_id }})
+
+            ### What's New
+            - For detailed changes, see the [commit history](https://github.com/${{ github.repository }}/commits/${{ github.ref_name }})
+
+            ### Assets
+            - See attached files for binaries and packages built by the CI pipeline
+
+            **Note**: This release reuses artifacts built and tested by our CI pipeline to ensure quality and consistency.
+          files: |
+            release-assets/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+
+  publish-containers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90  # Set 90 minute timeout for container builds
+    needs: [create-release]
+    if: ${{ inputs.version_tag != '' }}
+    strategy:
+      matrix:
+        container:
+          - name: jumpstarter
+            path: core/jumpstarter
+            exists_check: core/jumpstarter
+          - name: controller
+            path: core/controller
+            exists_check: core/controller
+          - name: lab-config
+            path: lab-config
+            exists_check: lab-config
+      fail-fast: false
+    steps:
+      - name: Check if running in ACT (skip container publishing in local testing)
+        run: |
+          if [ "$ACT" = "true" ]; then
+            echo "🧪 Running in ACT (local testing) - skipping container publishing"
+            echo "skip-containers=true" >> $GITHUB_OUTPUT
+          else
+            echo "☁️  Running in GitHub Actions - proceeding with container publishing"
+            echo "skip-containers=false" >> $GITHUB_OUTPUT
+          fi
+        id: act-check
+
+      - name: Checkout repository
+        if: steps.act-check.outputs.skip-containers == 'false'
+        uses: actions/checkout@v4
+
+      - name: Check if container should be built
+        if: steps.act-check.outputs.skip-containers == 'false'
+        id: should-build
+        run: |
+          if [ -d "${{ matrix.container.exists_check }}" ]; then
+            echo "build=true" >> $GITHUB_OUTPUT
+            echo "✅ Container ${{ matrix.container.name }} will be built"
+          else
+            echo "build=false" >> $GITHUB_OUTPUT
+            echo "⏭️  Container ${{ matrix.container.name }} skipped (directory not found)"
+          fi
+
+      - name: Set up Docker Buildx
+        if: steps.act-check.outputs.skip-containers == 'false' && steps.should-build.outputs.build == 'true'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        if: steps.act-check.outputs.skip-containers == 'false' && steps.should-build.outputs.build == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download CI artifacts
+        if: steps.act-check.outputs.skip-containers == 'false' && steps.should-build.outputs.build == 'true'
+        run: |
+          echo "Downloading artifacts for ${{ matrix.container.name }} container..."
+
+          # Create artifacts directory
+          mkdir -p artifacts
+
+          # Try to download artifacts (may not exist if no changes)
+          if gh run download ${{ inputs.ci_run_id }} --dir artifacts 2>/dev/null; then
+            echo "✅ Successfully downloaded CI artifacts for container builds"
+          else
+            echo "ℹ️  No CI artifacts found - containers will be built from source"
+          fi
+
+          # List any downloaded artifacts
+          echo "Available artifacts for ${{ matrix.container.name }}:"
+          find artifacts -type f -name "*" 2>/dev/null | head -10 || echo "No artifacts found"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ${{ matrix.container.name }} container
+        if: steps.act-check.outputs.skip-containers == 'false' && steps.should-build.outputs.build == 'true'
+        run: |
+          VERSION=${{ inputs.version }}
+          CONTAINER_NAME=${{ matrix.container.name }}
+          CONTAINER_PATH=${{ matrix.container.path }}
+
+          echo "🏗️  Building $CONTAINER_NAME container (version: $VERSION)"
+
+          # Determine dockerfile and context based on container
+          if [ "$CONTAINER_NAME" = "lab-config" ]; then
+            # lab-config needs the full repo as context due to go.mod replace directives
+            DOCKERFILE_ARG="--file $CONTAINER_PATH/Containerfile"
+            BUILD_CONTEXT="."
+          else
+            DOCKERFILE_ARG=""
+            BUILD_CONTEXT="$CONTAINER_PATH/"
+          fi
+
+          # Build with single-platform support (amd64 only for now)
+          # TODO: Add ARM64 support back when build times are optimized
+          docker buildx build \
+            --platform linux/amd64 \
+            --tag ghcr.io/the78mole/jumpstarter-mono/$CONTAINER_NAME:$VERSION \
+            --tag ghcr.io/the78mole/jumpstarter-mono/$CONTAINER_NAME:latest \
+            $DOCKERFILE_ARG \
+            --push \
+            $BUILD_CONTEXT
+
+          echo "✅ Container $CONTAINER_NAME published successfully"

@@ -17,6 +17,7 @@ limitations under the License.
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -31,6 +32,13 @@ import (
 
 	metav1alpha1 "github.com/the78mole/jumpstarter-mono/lab-config/api/v1alpha1"
 	// +kubebuilder:scaffold:imports
+)
+
+// Version information set by build
+var (
+	Version   = "dev"
+	Commit    = "unknown"
+	BuildTime = "unknown"
 )
 
 var (
@@ -49,6 +57,23 @@ var rootCmd = &cobra.Command{
 	Long: `A gitops/configuration system and tool for managing labs and environments
 	with jumpstarter controllers, exporter hosts (sidekicks), exporters, and clients
 	in enterprise environments.`,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		if cmd.Name() != "version" {
+			fmt.Printf("jumpstarter-lab-config version %s (commit %s, built %s)\n", Version, Commit, BuildTime)
+		}
+	},
+}
+
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Print version information",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("jumpstarter-lab-config version %s (commit %s, built %s)\n", Version, Commit, BuildTime)
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(versionCmd)
 }
 
 // nolint:gocyclo

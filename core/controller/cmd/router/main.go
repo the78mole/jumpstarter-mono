@@ -19,6 +19,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -34,11 +35,28 @@ import (
 	_ "google.golang.org/grpc/encoding/gzip"
 )
 
+// Version information (set via ldflags during build)
+var (
+	Version   = "dev"
+	Commit    = "unknown"
+	BuildTime = "unknown"
+)
+
 func main() {
+	var printVersion bool
 	opts := zap.Options{}
 	opts.BindFlags(flag.CommandLine)
+	flag.BoolVar(&printVersion, "version", false, "Print version information and exit")
 
 	flag.Parse()
+
+	if printVersion {
+		fmt.Printf("Jumpstarter Router\n")
+		fmt.Printf("Version: %s\n", Version)
+		fmt.Printf("Commit: %s\n", Commit)
+		fmt.Printf("Build Time: %s\n", BuildTime)
+		os.Exit(0)
+	}
 
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 	logger := ctrl.Log.WithName("router")
@@ -64,6 +82,7 @@ func main() {
 		ServerOption: serverOption,
 	}
 
+	logger.Info("starting router service", "version", Version, "commit", Commit, "buildTime", BuildTime)
 	err = svc.Start(ctx)
 	if err != nil {
 		logger.Error(err, "failed to start router service")

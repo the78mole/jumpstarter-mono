@@ -23,20 +23,19 @@ ENV CI=true
 ENV RUSTUP_HOME="/home/ci/.rustup"
 ENV CARGO_HOME="/home/ci/.cargo"
 
-# Create non-root user for CI operations
+# Create non-root user for CI operations but keep root for GitHub Actions compatibility
 RUN groupadd -r ci && useradd -r -g ci -m -s /bin/bash ci
-
-USER ci
 
 # Install Rust
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
+    RUSTUP_HOME="/home/ci/.rustup" CARGO_HOME="/home/ci/.cargo" sh -s -- -y --default-toolchain stable
 
 # Add embedded target for dutlink-firmware
-RUN /home/ci/.cargo/bin/rustup target add thumbv7em-none-eabihf
+RUN RUSTUP_HOME="/home/ci/.rustup" CARGO_HOME="/home/ci/.cargo" /home/ci/.cargo/bin/rustup target add thumbv7em-none-eabihf
 
 # Update PATH for Rust tools
 ENV PATH="/home/ci/.cargo/bin:$PATH"
 
 # Verify installation
-RUN rustc --version && cargo --version
+RUN /home/ci/.cargo/bin/rustc --version && /home/ci/.cargo/bin/cargo --version

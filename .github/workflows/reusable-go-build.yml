@@ -7,56 +7,75 @@ on:
         required: false
         type: string
         default: "1.24"
+        description: "Go version to use"
       working-directory:
         required: true
         type: string
+        description: "Working directory for the Go project"
       binary-name:
         required: true
         type: string
+        description: "Name of the output binary"
       cmd-package:
         required: false
         type: string
         default: "./cmd"
+        description: "Package path for the main command"
       build-flags:
         required: false
         type: string
         default: ""
+        description: "Additional build flags"
       test-flags:
         required: false
         type: string
         default: "-v -race"
+        description: "Test flags to use"
       use-container:
         required: false
         type: boolean
         default: true
+        description: "Whether to use CI container"
+      version:
+        required: false
+        type: string
+        default: "dev"
+        description: "Semantic version to inject"
   workflow_dispatch:
     inputs:
       go-version:
         required: false
         type: string
         default: "1.24"
+        description: "Go version to use"
       working-directory:
         required: true
         type: string
+        description: "Working directory for the Go project"
       binary-name:
         required: true
         type: string
+        description: "Name of the output binary"
       cmd-package:
         required: false
         type: string
         default: "./cmd"
+        description: "Package path for the main command"
       build-flags:
         required: false
         type: string
         default: ""
+        description: "Additional build flags"
       test-flags:
         required: false
         type: string
         default: "-v -race"
+        description: "Test flags to use"
       use-container:
         required: false
         type: boolean
         default: true
+        description: "Whether to use CI container"
 
 jobs:
   build:
@@ -65,6 +84,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for VCS stamping
 
       - name: Setup Go (if not using container)
         if: ${{ !inputs.use-container }}
@@ -73,20 +94,66 @@ jobs:
           go-version: ${{ inputs.go-version }}
           cache-dependency-path: ${{ inputs.working-directory }}/go.sum
 
+      - name: Configure Git for VCS stamping
+        if: ${{ inputs.use-container }}
+        run: |
+          git config --global --add safe.directory "$(pwd)"
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
       - name: Verify dependencies
         working-directory: ${{ inputs.working-directory }}
         run: go mod verify
 
       - name: Build
         working-directory: ${{ inputs.working-directory }}
+        env:
+          VERSION: ${{ inputs.version }}
         run: |
-          go build ${{ inputs.build-flags }} -o ${{ inputs.binary-name }} ${{ inputs.cmd-package }}
+          echo "Building with version: $VERSION"
+          COMMIT=$(git rev-parse --short HEAD || echo "unknown")
+          BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          LDFLAGS="-X main.Version=$VERSION -X main.Commit=$COMMIT -X main.BuildTime=$BUILD_TIME"
+          echo "LDFLAGS: $LDFLAGS"
+
+          # Build with fallback for VCS stamping if needed
+          if ! go build -ldflags="$LDFLAGS" ${{ inputs.build-flags }} -o ${{ inputs.binary-name }} ${{ inputs.cmd-package }}; then
+            echo "VCS stamping failed, retrying with -buildvcs=false"
+            go build -buildvcs=false -ldflags="$LDFLAGS" ${{ inputs.build-flags }} -o ${{ inputs.binary-name }} ${{ inputs.cmd-package }}
+          fi
+
+      - name: Setup test environment
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          # Set up envtest binaries if they don't exist
+          if [ ! -d "bin/k8s" ]; then
+            echo "Setting up envtest binaries..."
+            if command -v setup-envtest &> /dev/null; then
+              # Use pre-installed setup-envtest from container
+              mkdir -p bin/k8s
+              ENVTEST_BIN_DIR=$(setup-envtest use 1.30.0 --bin-dir bin/k8s --print path)
+              echo "✅ Envtest binaries installed to: $ENVTEST_BIN_DIR"
+            else
+              # Download and install setup-envtest tool
+              go install sigs.k8s.io/controller-runtime/tools/setup-envtest@release-0.18
+              mkdir -p bin/k8s
+              setup-envtest use 1.30.0 --bin-dir bin/k8s
+              echo "✅ Envtest tool and binaries installed"
+            fi
+          else
+            echo "✅ Envtest binaries already exist"
+          fi
 
       - name: Run tests
         working-directory: ${{ inputs.working-directory }}
+        env:
+          KUBEBUILDER_ASSETS: ${{ inputs.working-directory }}/bin/k8s/1.30.0-linux-amd64
         run: |
+          # Check if we should use the Makefile
           if [ -f Makefile ] && grep -q "^test:" Makefile; then
+            echo "🧪 Running tests via Makefile..."
             make test
           else
+            echo "🧪 Running tests directly..."
             go test ${{ inputs.test-flags }} ./...
           fi

@@ -30,12 +30,29 @@ ENV PATH="/usr/local/go/bin:$PATH"
 ENV GOPATH="/home/ci/go"
 ENV GOCACHE="/home/ci/.cache/go-build"
 
-# Create non-root user for CI operations
+# Create non-root user for CI operations but keep root for GitHub Actions compatibility
 RUN groupadd -r ci && useradd -r -g ci -m -s /bin/bash ci
 
-USER ci
-
 # Set up Go environment for ci user
-ENV PATH="/usr/local/go/bin:/home/ci/go/bin:$PATH"
 RUN mkdir -p /home/ci/go/bin /home/ci/go/src /home/ci/go/pkg && \
     mkdir -p /home/ci/.cache/go-build
+
+# Configure git for VCS stamping compatibility
+RUN git config --global --add safe.directory '*' && \
+    git config --global user.name "CI Container" && \
+    git config --global user.email "ci@jumpstarter.dev" && \
+    git config --global init.defaultBranch main
+
+# Install controller-runtime envtest binaries for Kubernetes testing
+ARG ENVTEST_K8S_VERSION=1.30.0
+RUN go install sigs.k8s.io/controller-runtime/tools/setup-envtest@release-0.18 && \
+    setup-envtest use ${ENVTEST_K8S_VERSION} --bin-dir /usr/local/kubebuilder && \
+    chmod +x /usr/local/kubebuilder/* || true
+
+# Install kubectl for e2e tests
+RUN curl -LO "https://dl.k8s.io/release/v${ENVTEST_K8S_VERSION}/bin/linux/amd64/kubectl" && \
+    chmod +x kubectl && \
+    mv kubectl /usr/local/bin/
+
+# Update PATH to include both user environments
+ENV PATH="/usr/local/go/bin:/home/ci/go/bin:/usr/local/kubebuilder:$PATH"

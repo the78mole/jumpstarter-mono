@@ -1,4 +1,15 @@
-GO_FILES := $(shell find ./ -name ".go" -not -path "./bin" -not -path "./packaging/*")
+GO_FILES := $(shell find ./ -name "*.go" -not -path "./bin" -not -path "./packaging/*")
+
+# Version information
+VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
+COMMIT ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+BUILD_TIME ?= $(shell date -u '+%Y-%m-%d_%H:%M:%S')
+
+# Build flags for version information
+LDFLAGS := -s -w \
+	-X main.Version=$(VERSION) \
+	-X main.Commit=$(COMMIT) \
+	-X main.BuildTime=$(BUILD_TIME)
 
 # Image URL to use all building/pushing image targets
 IMG ?= quay.io/jumpstarter-dev/jumpstarter-controller:latest
@@ -66,8 +77,12 @@ vet: ## Run go vet against code.
 	go vet ./...
 
 .PHONY: test
-test: manifests generate fmt vet envtest ## Run tests.
-	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) -p path)" go test $$(go list ./... | grep -v /e2e) -coverprofile cover.out
+test: manifests generate fmt vet envtest ## Run tests
+	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) --print path)" go test $$(go list ./... | grep -v /e2e) -coverprofile cover.out
+
+.PHONY: test-integration
+test-integration: manifests generate fmt vet envtest ## Run integration tests
+	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) --print path)" go test ./internal/controller/... -v -ginkgo.v
 
 # Utilize Kind or modify the e2e tests to load the image locally, enabling compatibility with other vendors.
 .PHONY: test-e2e  # Run the e2e tests against a Kind k8s instance that is spun up.
@@ -86,8 +101,8 @@ lint-fix: golangci-lint ## Run golangci-lint linter and perform fixes
 
 .PHONY: build
 build: manifests generate fmt vet ## Build manager binary.
-	go build -o bin/manager cmd/main.go
-	go build -o bin/router  cmd/router/main.go
+	go build -ldflags "$(LDFLAGS)" -o bin/manager cmd/main.go
+	go build -ldflags "$(LDFLAGS)" -o bin/router  cmd/router/main.go
 
 .PHONY: run
 run: manifests generate fmt vet ## Run a controller from your host.

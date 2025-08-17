@@ -16,6 +16,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.12-dev \
     python3.12-venv \
     python3-pip \
+    qemu-system-x86 \
+    qemu-system-arm \
+    qemu-utils \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv - modern Python package manager
@@ -24,7 +27,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 # Set up workspace
 WORKDIR /workspace
 
-# Create non-root user for CI operations
+# Create non-root user for CI operations but keep root for GitHub Actions compatibility
 RUN groupadd -r ci && useradd -r -g ci -m -s /bin/bash ci
 
 # Create virtual environment for the ci user
@@ -36,9 +39,6 @@ ENV CI=true
 ENV PATH="/home/ci/.venv/bin:/usr/local/bin:$PATH"
 ENV PYTHONPATH="/workspace"
 ENV UV_SYSTEM_PYTHON=1
-
-# Switch to non-root user
-USER ci
 
 # Verify Python installation
 RUN python3.12 --version && \

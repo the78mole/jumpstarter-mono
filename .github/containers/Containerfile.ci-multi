@@ -16,6 +16,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.12-dev \
     python3.12-venv \
     python3-pip \
+    qemu-system-x86 \
+    qemu-system-arm \
+    qemu-utils \
     && rm -rf /var/lib/apt/lists/*
 
 # Install uv for Python package management
@@ -45,19 +48,18 @@ ENV GOCACHE="/home/ci/.cache/go-build"
 ENV RUSTUP_HOME="/home/ci/.rustup"
 ENV CARGO_HOME="/home/ci/.cargo"
 
-# Create non-root user for CI operations
+# Create non-root user for CI operations but keep root for GitHub Actions compatibility
 RUN groupadd -r ci && useradd -r -g ci -m -s /bin/bash ci
 
-USER ci
-
 # Set up Go environment
-ENV PATH="/usr/local/go/bin:/home/ci/go/bin:$PATH"
 RUN mkdir -p /home/ci/go/bin /home/ci/go/src /home/ci/go/pkg && \
     mkdir -p /home/ci/.cache/go-build
 
-# Install Rust
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
-RUN /home/ci/.cargo/bin/rustup target add thumbv7em-none-eabihf
+# Install Rust for ci user
+RUN RUSTUP_HOME="/home/ci/.rustup" CARGO_HOME="/home/ci/.cargo" \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+RUN RUSTUP_HOME="/home/ci/.rustup" CARGO_HOME="/home/ci/.cargo" \
+    /home/ci/.cargo/bin/rustup target add thumbv7em-none-eabihf
 
 # Update PATH for all tools
 ENV PATH="/home/ci/.cargo/bin:/usr/local/go/bin:/home/ci/go/bin:$PATH"
@@ -71,8 +73,8 @@ ENV PATH="/home/ci/.venv/bin:$PATH"
 RUN python3.12 --version && \
     uv --version && \
     go version && \
-    rustc --version && \
-    cargo --version && \
+    /home/ci/.cargo/bin/rustc --version && \
+    /home/ci/.cargo/bin/cargo --version && \
     node --version && \
     npm --version && \
     pnpm --version

@@ -11,6 +11,8 @@ from packaging.specifiers import SpecifierSet
 
 
 class PinJumpstarter(BuildHookInterface):
+    """Build hook to pin jumpstarter dependencies during build."""
+
     PLUGIN_NAME = "pin_jumpstarter"
 
     def initialize(self, version, build_data):

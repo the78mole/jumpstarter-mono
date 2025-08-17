@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/the78mole/jumpstarter-mono/actions/workflows/ci.yml/badge.svg)](https://github.com/the78mole/jumpstarter-mono/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Release](https://img.shields.io/github/v/release/the78mole/jumpstarter-mono?label=Latest%20Release)](https://github.com/the78mole/jumpstarter-mono/releases/latest)
 
 This is a monorepo containing all Jumpstarter components unified into a single, manageable repository. The goal is to simplify development, improve cross-component integration, and streamline the release process.
 

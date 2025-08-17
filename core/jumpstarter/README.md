@@ -4,6 +4,8 @@
 [![Etherpad](https://img.shields.io/badge/Etherpad-Notes-blue?logo=etherpad)](https://etherpad.jumpstarter.dev/pad-lister)
 [![Community Meeting](https://img.shields.io/badge/Weekly%20Meeting-Google%20Meet-blue?logo=google-meet)](https://meet.google.com/gzd-hhbd-hpu)
 
+**Note**: Container-based CI infrastructure is now active and working correctly.
+
 A free, open source tool for automated testing on real and virtual hardware with
 CI/CD integration. Simplify device automation with consistent rules across local
 and distributed environments.

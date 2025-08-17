@@ -4,6 +4,7 @@ name: CI
 on:
   push:
     branches: [main, develop, "release-*"]
+    # Remove tag triggers - we'll create tags automatically
   pull_request:
     branches: [main, "release-*"]
   merge_group: {}
@@ -20,6 +21,9 @@ jobs:
   # Detect what components have changed to optimize build times
   detect-changes:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required for creating tags
+      actions: read    # Required for reading workflow artifacts
     outputs:
       python: ${{ steps.changes.outputs.python }}
       go: ${{ steps.changes.outputs.go }}
@@ -28,9 +32,95 @@ jobs:
       docs: ${{ steps.changes.outputs.docs }}
       ci: ${{ steps.changes.outputs.ci }}
       containers: ${{ steps.changes.outputs.containers }}
+      version: ${{ steps.semver.outputs.version }}
+      version-tag: ${{ steps.semver.outputs.version_tag }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for semantic versioning
+
+      - name: Determine version format and PR number
+        id: version-config
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            PR_NUMBER="${{ github.event.number }}"
+            VERSION_FORMAT="\${major}.\${minor}.\${patch}-pr-${PR_NUMBER}-\${increment}"
+            echo "version-format=${VERSION_FORMAT}" >> $GITHUB_OUTPUT
+            echo "pr-number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+            echo "is-pr=true" >> $GITHUB_OUTPUT
+            echo "🔀 Pull Request detected: #${PR_NUMBER}"
+          elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            VERSION_FORMAT="\${major}.\${minor}.\${patch}"
+            echo "version-format=${VERSION_FORMAT}" >> $GITHUB_OUTPUT
+            echo "pr-number=" >> $GITHUB_OUTPUT
+            echo "is-pr=false" >> $GITHUB_OUTPUT
+            echo "🚀 Main branch detected - clean version format"
+          else
+            # Other branches (develop, feature, etc.)
+            BRANCH_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
+            VERSION_FORMAT="\${major}.\${minor}.\${patch}-${BRANCH_NAME}-\${increment}"
+            echo "version-format=${VERSION_FORMAT}" >> $GITHUB_OUTPUT
+            echo "pr-number=" >> $GITHUB_OUTPUT
+            echo "is-pr=false" >> $GITHUB_OUTPUT
+            echo "🌿 Branch '${BRANCH_NAME}' detected"
+          fi
+
+          echo "Version format: $(cat $GITHUB_OUTPUT | grep version-format | cut -d= -f2-)"
+
+      - name: Calculate semantic version
+        id: semver
+        uses: paulhatch/semantic-version@v5.4.0
+        with:
+          tag_prefix: "mono-v"
+          major_pattern: "/(feat|fix|refactor)!:/"
+          minor_pattern: "/^feat:/"
+          version_format: ${{ steps.version-config.outputs.version-format }}
+          bump_each_commit: ${{ github.ref == 'refs/heads/main' }}
+          search_commit_body: true
+          user_format_type: "csv"
+
+      - name: Debug semantic version
+        run: |
+          echo "Semantic version: ${{ steps.semver.outputs.version }}"
+          echo "Version tag: ${{ steps.semver.outputs.version_tag }}"
+          echo "Major: ${{ steps.semver.outputs.major }}"
+          echo "Minor: ${{ steps.semver.outputs.minor }}"
+          echo "Patch: ${{ steps.semver.outputs.patch }}"
+          echo "Increment: ${{ steps.semver.outputs.increment }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "Bump each commit: ${{ github.ref == 'refs/heads/main' }}"
+
+      - name: Generate version summary
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          ## 📋 Semantic Versioning Summary
+
+          | Field | Value |
+          |-------|-------|
+          | **Version** | `${{ steps.semver.outputs.version }}` |
+          | **Version Tag** | `${{ steps.semver.outputs.version_tag }}` |
+          | **Major** | `${{ steps.semver.outputs.major }}` |
+          | **Minor** | `${{ steps.semver.outputs.minor }}` |
+          | **Patch** | `${{ steps.semver.outputs.patch }}` |
+          | **Increment** | `${{ steps.semver.outputs.increment }}` |
+
+          ### 🔍 Versioning Configuration
+          - **Tag Prefix**: `mono-v`
+          - **Major Pattern**: `/(feat|fix|refactor)!:/` (Breaking changes)
+          - **Minor Pattern**: `/^feat:/` (New features)
+          - **Version Format**: `${{ steps.version-config.outputs.version-format }}`
+          - **Bump Each Commit**: `${{ github.ref == 'refs/heads/main' }}` (Main: true, PRs: false)
+
+          ### 📈 Version Calculation
+          - Uses conventional commit patterns for automated versioning
+          - Major: Breaking changes marked with `!` after type (e.g., `feat!:`, `fix!:`)
+          - Minor: New features with `feat:` prefix
+          - Patch: All other changes (`fix:`, `refactor:`, etc.)
+          - **Main Branch**: Every commit increments version
+          - **PR Branches**: Only final merge increments version
+
+          EOF
 
       - name: Check for changes
         uses: dorny/paths-filter@v3
@@ -65,6 +155,44 @@ jobs:
               - '.github/containers/**'
               - '.github/workflows/ci-containers.yml'
 
+      - name: Create automatic release tag (main branch only)
+        if: >
+          github.ref == 'refs/heads/main' &&
+          github.event_name == 'push' &&
+          !env.ACT
+        run: |
+          # Calculate the next version for main branch pushes
+          CURRENT_VERSION="${{ steps.semver.outputs.version }}"
+          VERSION_TAG="${{ steps.semver.outputs.version_tag }}"
+
+          echo "🚀 Auto-creating release tag for main branch push"
+          echo "Current version: $CURRENT_VERSION"
+          echo "Release tag: $VERSION_TAG"
+
+          # Configure git for the action
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Create and push the tag
+          git tag "$VERSION_TAG" -m "Automatic release $CURRENT_VERSION"
+          git push origin "$VERSION_TAG"
+
+          echo "✅ Created and pushed tag: $VERSION_TAG"
+
+          # Add to step summary
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          ## 🏷️ Automatic Release Tag Created
+
+          **Tag**: \`$VERSION_TAG\`
+          **Version**: \`$CURRENT_VERSION\`
+          **Trigger**: Main branch push
+          **Commit**: \`${{ github.sha }}\`
+
+          This will trigger an automatic release workflow.
+          EOF
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   # Build CI container images if needed
   build-containers:
     needs: detect-changes
@@ -72,6 +200,9 @@ jobs:
       needs.detect-changes.outputs.containers == 'true' ||
       needs.detect-changes.outputs.ci == 'true' ||
       github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: read
+      packages: write
     uses: ./.github/workflows/ci-containers.yml
     with:
       force-rebuild: ${{ github.event_name == 'workflow_dispatch' }}
@@ -84,81 +215,117 @@ jobs:
       github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/reusable-typos.yml
 
+  # === LINTING JOBS ===
+
   # Python components
   python-lint:
-    needs: detect-changes
+    needs: [detect-changes, build-containers]
     if: >
-      needs.detect-changes.outputs.python == 'true' ||
-      needs.detect-changes.outputs.ci == 'true' ||
-      github.event_name == 'workflow_dispatch'
+      always() &&
+      (needs.detect-changes.outputs.python == 'true' ||
+       needs.detect-changes.outputs.ci == 'true' ||
+       github.event_name == 'workflow_dispatch') &&
+      (needs.build-containers.result == 'success' ||
+       needs.build-containers.result == 'skipped')
     uses: ./.github/workflows/reusable-python-lint.yml
     with:
       working-directory: core/jumpstarter
-      use-container: false  # Disable containers for local testing compatibility
+      use-container: true  # Use pre-built CI containers for faster builds
 
-  python-test:
-    needs: detect-changes
+  # Go components
+  controller-lint:
+    needs: [detect-changes, build-containers]
     if: >
-      needs.detect-changes.outputs.python == 'true' ||
-      needs.detect-changes.outputs.ci == 'true' ||
-      github.event_name == 'workflow_dispatch'
+      always() &&
+      (needs.detect-changes.outputs.go == 'true' ||
+       needs.detect-changes.outputs.ci == 'true' ||
+       github.event_name == 'workflow_dispatch') &&
+      (needs.build-containers.result == 'success' ||
+       needs.build-containers.result == 'skipped')
+    uses: ./.github/workflows/reusable-go-lint.yml
+    with:
+      working-directory: core/controller
+      use-container: true  # Use pre-built CI containers for faster builds
+
+  lab-config-lint:
+    needs: [detect-changes, build-containers]
+    if: >
+      always() &&
+      (needs.detect-changes.outputs.go == 'true' ||
+       needs.detect-changes.outputs.ci == 'true' ||
+       github.event_name == 'workflow_dispatch') &&
+      (needs.build-containers.result == 'success' ||
+       needs.build-containers.result == 'skipped')
+    uses: ./.github/workflows/reusable-go-lint.yml
+    with:
+      working-directory: lab-config
+      use-container: true  # Use pre-built CI containers for faster builds
+
+  # === TESTING JOBS ===
+
+  # Python components
+  python-test:
+    needs: [detect-changes, build-containers]
+    if: >
+      always() &&
+      (needs.detect-changes.outputs.python == 'true' ||
+       needs.detect-changes.outputs.ci == 'true' ||
+       github.event_name == 'workflow_dispatch') &&
+      (needs.build-containers.result == 'success' ||
+       needs.build-containers.result == 'skipped')
     uses: ./.github/workflows/reusable-python-test.yml
     with:
       working-directory: core/jumpstarter
       test-command: "uv run pytest --tb=short"
-      use-container: false  # Disable containers for local testing compatibility
+      use-container: true  # Use pre-built CI containers for faster builds
+
+  # === BUILDING JOBS ===
 
   # Go components
-  controller-lint:
-    needs: detect-changes
-    if: >
-      needs.detect-changes.outputs.go == 'true' ||
-      needs.detect-changes.outputs.ci == 'true' ||
-      github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/reusable-go-lint.yml
-    with:
-      working-directory: core/controller
-      use-container: false  # Disable containers for local testing compatibility
-
   controller-build:
-    needs: detect-changes
+    needs: [detect-changes, build-containers]
     if: >
-      needs.detect-changes.outputs.go == 'true' ||
-      needs.detect-changes.outputs.ci == 'true' ||
-      github.event_name == 'workflow_dispatch'
+      always() &&
+      (needs.detect-changes.outputs.go == 'true' ||
+       needs.detect-changes.outputs.ci == 'true' ||
+       github.event_name == 'workflow_dispatch') &&
+      (needs.build-containers.result == 'success' ||
+       needs.build-containers.result == 'skipped')
     uses: ./.github/workflows/reusable-go-build.yml
     with:
       working-directory: core/controller
       binary-name: manager
       cmd-package: "./cmd"
       build-flags: '-ldflags "-s -w"'
-      use-container: false  # Disable containers for local testing compatibility
-
-  lab-config-lint:
-    needs: detect-changes
-    if: >
-      needs.detect-changes.outputs.go == 'true' ||
-      needs.detect-changes.outputs.ci == 'true' ||
-      github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/reusable-go-lint.yml
-    with:
-      working-directory: lab-config
-      use-container: false  # Disable containers for local testing compatibility
+      use-container: true  # Use pre-built CI containers for faster builds
+      version: ${{ needs.detect-changes.outputs.version }}
 
   lab-config-build:
-    needs: detect-changes
+    needs: [detect-changes, build-containers]
     if: >
-      needs.detect-changes.outputs.go == 'true' ||
-      needs.detect-changes.outputs.ci == 'true' ||
-      github.event_name == 'workflow_dispatch'
+      always() &&
+      (needs.detect-changes.outputs.go == 'true' ||
+       needs.detect-changes.outputs.ci == 'true' ||
+       github.event_name == 'workflow_dispatch') &&
+      (needs.build-containers.result == 'success' ||
+       needs.build-containers.result == 'skipped')
     uses: ./.github/workflows/reusable-go-build.yml
     with:
       working-directory: lab-config
       binary-name: lab-config
-      use-container: false  # Disable containers for local testing compatibility
+      use-container: true  # Use pre-built CI containers for faster builds
+      version: ${{ needs.detect-changes.outputs.version }}
 
-  # Rust components
-  rust-build:
+  # Rust components (combined lint and build)
+  rust-lint-and-build:
+    needs: [detect-changes, build-containers]
+    if: >
+      always() &&
+      (needs.detect-changes.outputs.rust == 'true' ||
+       needs.detect-changes.outputs.ci == 'true' ||
+       github.event_name == 'workflow_dispatch') &&
+      (needs.build-containers.result == 'success' ||
+       needs.build-containers.result == 'skipped')
     uses: ./.github/workflows/reusable-rust-build.yml
     with:
       working-directory: hardware/dutlink-firmware
@@ -166,15 +333,18 @@ jobs:
       skip-tests: true
       clippy-flags: "--all-features"
       clippy-warnings: "warn"
-      use-container: false  # Disable containers for local testing compatibility
+      use-container: true  # Use pre-built CI containers for faster builds
 
-  # Node.js/TypeScript components
+  # Web components (Node.js/TypeScript)
   web-build:
-    needs: detect-changes
+    needs: [detect-changes, build-containers]
     if: >
-      needs.detect-changes.outputs.web == 'true' ||
-      needs.detect-changes.outputs.ci == 'true' ||
-      github.event_name == 'workflow_dispatch'
+      always() &&
+      (needs.detect-changes.outputs.web == 'true' ||
+       needs.detect-changes.outputs.ci == 'true' ||
+       github.event_name == 'workflow_dispatch') &&
+      (needs.build-containers.result == 'success' ||
+       needs.build-containers.result == 'skipped')
     uses: ./.github/workflows/reusable-web-build.yml
     with:
       working-directory: integrations/vscode
@@ -182,7 +352,9 @@ jobs:
       build-command: pnpm run compile
       test-command: echo "Tests skipped - VSCode extension tests require GUI environment"
       lint-command: pnpm run lint
-      use-container: false  # Disable containers for local testing compatibility
+      use-container: true  # Use pre-built CI containers for faster builds
+
+  # === DOCUMENTATION & INTEGRATION TESTS ===
 
   # Documentation build
   docs-build:
@@ -192,6 +364,8 @@ jobs:
       needs.detect-changes.outputs.ci == 'true' ||
       github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -257,3 +431,37 @@ jobs:
           else
             echo "No e2e tests found, skipping"
           fi
+
+  # Create automatic release for main branch pushes after all tests pass
+  automatic-release:
+    needs: [
+      detect-changes,
+      python-test,
+      controller-build,
+      lab-config-build,
+      rust-lint-and-build,
+      web-build,
+      docs-build,
+      e2e-tests
+    ]
+    permissions:
+      contents: write      # Required for creating releases and uploading assets
+      packages: write      # Required for publishing container images
+    if: >
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
+      always() &&
+      (needs.detect-changes.result == 'success') &&
+      (needs.python-test.result == 'success' || needs.python-test.result == 'skipped') &&
+      (needs.controller-build.result == 'success' || needs.controller-build.result == 'skipped') &&
+      (needs.lab-config-build.result == 'success' || needs.lab-config-build.result == 'skipped') &&
+      (needs.rust-lint-and-build.result == 'success' || needs.rust-lint-and-build.result == 'skipped') &&
+      (needs.web-build.result == 'success' || needs.web-build.result == 'skipped') &&
+      (needs.docs-build.result == 'success' || needs.docs-build.result == 'skipped') &&
+      (needs.e2e-tests.result == 'success' || needs.e2e-tests.result == 'skipped')
+    uses: ./.github/workflows/reusable-release.yml
+    with:
+      version: ${{ needs.detect-changes.outputs.version }}
+      version_tag: ${{ needs.detect-changes.outputs.version-tag }}
+      ci_run_id: "${{ github.run_id }}"
+    secrets: inherit

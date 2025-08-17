@@ -44,6 +44,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup test environment (if using container)
+        if: ${{ inputs.use-container }}
+        run: |
+          # Create required directories for container environment
+          mkdir -p /github/home/.config
+
       - name: Setup Python (if not using container)
         if: ${{ !inputs.use-container }}
         uses: actions/setup-python@v4

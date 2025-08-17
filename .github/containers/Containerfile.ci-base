@@ -21,6 +21,5 @@ WORKDIR /workspace
 ENV DEBIAN_FRONTEND=noninteractive
 ENV CI=true
 
-# Create non-root user for CI operations
+# Create non-root user for CI operations but keep root for GitHub Actions compatibility
 RUN groupadd -r ci && useradd -r -g ci -m -s /bin/bash ci
-USER ci

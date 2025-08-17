@@ -89,8 +89,8 @@ jobs:
       - name: Add additional targets (if using container)
         if: ${{ inputs.use-container && inputs.targets }}
         run: |
-          IFS=',' read -ra TARGETS <<< "${{ inputs.targets }}"
-          for target in "${TARGETS[@]}"; do
+          targets="${{ inputs.targets }}"
+          for target in $(echo "$targets" | tr ',' ' '); do
             rustup target add "$target"
           done
 

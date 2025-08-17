@@ -23,7 +23,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}/ci
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-containers-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -72,6 +72,12 @@ jobs:
             NEED_REBUILD=true
           fi
 
+          # Always rebuild on main branch push to ensure containers are available
+          if [ "${{ github.ref }}" = "refs/heads/main" ] && [ "${{ github.event_name }}" = "push" ]; then
+            echo "Main branch push - rebuild to ensure containers are available"
+            NEED_REBUILD=true
+          fi
+
           # Check if container configuration changed
           if git diff --name-only HEAD~1 2>/dev/null | grep -q ".github/containers/Containerfile.ci-${{ matrix.container }}"; then
             echo "Container configuration changed"
@@ -93,7 +99,7 @@ jobs:
           context: .
           file: .github/containers/Containerfile.ci-${{ matrix.container }}
           platforms: linux/amd64
-          push: false
+          push: ${{ !env.ACT }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha

@@ -24,15 +24,12 @@ RUN curl -k -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - &&
 # Set up workspace
 WORKDIR /workspace
 
-# Create non-root user for CI operations
-RUN groupadd -r ci && useradd -r -g ci -m -s /bin/bash ci
-
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 ENV CI=true
 
-# Switch to non-root user
-USER ci
+# Create non-root user for CI operations but keep root for GitHub Actions compatibility
+RUN groupadd -r ci && useradd -r -g ci -m -s /bin/bash ci
 
 # Verify installation
 RUN node --version && npm --version && pnpm --version

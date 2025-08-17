@@ -1,0 +1,51 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 0.1.6)'
+        required: true
+        type: string
+      create-tag:
+        description: 'Create new tag for this version'
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  prepare-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create tag if requested
+        if: ${{ inputs.create-tag }}
+        run: |
+          VERSION="${{ inputs.version }}"
+          VERSION_TAG="mono-v${VERSION}"
+
+          echo "Creating tag ${VERSION_TAG}..."
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "${VERSION_TAG}"
+          git push origin "${VERSION_TAG}"
+
+          echo "✅ Tag ${VERSION_TAG} created and pushed"
+          echo "This will trigger the automatic CI → Release pipeline"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Manual release info
+        if: ${{ !inputs.create-tag }}
+        run: |
+          echo "ℹ️  No tag creation requested"
+          echo "For manual releases without automatic CI, you would need to:"
+          echo "1. Ensure all components are built and tested"
+          echo "2. Use the reusable-release.yml workflow directly"
+          echo "3. Or create the tag to trigger automatic CI → Release"
