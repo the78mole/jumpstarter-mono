@@ -39,32 +39,33 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    container: ${{ inputs.use-container && !env.ACT && 'ghcr.io/the78mole/jumpstarter-mono/ci-python:latest' || '' }}
+    container: ${{ inputs.use-container && 'ghcr.io/the78mole/jumpstarter-mono/ci-python:latest' || null }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Python (if not using container)
-        if: ${{ !inputs.use-container || env.ACT }}
+        if: ${{ !inputs.use-container }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ inputs.python-version }}
 
       - name: Install QEMU (if not using container)
-        if: ${{ !inputs.use-container || env.ACT }}
+        if: ${{ !inputs.use-container }}
         run: |
           sudo apt-get update
           sudo apt-get install -y qemu-system-x86 qemu-system-arm qemu-utils
 
       - name: Install uv (if not using container)
-        if: ${{ !inputs.use-container || env.ACT }}
+        if: ${{ !inputs.use-container }}
         uses: astral-sh/setup-uv@v3
 
       - name: Install buf
         run: |
           # Download and install buf
-          if [ "${{ inputs.use-container && !env.ACT }}" = "true" ]; then
+          if [ "${{ inputs.use-container }}" = "true" ]; then
             # In container, install as regular user
+            mkdir -p /home/ci/.local/bin
             curl -sSL \
               "https://github.com/bufbuild/buf/releases/latest/download/buf-$(uname -s)-$(uname -m)" \
               -o "/home/ci/.local/bin/buf"

@@ -73,13 +73,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ${{ inputs.use-container && !env.ACT && 'ghcr.io/the78mole/jumpstarter-mono/ci-rust:latest' || '' }}
+    container: ${{ inputs.use-container && 'ghcr.io/the78mole/jumpstarter-mono/ci-rust:latest' || null }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Rust toolchain (if not using container)
-        if: ${{ !inputs.use-container || env.ACT }}
+        if: ${{ !inputs.use-container }}
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ inputs.rust-toolchain }}
@@ -87,7 +87,7 @@ jobs:
           components: rustfmt, clippy
 
       - name: Add additional targets (if using container)
-        if: ${{ inputs.use-container && !env.ACT && inputs.targets }}
+        if: ${{ inputs.use-container && inputs.targets }}
         run: |
           IFS=',' read -ra TARGETS <<< "${{ inputs.targets }}"
           for target in "${TARGETS[@]}"; do
@@ -95,7 +95,7 @@ jobs:
           done
 
       - name: Cache cargo registry (if not using container)
-        if: ${{ !inputs.use-container || env.ACT }}
+        if: ${{ !inputs.use-container }}
         uses: actions/cache@v4
         with:
           path: ~/.cargo/registry
@@ -104,7 +104,7 @@ jobs:
             ${{ runner.os }}-cargo-registry-
 
       - name: Cache cargo index (if not using container)
-        if: ${{ !inputs.use-container || env.ACT }}
+        if: ${{ !inputs.use-container }}
         uses: actions/cache@v4
         with:
           path: ~/.cargo/git

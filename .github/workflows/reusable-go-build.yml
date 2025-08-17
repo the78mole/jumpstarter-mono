@@ -61,13 +61,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ${{ inputs.use-container && !env.ACT && 'ghcr.io/the78mole/jumpstarter-mono/ci-go:latest' || '' }}
+    container: ${{ inputs.use-container && 'ghcr.io/the78mole/jumpstarter-mono/ci-go:latest' || null }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Go (if not using container)
-        if: ${{ !inputs.use-container || env.ACT }}
+        if: ${{ !inputs.use-container }}
         uses: actions/setup-go@v4
         with:
           go-version: ${{ inputs.go-version }}

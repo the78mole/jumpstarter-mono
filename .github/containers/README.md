@@ -49,8 +49,32 @@ These images are automatically built and published to `ghcr.io/the78mole/jumpsta
 - Container definitions change
 - CI configuration changes
 - Manually triggered via workflow_dispatch
+- Weekly on schedule (Sundays at 2 AM UTC)
 
-The reusable workflow templates automatically use these containers when available, falling back to tool installation if needed (e.g., when running with `act` locally).
+### Enabling Container Usage
+
+Currently, containers are **disabled by default** in the CI workflows to ensure compatibility with local testing via `act`. To enable container usage in production:
+
+1. Edit `.github/workflows/ci.yml`
+2. Change `use-container: false` to `use-container: true` for each workflow
+3. Commit and push the changes
+
+Example:
+```yaml
+python-lint:
+  uses: ./.github/workflows/reusable-python-lint.yml
+  with:
+    working-directory: core/jumpstarter
+    use-container: true  # Enable container usage
+```
+
+### Performance Benefits
+
+When enabled, containers provide:
+- **2-5 minutes saved per job** (eliminates tool installation)
+- Consistent environments across all CI runs
+- Better caching through pre-built layers
+- Reduced network usage during CI runs
 
 ## Building Locally
 
@@ -66,7 +90,7 @@ docker run --rm ci-python python3.12 --version
 
 ## ACT Integration
 
-When testing workflows locally with `act`, the containers are not used (to allow for faster local testing). The workflows automatically detect the `ACT` environment variable and fall back to installing tools via GitHub Actions.
+When testing workflows locally with `act`, the workflows automatically fall back to installing tools via GitHub Actions (regardless of the `use-container` setting). This ensures local testing remains fast and doesn't require pulling large container images.
 
 ## Cache Strategy
 

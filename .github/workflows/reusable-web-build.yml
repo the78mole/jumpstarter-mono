@@ -63,19 +63,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ${{ inputs.use-container && !env.ACT && 'ghcr.io/the78mole/jumpstarter-mono/ci-node:latest' || '' }}
+    container: ${{ inputs.use-container && 'ghcr.io/the78mole/jumpstarter-mono/ci-node:latest' || null }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js (if not using container)
-        if: ${{ !inputs.use-container || env.ACT }}
+        if: ${{ !inputs.use-container }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node-version }}
 
       - name: Install pnpm (if not using container)
-        if: ${{ (!inputs.use-container || env.ACT) && inputs.package-manager == 'pnpm' }}
+        if: ${{ !inputs.use-container && inputs.package-manager == 'pnpm' }}
         uses: pnpm/action-setup@v4
         with:
           version: latest
