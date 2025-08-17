@@ -27,6 +27,7 @@ jobs:
       web: ${{ steps.changes.outputs.web }}
       docs: ${{ steps.changes.outputs.docs }}
       ci: ${{ steps.changes.outputs.ci }}
+      containers: ${{ steps.changes.outputs.containers }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -60,6 +61,20 @@ jobs:
             ci:
               - '.github/workflows/**'
               - 'Makefile'
+            containers:
+              - '.github/containers/**'
+              - '.github/workflows/ci-containers.yml'
+
+  # Build CI container images if needed
+  build-containers:
+    needs: detect-changes
+    if: >
+      needs.detect-changes.outputs.containers == 'true' ||
+      needs.detect-changes.outputs.ci == 'true' ||
+      github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/ci-containers.yml
+    with:
+      force-rebuild: ${{ github.event_name == 'workflow_dispatch' }}
 
   # Check for typos across the repository
   typos:
@@ -79,6 +94,7 @@ jobs:
     uses: ./.github/workflows/reusable-python-lint.yml
     with:
       working-directory: core/jumpstarter
+      use-container: false  # Disable containers for local testing compatibility
 
   python-test:
     needs: detect-changes
@@ -90,6 +106,7 @@ jobs:
     with:
       working-directory: core/jumpstarter
       test-command: "uv run pytest --tb=short"
+      use-container: false  # Disable containers for local testing compatibility
 
   # Go components
   controller-lint:
@@ -101,6 +118,7 @@ jobs:
     uses: ./.github/workflows/reusable-go-lint.yml
     with:
       working-directory: core/controller
+      use-container: false  # Disable containers for local testing compatibility
 
   controller-build:
     needs: detect-changes
@@ -114,6 +132,7 @@ jobs:
       binary-name: manager
       cmd-package: "./cmd"
       build-flags: '-ldflags "-s -w"'
+      use-container: false  # Disable containers for local testing compatibility
 
   lab-config-lint:
     needs: detect-changes
@@ -124,6 +143,7 @@ jobs:
     uses: ./.github/workflows/reusable-go-lint.yml
     with:
       working-directory: lab-config
+      use-container: false  # Disable containers for local testing compatibility
 
   lab-config-build:
     needs: detect-changes
@@ -135,6 +155,7 @@ jobs:
     with:
       working-directory: lab-config
       binary-name: lab-config
+      use-container: false  # Disable containers for local testing compatibility
 
   # Rust components
   rust-build:
@@ -145,6 +166,7 @@ jobs:
       skip-tests: true
       clippy-flags: "--all-features"
       clippy-warnings: "warn"
+      use-container: false  # Disable containers for local testing compatibility
 
   # Node.js/TypeScript components
   web-build:
@@ -160,6 +182,7 @@ jobs:
       build-command: pnpm run compile
       test-command: echo "Tests skipped - VSCode extension tests require GUI environment"
       lint-command: pnpm run lint
+      use-container: false  # Disable containers for local testing compatibility
 
   # Documentation build
   docs-build:

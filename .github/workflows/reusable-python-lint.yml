@@ -10,6 +10,10 @@ on:
       working-directory:
         required: true
         type: string
+      use-container:
+        required: false
+        type: boolean
+        default: true
   workflow_dispatch:
     inputs:
       python-version:
@@ -19,20 +23,27 @@ on:
       working-directory:
         required: true
         type: string
+      use-container:
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+    container: ${{ inputs.use-container && 'ghcr.io/the78mole/jumpstarter-mono/ci-python:latest' || null }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup Python (if not using container)
+        if: ${{ !inputs.use-container }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ inputs.python-version }}
 
-      - name: Install uv
+      - name: Install uv (if not using container)
+        if: ${{ !inputs.use-container }}
         uses: astral-sh/setup-uv@v3
 
       - name: Install dependencies

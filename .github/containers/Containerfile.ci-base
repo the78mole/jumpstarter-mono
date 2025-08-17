@@ -1,0 +1,26 @@
+# Base CI image with common tools
+FROM ubuntu:24.04
+
+# Install common system dependencies
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    curl \
+    wget \
+    git \
+    make \
+    build-essential \
+    pkg-config \
+    libudev-dev \
+    libusb-1.0-0-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up workspace
+WORKDIR /workspace
+
+# Add common environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV CI=true
+
+# Create non-root user for CI operations
+RUN groupadd -r ci && useradd -r -g ci -m -s /bin/bash ci
+USER ci

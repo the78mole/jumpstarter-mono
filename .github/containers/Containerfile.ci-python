@@ -1,0 +1,41 @@
+# CI Python environment
+FROM ubuntu:24.04
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    curl \
+    wget \
+    git \
+    make \
+    build-essential \
+    pkg-config \
+    libudev-dev \
+    libusb-1.0-0-dev \
+    python3.12 \
+    python3.12-dev \
+    python3.12-venv \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv for Python package management
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+
+# Set up workspace
+WORKDIR /workspace
+
+# Add environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV CI=true
+ENV VIRTUAL_ENV=/workspace/.venv
+ENV PATH="/workspace/.venv/bin:$PATH"
+
+# Create non-root user for CI operations
+RUN groupadd -r ci && useradd -r -g ci -m -s /bin/bash ci
+
+# Pre-create virtual environment as ci user
+USER ci
+RUN mkdir -p /home/ci/.local/bin
+RUN python3.12 -m venv /home/ci/.venv
+ENV VIRTUAL_ENV=/home/ci/.venv
+ENV PATH="/home/ci/.venv/bin:/home/ci/.local/bin:$PATH"

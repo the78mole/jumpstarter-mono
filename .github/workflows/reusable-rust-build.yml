@@ -37,6 +37,11 @@ on:
         required: false
         type: string
         default: "deny"
+      use-container:
+        description: "Use pre-built container image"
+        required: false
+        type: boolean
+        default: true
 
   workflow_dispatch:
     inputs:
@@ -68,18 +73,29 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: ${{ inputs.use-container && 'ghcr.io/the78mole/jumpstarter-mono/ci-rust:latest' || null }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Rust toolchain
+      - name: Setup Rust toolchain (if not using container)
+        if: ${{ !inputs.use-container }}
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ inputs.rust-toolchain }}
           targets: ${{ inputs.targets }}
           components: rustfmt, clippy
 
-      - name: Cache cargo registry
+      - name: Add additional targets (if using container)
+        if: ${{ inputs.use-container && inputs.targets }}
+        run: |
+          IFS=',' read -ra TARGETS <<< "${{ inputs.targets }}"
+          for target in "${TARGETS[@]}"; do
+            rustup target add "$target"
+          done
+
+      - name: Cache cargo registry (if not using container)
+        if: ${{ !inputs.use-container }}
         uses: actions/cache@v4
         with:
           path: ~/.cargo/registry
@@ -87,7 +103,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-registry-
 
-      - name: Cache cargo index
+      - name: Cache cargo index (if not using container)
+        if: ${{ !inputs.use-container }}
         uses: actions/cache@v4
         with:
           path: ~/.cargo/git

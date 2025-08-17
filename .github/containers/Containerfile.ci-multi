@@ -1,0 +1,76 @@
+# CI Multi-tool environment for workflows that need multiple tools
+FROM ubuntu:24.04
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    curl \
+    wget \
+    git \
+    make \
+    build-essential \
+    pkg-config \
+    libudev-dev \
+    libusb-1.0-0-dev \
+    python3.12 \
+    python3.12-dev \
+    python3.12-venv \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv for Python package management
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+
+# Install Go
+ARG GO_VERSION=1.24.6
+RUN curl -k -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar -C /usr/local -xzf -
+
+# Install Node.js 18 LTS
+ARG NODE_VERSION=18
+RUN curl -k -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g pnpm
+
+# Set up workspace
+WORKDIR /workspace
+
+# Add environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV CI=true
+ENV PATH="/usr/local/go/bin:$PATH"
+ENV GOPATH="/home/ci/go"
+ENV GOCACHE="/home/ci/.cache/go-build"
+ENV RUSTUP_HOME="/home/ci/.rustup"
+ENV CARGO_HOME="/home/ci/.cargo"
+
+# Create non-root user for CI operations
+RUN groupadd -r ci && useradd -r -g ci -m -s /bin/bash ci
+
+USER ci
+
+# Set up Go environment
+ENV PATH="/usr/local/go/bin:/home/ci/go/bin:$PATH"
+RUN mkdir -p /home/ci/go/{bin,src,pkg} && \
+    mkdir -p /home/ci/.cache/go-build
+
+# Install Rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+RUN /home/ci/.cargo/bin/rustup target add thumbv7em-none-eabihf
+
+# Update PATH for all tools
+ENV PATH="/home/ci/.cargo/bin:/usr/local/go/bin:/home/ci/go/bin:$PATH"
+
+# Set up Python virtual environment
+RUN python3.12 -m venv /home/ci/.venv
+ENV VIRTUAL_ENV=/home/ci/.venv
+ENV PATH="/home/ci/.venv/bin:$PATH"
+
+# Verify all installations
+RUN python3.12 --version && \
+    uv --version && \
+    go version && \
+    rustc --version && \
+    cargo --version && \
+    node --version && \
+    npm --version && \
+    pnpm --version

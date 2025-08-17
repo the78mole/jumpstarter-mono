@@ -1,0 +1,39 @@
+# CI Go environment
+FROM ubuntu:24.04
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    curl \
+    wget \
+    git \
+    make \
+    build-essential \
+    pkg-config \
+    libudev-dev \
+    libusb-1.0-0-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Go
+ARG GO_VERSION=1.24.6
+RUN curl -k -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar -C /usr/local -xzf -
+
+# Set up workspace
+WORKDIR /workspace
+
+# Add environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV CI=true
+ENV PATH="/usr/local/go/bin:$PATH"
+ENV GOPATH="/home/ci/go"
+ENV GOCACHE="/home/ci/.cache/go-build"
+
+# Create non-root user for CI operations
+RUN groupadd -r ci && useradd -r -g ci -m -s /bin/bash ci
+
+USER ci
+
+# Set up Go environment for ci user
+ENV PATH="/usr/local/go/bin:/home/ci/go/bin:$PATH"
+RUN mkdir -p /home/ci/go/{bin,src,pkg} && \
+    mkdir -p /home/ci/.cache/go-build
