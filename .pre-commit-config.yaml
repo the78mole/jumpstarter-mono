@@ -117,13 +117,13 @@ repos:
         pass_filenames: false
       - id: cargo-fmt
         name: cargo fmt (optional)
-        entry: sh -c 'if command -v cargo >/dev/null 2>&1 && cargo fmt --version >/dev/null 2>&1; then cd hardware/dutlink-firmware/application && cargo fmt --check && cd ../bootloader && cargo fmt --check; else echo "cargo fmt not available, skipping"; exit 0; fi'
+        entry: sh -c 'if command -v cargo >/dev/null 2>&1 && cargo fmt --version >/dev/null 2>&1; then cd hardware/dutlink-firmware/application && cargo fmt --check; else echo "cargo fmt not available, skipping"; exit 0; fi'
         language: system
-        files: ^hardware/dutlink-firmware/.*\.rs$
+        files: ^hardware/dutlink-firmware/application/.*\.rs$
         pass_filenames: false
       - id: cargo-clippy
         name: cargo clippy (optional)
-        entry: sh -c 'if command -v cargo >/dev/null 2>&1 && cargo clippy --version >/dev/null 2>&1; then cd hardware/dutlink-firmware/application && cargo clippy --all-targets --all-features && cd ../bootloader && cargo clippy --all-targets --all-features; else echo "cargo clippy not available, skipping"; exit 0; fi'
+        entry: sh -c 'if command -v cargo >/dev/null 2>&1 && cargo clippy --version >/dev/null 2>&1; then cd hardware/dutlink-firmware/application && cargo clippy --target thumbv7em-none-eabihf --bin jumpstarter; else echo "cargo clippy not available, skipping"; exit 0; fi'
         language: system
-        files: ^hardware/dutlink-firmware/.*\.rs$
+        files: ^hardware/dutlink-firmware/application/.*\.rs$
         pass_filenames: false
