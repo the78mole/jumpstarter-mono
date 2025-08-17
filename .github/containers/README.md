@@ -7,40 +7,52 @@ This directory contains container definitions for optimized CI environments. The
 ### CI Container Images (for development and testing)
 
 ### `ci-base`
+
 Basic CI environment with common system dependencies:
+
 - Ubuntu 24.04 base
 - Git, make, build-essential
 - USB development libraries (libudev-dev, libusb-1.0-0-dev)
 - Non-root `ci` user
 
 ### `ci-python`
+
 Python development environment:
+
 - Everything from `ci-base`
 - Python 3.12 with venv support
 - UV package manager
 - Pre-configured virtual environment
 
 ### `ci-go`
+
 Go development environment:
+
 - Everything from `ci-base`
 - Go 1.24.6 (latest from golang.org)
 - Pre-configured GOPATH and build cache directories
 
 ### `ci-rust`
+
 Rust development environment:
+
 - Everything from `ci-base`
 - Rust stable toolchain
 - thumbv7em-none-eabihf target (for embedded development)
 - Cargo and rustc
 
 ### `ci-node`
+
 Node.js/TypeScript development environment:
+
 - Everything from `ci-base`
 - Node.js 18 LTS
 - npm and pnpm package managers
 
 ### `ci-multi`
+
 All-in-one environment with all tools:
+
 - Everything from all above images
 - Go 1.24.6, Python 3.12, Rust stable, Node.js 18 LTS
 - Suitable for workflows that need multiple toolchains
@@ -51,6 +63,7 @@ All-in-one environment with all tools:
 The production applications also use containerized environments based on Red Hat Universal Base Images (UBI):
 
 #### Core Controller & Lab Config
+
 - **Base Image**: `registry.access.redhat.com/ubi9/go-toolset:1.24`
 - **Runtime**: `registry.access.redhat.com/ubi9/ubi-micro:9.5`
 - **Go Version**: 1.24.4 (Red Hat enterprise-ready distribution)
@@ -62,6 +75,7 @@ The production containers use Red Hat UBI for enhanced security, enterprise supp
 ## Usage
 
 These images are automatically built and published to `ghcr.io/the78mole/jumpstarter-mono/ci-*:latest` when:
+
 - Container definitions change
 - CI configuration changes
 - Manually triggered via workflow_dispatch
@@ -76,17 +90,19 @@ Currently, containers are **disabled by default** in the CI workflows to ensure 
 3. Commit and push the changes
 
 Example:
+
 ```yaml
 python-lint:
   uses: ./.github/workflows/reusable-python-lint.yml
   with:
     working-directory: core/jumpstarter
-    use-container: true  # Enable container usage
+    use-container: true # Enable container usage
 ```
 
 ### Performance Benefits
 
 When enabled, containers provide:
+
 - **2-5 minutes saved per job** (eliminates tool installation)
 - Consistent environments across all CI runs
 - Better caching through pre-built layers
@@ -114,6 +130,7 @@ To validate that Red Hat UBI containers are accessible and working correctly:
 ```
 
 This script verifies:
+
 - Red Hat container registry connectivity
 - Go toolset and runtime image availability
 - Container functionality with current environment
@@ -125,6 +142,7 @@ When testing workflows locally with `act`, the workflows automatically fall back
 ## Cache Strategy
 
 The containers include:
+
 - Pre-installed development tools
 - Optimized layer caching
 - Build cache directories pre-created

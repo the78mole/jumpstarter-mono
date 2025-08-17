@@ -15,55 +15,49 @@
   "packageRules": [
     {
       "description": "Group Python dependencies",
-      "matchManagers": [
-        "pip_requirements",
-        "pip_setup",
-        "pipenv",
-        "poetry"
-      ],
+      "matchManagers": ["pip_requirements", "pip_setup", "pipenv", "poetry"],
       "groupName": "python dependencies"
     },
     {
       "description": "Group Go dependencies",
-      "matchManagers": [
-        "gomod"
-      ],
+      "matchManagers": ["gomod"],
       "groupName": "go dependencies"
     },
     {
       "description": "Group Rust dependencies",
-      "matchManagers": [
-        "cargo"
-      ],
+      "matchManagers": ["cargo"],
       "groupName": "rust dependencies"
     },
     {
       "description": "Group Node.js dependencies",
-      "matchManagers": [
-        "npm",
-        "pnpm"
-      ],
+      "matchManagers": ["npm", "pnpm"],
       "groupName": "nodejs dependencies"
     },
     {
       "description": "Group GitHub Actions",
-      "matchManagers": [
-        "github-actions"
-      ],
+      "matchManagers": ["github-actions"],
       "groupName": "github actions"
     },
     {
       "description": "Group pre-commit hooks",
-      "matchManagers": [
-        "pre-commit"
-      ],
+      "matchManagers": ["pre-commit"],
       "groupName": "pre-commit hooks"
     },
     {
+      "description": "Group Docker base images",
+      "matchManagers": ["dockerfile"],
+      "matchDatasources": ["docker"],
+      "groupName": "docker base images"
+    },
+    {
+      "description": "Group CI container tool versions",
+      "matchManagers": ["regex"],
+      "matchFileNames": [".github/containers/**"],
+      "groupName": "ci container tools"
+    },
+    {
       "description": "Automerge patch updates for stable packages",
-      "matchUpdateTypes": [
-        "patch"
-      ],
+      "matchUpdateTypes": ["patch"],
       "matchCurrentVersion": "!/^0\\./",
       "automerge": true
     }
@@ -73,5 +67,36 @@
   },
   "lockFileMaintenance": {
     "enabled": true
-  }
+  },
+  "regexManagers": [
+    {
+      "description": "Update Go version in Containerfiles",
+      "fileMatch": ["\\.github/containers/Containerfile\\.ci-.*"],
+      "matchStrings": ["ARG GO_VERSION=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "golang/go",
+      "extractVersionTemplate": "^go(?<version>.*)$"
+    },
+    {
+      "description": "Update Node.js version in Containerfiles",
+      "fileMatch": ["\\.github/containers/Containerfile\\.ci-.*"],
+      "matchStrings": ["ARG NODE_VERSION=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "node-version",
+      "depNameTemplate": "node"
+    },
+    {
+      "description": "Update pnpm version in Containerfiles",
+      "fileMatch": ["\\.github/containers/Containerfile\\.ci-.*"],
+      "matchStrings": ["npm install -g pnpm@(?<currentValue>.*?)\\s"],
+      "datasourceTemplate": "npm",
+      "depNameTemplate": "pnpm"
+    },
+    {
+      "description": "Update Ubuntu base image in Containerfiles",
+      "fileMatch": ["\\.github/containers/Containerfile\\.ci-.*"],
+      "matchStrings": ["FROM ubuntu:(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "ubuntu"
+    }
+  ]
 }

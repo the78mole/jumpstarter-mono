@@ -41,7 +41,7 @@ echo
 echo "🏗️  Testing container base images..."
 
 echo "   Testing Go build environment..."
-if docker run --rm -v $(pwd):/workspace -w /workspace registry.access.redhat.com/ubi9/go-toolset:1.24 go version >/dev/null 2>&1; then
+if docker run --rm -v "$(pwd)":/workspace -w /workspace registry.access.redhat.com/ubi9/go-toolset:1.24 go version >/dev/null 2>&1; then
     echo "✅ Go build environment works correctly"
 else
     echo "❌ Go build environment test failed"

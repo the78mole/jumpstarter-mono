@@ -17,9 +17,6 @@ on:
         description: "Force rebuild all containers"
         type: boolean
         default: false
-  schedule:
-    # Rebuild containers weekly on Sunday at 2 AM UTC to keep base images fresh
-    - cron: "0 2 * * 0"
 
 env:
   REGISTRY: ghcr.io
@@ -68,25 +65,25 @@ jobs:
         id: check-rebuild
         run: |
           NEED_REBUILD=false
-          
+
           # Force rebuild if requested
           if [ "${{ inputs.force-rebuild }}" = "true" ]; then
             echo "Force rebuild requested"
             NEED_REBUILD=true
           fi
-          
+
           # Check if container configuration changed
           if git diff --name-only HEAD~1 2>/dev/null | grep -q ".github/containers/Containerfile.ci-${{ matrix.container }}"; then
             echo "Container configuration changed"
             NEED_REBUILD=true
           fi
-          
+
           # Check if base image needs update (weekly builds)
           if [ "${{ github.event_name }}" = "schedule" ]; then
             echo "Scheduled rebuild"
             NEED_REBUILD=true
           fi
-          
+
           echo "need-rebuild=$NEED_REBUILD" >> $GITHUB_OUTPUT
 
       - name: Build and push container image
@@ -95,8 +92,8 @@ jobs:
         with:
           context: .
           file: .github/containers/Containerfile.ci-${{ matrix.container }}
-          platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
+          platforms: linux/amd64
+          push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
