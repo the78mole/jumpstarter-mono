@@ -11,7 +11,7 @@ cortex-m = "0.7.7"
 cortex-m-rt = "0.7.3"
 stm32f4xx-hal = { version = "0.21.0", features = ["stm32f411", "usb_fs"] }
 stm32f4 = { version = "0.15.1", features = ["stm32f411", "rt"]}
-panic-halt= "0.2.0"
+panic-halt= "1.0.0"
 usb-device = { version="0.3.2", features = ["control-buffer-256"] }
 usbd-serial = "0.2.2"
 embedded-hal = "1.0.0"
