@@ -113,11 +113,6 @@ jobs:
             # Find all Cargo.toml files in subdirectories and format each project
             for dir in */; do
               if [ -f "${dir}Cargo.toml" ]; then
-                # Skip bootloader directory due to stm32f4xx-hal breaking changes
-                if [ "$dir" = "bootloader/" ]; then
-                  echo "Skipping fmt in ${dir} (known stm32f4xx-hal compatibility issues)"
-                  continue
-                fi
                 echo "Checking formatting in ${dir}"
                 (cd "$dir" && cargo fmt --all -- --check)
               fi
@@ -141,11 +136,6 @@ jobs:
           else
             for dir in */; do
               if [ -f "${dir}Cargo.toml" ]; then
-                # Skip bootloader directory due to stm32f4xx-hal breaking changes
-                if [ "$dir" = "bootloader/" ]; then
-                  echo "Skipping clippy in ${dir} (known stm32f4xx-hal compatibility issues)"
-                  continue
-                fi
                 echo "Running clippy in ${dir}"
                 echo "DEBUG: Running: cargo clippy ${{ inputs.clippy-flags }} -- $CLIPPY_WARNING_FLAG"
                 (cd "$dir" && cargo clippy ${{ inputs.clippy-flags }} -- $CLIPPY_WARNING_FLAG)
@@ -176,11 +166,6 @@ jobs:
           else
             for dir in */; do
               if [ -f "${dir}Cargo.toml" ]; then
-                # Skip bootloader directory due to stm32f4xx-hal breaking changes
-                if [ "$dir" = "bootloader/" ]; then
-                  echo "Skipping build in ${dir} (known stm32f4xx-hal compatibility issues)"
-                  continue
-                fi
                 echo "Building in ${dir}"
                 (cd "$dir" && cargo build ${{ inputs.build-flags }})
               fi
