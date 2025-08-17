@@ -864,7 +864,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "hatchling", specifier = ">=1.27.0" },
-    { name = "packaging", specifier = ">=24.2" },
+    { name = "packaging", specifier = ">=25.0" },
     { name = "tomli", specifier = ">=2.2.1" },
     { name = "tomli-w", specifier = ">=1.2.0" },
 ]
