@@ -11,7 +11,7 @@ dependencies = [
     "jumpstarter-cli-common",
     "jumpstarter-kubernetes",
     "packaging>=25.0",
-    "semver~=2.13",
+    "semver~=3.0",
 ]
 
 [dependency-groups]
