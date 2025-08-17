@@ -1033,7 +1033,7 @@ requires-dist = [
     { name = "aiohttp", specifier = ">=3.12.15" },
     { name = "anyio", specifier = ">=4.4.0,!=4.6.2" },
     { name = "jumpstarter-protocol", editable = "packages/jumpstarter-protocol" },
-    { name = "pydantic", specifier = ">=2.8.2" },
+    { name = "pydantic", specifier = ">=2.11.7" },
     { name = "pydantic-settings", specifier = ">=2.9.1" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "rich", specifier = ">=14.0.0" },
@@ -1220,7 +1220,7 @@ requires-dist = [
     { name = "click", specifier = ">=8.2.1" },
     { name = "joserfc", specifier = ">=1.0.3" },
     { name = "jumpstarter", editable = "packages/jumpstarter" },
-    { name = "pydantic", specifier = ">=2.8.2" },
+    { name = "pydantic", specifier = ">=2.11.7" },
     { name = "rich", specifier = ">=14.0.0" },
     { name = "truststore", specifier = ">=0.10.1" },
     { name = "yarl", specifier = ">=1.18.3" },
@@ -2194,7 +2194,7 @@ requires-dist = [
     { name = "jumpstarter", editable = "packages/jumpstarter" },
     { name = "kubernetes", specifier = ">=33.1.0" },
     { name = "kubernetes-asyncio", specifier = ">=33.3.0" },
-    { name = "pydantic", specifier = ">=2.8.2" },
+    { name = "pydantic", specifier = ">=2.11.7" },
 ]
 
 [package.metadata.requires-dev]
