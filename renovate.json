@@ -19,6 +19,7 @@
         "pip_requirements",
         "pip_setup",
         "pipenv",
+        "pep621",
         "poetry"
       ],
       "groupName": "python dependencies"
