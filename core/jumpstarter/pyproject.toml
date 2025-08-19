@@ -45,7 +45,7 @@ docs = [
     "sphinx<8.1.0",
     "myst-parser>=4.0.1",
     "sphinxcontrib-mermaid>=1.0.0",
-    "furo>=2024.8.6",
+    "furo>=2025.7.19",
     "esbonio>=0.16.5",
     "sphinx-autobuild>=2024.10.3",
     "sphinx-click>=6.0.0",

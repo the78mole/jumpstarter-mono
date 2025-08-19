@@ -54,7 +54,7 @@ dev = [
 ]
 docs = [
     { name = "esbonio", specifier = ">=0.16.5" },
-    { name = "furo", specifier = ">=2024.8.6" },
+    { name = "furo", specifier = ">=2025.7.19" },
     { name = "myst-parser", specifier = ">=4.0.1" },
     { name = "requests", specifier = ">=2.32.4" },
     { name = "sphinx", specifier = "<8.1.0" },
