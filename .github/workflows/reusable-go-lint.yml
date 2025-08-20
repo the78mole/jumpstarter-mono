@@ -22,6 +22,11 @@ on:
         type: boolean
         default: true
         description: "Whether to use CI container"
+      container-tag:
+        required: false
+        type: string
+        default: "latest"
+        description: "Container tag to use for CI container"
   workflow_dispatch:
     inputs:
       go-version:
@@ -43,11 +48,16 @@ on:
         type: boolean
         default: true
         description: "Whether to use CI container"
+      container-tag:
+        required: false
+        type: string
+        default: "latest"
+        description: "Container tag to use for CI container"
 
 jobs:
   lint:
     runs-on: ubuntu-latest
-    container: ${{ inputs.use-container && 'ghcr.io/the78mole/jumpstarter-mono/ci-go:latest' || null }}
+    container: ${{ inputs.use-container && format('ghcr.io/the78mole/jumpstarter-mono/ci-go:{0}', inputs.container-tag) || null }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
