@@ -12,6 +12,11 @@ on:
         required: true
         type: string
         description: "Working directory for the Go project"
+      golangci-lint-install-mode:
+        required: false
+        type: string
+        default: none
+        description: "golangci-lint installation mode: none, goinstall or binary"
       golangci-lint-version:
         required: false
         type: string
