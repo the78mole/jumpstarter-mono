@@ -1,0 +1,19 @@
+run:
+  timeout: 5m
+  allow-parallel-runners: true
+
+linters:
+  enable:
+    - copyloopvar
+    - errcheck
+    - ginkgolinter
+    - goconst
+    - gocyclo
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - staticcheck
+    - unconvert
+    - unparam
+    - unused
