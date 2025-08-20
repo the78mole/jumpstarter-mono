@@ -54,10 +54,11 @@ RUN curl -LO "https://dl.k8s.io/release/v${ENVTEST_K8S_VERSION}/bin/linux/amd64/
     chmod +x kubectl && \
     mv kubectl /usr/local/bin/
 
-# CACHE BREAKER: This comment changes to force new layers - 2025-08-20-12-25
-# Install golangci-lint via direct download - NO MORE go install!
-RUN echo "Installing golangci-lint v1.62.2 via download script" && \
-    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin v1.62.2 && \
+# CACHE BREAKER: This comment changes to force new layers - 2025-08-20-12-30
+# Install golangci-lint via direct download - use latest version
+RUN echo "Installing golangci-lint latest version via download script" && \
+    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | \
+      sh -s -- -b /usr/local/bin v2.4.0 && \
     golangci-lint --version && \
     echo "golangci-lint installation completed successfully"
 
