@@ -78,7 +78,19 @@ vet: ## Run go vet against code.
 
 .PHONY: test
 test: manifests generate fmt vet envtest ## Run tests
-	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) --print path)" go test $$(go list ./... | grep -v /e2e) -coverprofile cover.out
+	@echo "Finding packages with test files..."
+	@PACKAGES_WITH_TESTS=$$(go list ./... | grep -v /e2e | while read pkg; do \
+		relative_path=$$(echo $$pkg | sed 's|github.com/the78mole/jumpstarter-mono/core/controller|.|'); \
+		if find "$$relative_path" -name "*_test.go" 2>/dev/null | grep -q .; then \
+			echo $$pkg; \
+		fi; \
+	done); \
+	if [ -n "$$PACKAGES_WITH_TESTS" ]; then \
+		echo "Running tests on packages: $$PACKAGES_WITH_TESTS"; \
+		KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) --print path)" go test $$PACKAGES_WITH_TESTS -coverprofile cover.out; \
+	else \
+		echo "No packages with test files found"; \
+	fi
 
 .PHONY: test-integration
 test-integration: manifests generate fmt vet envtest ## Run integration tests
