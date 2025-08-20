@@ -54,11 +54,12 @@ RUN curl -LO "https://dl.k8s.io/release/v${ENVTEST_K8S_VERSION}/bin/linux/amd64/
     chmod +x kubectl && \
     mv kubectl /usr/local/bin/
 
-# Install golangci-lint from source to ensure Go 1.25.0 compatibility
-# Force rebuild 2: Updated GOBIN to fix PATH issue - golangci-lint availability
-ARG GOLANGCI_LINT_VERSION=v2.4.0
-ENV GOBIN=/usr/local/bin
-RUN go install github.com/golangci/golangci-lint/cmd/golangci-lint@${GOLANGCI_LINT_VERSION}
+# CACHE BREAKER: This comment changes to force new layers - 2025-08-20-12-25
+# Install golangci-lint via direct download - NO MORE go install!
+RUN echo "Installing golangci-lint v1.62.2 via download script" && \
+    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin v1.62.2 && \
+    golangci-lint --version && \
+    echo "golangci-lint installation completed successfully"
 
 # Update PATH to include both user environments
 ENV PATH="/usr/local/go/bin:/home/ci/go/bin:/usr/local/kubebuilder:$PATH"
