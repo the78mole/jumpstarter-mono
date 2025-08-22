@@ -52,12 +52,17 @@ jobs:
 
       - name: Normalize branch name for container tag
         id: branch-name
-        if: github.event_name == 'pull_request'
         run: |
-          # Normalize branch name same way as in ci.yml
-          NORMALIZED_BRANCH=$(echo "${{ github.head_ref }}" | sed 's/[^a-zA-Z0-9._-]/-/g')
-          echo "normalized=${NORMALIZED_BRANCH}" >> $GITHUB_OUTPUT
-          echo "Normalized branch name: ${NORMALIZED_BRANCH}"
+          # Only set normalized branch name for PRs
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # Normalize branch name same way as in ci.yml
+            NORMALIZED_BRANCH=$(echo "${{ github.head_ref }}" | sed 's/[^a-zA-Z0-9._-]/-/g')
+            echo "normalized=${NORMALIZED_BRANCH}" >> $GITHUB_OUTPUT
+            echo "Normalized branch name: ${NORMALIZED_BRANCH}"
+          else
+            echo "normalized=" >> $GITHUB_OUTPUT
+            echo "Not a PR, no branch normalization needed"
+          fi
 
       - name: Extract metadata
         id: meta
