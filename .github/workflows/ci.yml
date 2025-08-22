@@ -34,6 +34,7 @@ jobs:
       containers: ${{ steps.changes.outputs.containers }}
       version: ${{ steps.semver.outputs.version }}
       version-tag: ${{ steps.semver.outputs.version_tag }}
+      container-tag: ${{ steps.version-config.outputs.container-tag }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -46,24 +47,34 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             PR_NUMBER="${{ github.event.number }}"
             VERSION_FORMAT="\${major}.\${minor}.\${patch}-pr-${PR_NUMBER}-\${increment}"
+            # For PRs, use the head branch name normalized for container tags
+            CONTAINER_TAG=$(echo "${{ github.head_ref }}" | sed 's/[^a-zA-Z0-9._-]/-/g')
             echo "version-format=${VERSION_FORMAT}" >> $GITHUB_OUTPUT
             echo "pr-number=${PR_NUMBER}" >> $GITHUB_OUTPUT
             echo "is-pr=true" >> $GITHUB_OUTPUT
+            echo "container-tag=${CONTAINER_TAG}" >> $GITHUB_OUTPUT
             echo "🔀 Pull Request detected: #${PR_NUMBER}"
+            echo "🐳 Container tag: ${CONTAINER_TAG}"
           elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
             VERSION_FORMAT="\${major}.\${minor}.\${patch}"
+            CONTAINER_TAG="latest"
             echo "version-format=${VERSION_FORMAT}" >> $GITHUB_OUTPUT
             echo "pr-number=" >> $GITHUB_OUTPUT
             echo "is-pr=false" >> $GITHUB_OUTPUT
+            echo "container-tag=${CONTAINER_TAG}" >> $GITHUB_OUTPUT
             echo "🚀 Main branch detected - clean version format"
+            echo "🐳 Container tag: ${CONTAINER_TAG}"
           else
             # Other branches (develop, feature, etc.)
             BRANCH_NAME=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9]/-/g' | tr '[:upper:]' '[:lower:]')
             VERSION_FORMAT="\${major}.\${minor}.\${patch}-${BRANCH_NAME}-\${increment}"
+            CONTAINER_TAG=$(echo "${{ github.ref_name }}" | sed 's/[^a-zA-Z0-9._-]/-/g')
             echo "version-format=${VERSION_FORMAT}" >> $GITHUB_OUTPUT
             echo "pr-number=" >> $GITHUB_OUTPUT
             echo "is-pr=false" >> $GITHUB_OUTPUT
+            echo "container-tag=${CONTAINER_TAG}" >> $GITHUB_OUTPUT
             echo "🌿 Branch '${BRANCH_NAME}' detected"
+            echo "🐳 Container tag: ${CONTAINER_TAG}"
           fi
 
           echo "Version format: $(cat $GITHUB_OUTPUT | grep version-format | cut -d= -f2-)"
@@ -246,6 +257,7 @@ jobs:
     with:
       working-directory: core/controller
       use-container: true  # Use pre-built CI containers for faster builds
+      container-tag: ${{ needs.detect-changes.outputs.container-tag }}
 
   lab-config-lint:
     needs: [detect-changes, build-containers]
@@ -260,6 +272,7 @@ jobs:
     with:
       working-directory: lab-config
       use-container: true  # Use pre-built CI containers for faster builds
+      container-tag: ${{ needs.detect-changes.outputs.container-tag }}
 
   # === TESTING JOBS ===
 

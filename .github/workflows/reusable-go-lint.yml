@@ -6,12 +6,17 @@ on:
       go-version:
         required: false
         type: string
-        default: "1.24"
+        default: "1.25"
         description: "Go version to use"
       working-directory:
         required: true
         type: string
         description: "Working directory for the Go project"
+      golangci-lint-install-mode:
+        required: false
+        type: string
+        default: none
+        description: "golangci-lint installation mode: none, goinstall or binary"
       golangci-lint-version:
         required: false
         type: string
@@ -22,12 +27,17 @@ on:
         type: boolean
         default: true
         description: "Whether to use CI container"
+      container-tag:
+        required: false
+        type: string
+        default: "latest"
+        description: "Container tag to use for CI container"
   workflow_dispatch:
     inputs:
       go-version:
         required: false
         type: string
-        default: "1.24"
+        default: "1.25"
         description: "Go version to use"
       working-directory:
         required: true
@@ -43,11 +53,16 @@ on:
         type: boolean
         default: true
         description: "Whether to use CI container"
+      container-tag:
+        required: false
+        type: string
+        default: "latest"
+        description: "Container tag to use for CI container"
 
 jobs:
   lint:
     runs-on: ubuntu-latest
-    container: ${{ inputs.use-container && 'ghcr.io/the78mole/jumpstarter-mono/ci-go:latest' || null }}
+    container: ${{ inputs.use-container && format('ghcr.io/the78mole/jumpstarter-mono/ci-go:{0}', inputs.container-tag) || null }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -68,8 +83,16 @@ jobs:
           git config --global user.email "actions@github.com"
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        if: ${{ !inputs.use-container }}
+        uses: golangci/golangci-lint-action@v8
         with:
           version: ${{ inputs.golangci-lint-version }}
           working-directory: ${{ inputs.working-directory }}
           args: --timeout=5m
+
+      - name: golangci-lint (container)
+        if: ${{ inputs.use-container }}
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          golangci-lint --version
+          golangci-lint run --timeout=5m

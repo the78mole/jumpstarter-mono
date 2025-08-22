@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Go
-ARG GO_VERSION=1.24.6
+ARG GO_VERSION=1.25.0
 ARG TARGETARCH
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN curl -k -L https://go.dev/dl/go${GO_VERSION}.linux-${TARGETARCH}.tar.gz | tar -C /usr/local -xzf -
@@ -53,6 +53,14 @@ RUN go install sigs.k8s.io/controller-runtime/tools/setup-envtest@release-0.18 &
 RUN curl -LO "https://dl.k8s.io/release/v${ENVTEST_K8S_VERSION}/bin/linux/amd64/kubectl" && \
     chmod +x kubectl && \
     mv kubectl /usr/local/bin/
+
+# CACHE BREAKER: This comment changes to force new layers - 2025-08-20-12-30
+# Install golangci-lint via direct download - use latest version
+RUN echo "Installing golangci-lint latest version via download script" && \
+    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | \
+      sh -s -- -b /usr/local/bin v2.4.0 && \
+    golangci-lint --version && \
+    echo "golangci-lint installation completed successfully"
 
 # Update PATH to include both user environments
 ENV PATH="/usr/local/go/bin:/home/ci/go/bin:/usr/local/kubebuilder:$PATH"
