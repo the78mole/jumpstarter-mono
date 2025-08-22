@@ -1,0 +1,2503 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Comprehensive documentation for the Jumpstarter monorepo">
+      
+      
+        <meta name="author" content="Jumpstarter Contributors">
+      
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../../architecture/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Local Workflow Testing - Jumpstarter Monorepo Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#local-workflow-testing-with-act" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Jumpstarter Monorepo Documentation" class="md-header__button md-logo" aria-label="Jumpstarter Monorepo Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Jumpstarter Monorepo Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Local Workflow Testing
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/the78mole/jumpstarter-mono" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    the78mole/jumpstarter-mono
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../installation/" class="md-tabs__link">
+          
+  
+  
+  Installation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../architecture/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user-guide/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../hardware/" class="md-tabs__link">
+          
+  
+  
+  Hardware
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../integrations/" class="md-tabs__link">
+          
+  
+  
+  Integrations
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Jumpstarter Monorepo Documentation" class="md-nav__button md-logo" aria-label="Jumpstarter Monorepo Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Jumpstarter Monorepo Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/the78mole/jumpstarter-mono" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    the78mole/jumpstarter-mono
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Installation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Development
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Development Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Local Workflow Testing
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Local Workflow Testing
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Start
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-official-installer-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 1: Official Installer (Recommended)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-package-managers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 2: Package Managers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-3-using-go" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 3: Using Go
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-4-docker-no-installation-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 4: Docker (No Installation Required)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#repository-actrc-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Repository .actrc Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage Examples
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-workflow-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Workflow Testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#event-specific-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Event-Specific Testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#job-specific-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Job-Specific Testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reusable-workflow-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reusable Workflow Testing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automated-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automated Validation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Automated Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validation-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation Script
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#act-masking-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      ACT Masking Test
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manual-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Manual Validation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#container-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      Container Images
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conditional-masking" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conditional Masking
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Limitations
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-issues-and-solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Issues and Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Issues and Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-paths-filter-action-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Paths-filter Action Errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-certificatenetwork-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Certificate/Network Issues
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-container-image-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Container Image Issues
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#network-and-firewall-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Network and Firewall Issues
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Issues
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      Debug Mode
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environment-specific-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Environment-Specific Issues
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Local Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test-python-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Python Components
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-go-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Go Components
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-rust-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Rust Components
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Documentation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integration-with-development-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Integration with Development Workflow
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Considerations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Performance Considerations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#image-selection-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Image Selection Strategy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimization-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optimization Tips
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#essential-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Essential Commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Flags
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#container-images_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Container Images
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#masked-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Masked Operations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration Files
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Architecture
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    User Guide
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            User Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    User Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Hardware
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Hardware
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hardware Documentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Integrations
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Integrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../integrations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Integrations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Start
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-official-installer-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 1: Official Installer (Recommended)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-package-managers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 2: Package Managers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-3-using-go" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 3: Using Go
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-4-docker-no-installation-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 4: Docker (No Installation Required)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#repository-actrc-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Repository .actrc Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage Examples
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-workflow-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Workflow Testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#event-specific-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Event-Specific Testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#job-specific-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Job-Specific Testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reusable-workflow-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reusable Workflow Testing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automated-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automated Validation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Automated Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validation-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation Script
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#act-masking-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      ACT Masking Test
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manual-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Manual Validation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#container-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      Container Images
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conditional-masking" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conditional Masking
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Limitations
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-issues-and-solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Issues and Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Issues and Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-paths-filter-action-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Paths-filter Action Errors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-certificatenetwork-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Certificate/Network Issues
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-container-image-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Container Image Issues
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#network-and-firewall-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Network and Firewall Issues
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Issues
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      Debug Mode
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environment-specific-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Environment-Specific Issues
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Local Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test-python-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Python Components
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-go-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Go Components
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-rust-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Rust Components
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Documentation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integration-with-development-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Integration with Development Workflow
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performance-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Considerations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Performance Considerations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#image-selection-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Image Selection Strategy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimization-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optimization Tips
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Reference
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#essential-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Essential Commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Flags
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#container-images_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Container Images
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#masked-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Masked Operations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration Files
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="local-workflow-testing-with-act">Local Workflow Testing with Act<a class="headerlink" href="#local-workflow-testing-with-act" title="Permanent link">&para;</a></h1>
+<p>This repository includes comprehensive integration with <a href="https://github.com/nektos/act">act</a> for local testing of GitHub Actions workflows. Act allows you to run workflows locally in Docker containers, enabling faster iteration and debugging of CI/CD changes.</p>
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># Install act (see installation options below)</span>
+curl<span class="w"> </span>https://raw.githubusercontent.com/nektos/act/master/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>bash
+
+<span class="c1"># Test the main CI workflow</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-W<span class="w"> </span>.github/workflows/ci.yml<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span>
+
+<span class="c1"># Run comprehensive validation on all workflows</span>
+./scripts/validate-ci-with-act.sh
+
+<span class="c1"># Test specific masking conditions</span>
+./scripts/test-act-masking.sh
+</code></pre></div>
+<blockquote>
+<p><strong>💡 Tip:</strong> Use the validation scripts first to ensure your environment is properly configured before running individual workflows.</p>
+</blockquote>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
+<h3 id="option-1-official-installer-recommended">Option 1: Official Installer (Recommended)<a class="headerlink" href="#option-1-official-installer-recommended" title="Permanent link">&para;</a></h3>
+<p>Install act using the official installer:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>https://raw.githubusercontent.com/nektos/act/master/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>bash
+</code></pre></div>
+<h3 id="option-2-package-managers">Option 2: Package Managers<a class="headerlink" href="#option-2-package-managers" title="Permanent link">&para;</a></h3>
+<p><strong>macOS with Homebrew:</strong></p>
+<div class="highlight"><pre><span></span><code>brew<span class="w"> </span>install<span class="w"> </span>act
+</code></pre></div>
+<p><strong>Arch Linux:</strong></p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>act
+</code></pre></div>
+<p><strong>Manual Download:</strong>
+If you experience network issues with the installer, download directly from GitHub releases:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Download the latest release for your platform</span>
+<span class="nv">LATEST_VERSION</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>https://api.github.com/repos/nektos/act/releases/latest<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-oP<span class="w"> </span><span class="s1">&#39;&quot;tag_name&quot;: &quot;\K(.*)(?=&quot;)&#39;</span><span class="k">)</span>
+wget<span class="w"> </span><span class="s2">&quot;https://github.com/nektos/act/releases/download/</span><span class="si">${</span><span class="nv">LATEST_VERSION</span><span class="si">}</span><span class="s2">/act_Linux_x86_64.tar.gz&quot;</span>
+tar<span class="w"> </span>xzf<span class="w"> </span>act_Linux_x86_64.tar.gz
+sudo<span class="w"> </span>mv<span class="w"> </span>act<span class="w"> </span>/usr/local/bin/
+</code></pre></div>
+<h3 id="option-3-using-go">Option 3: Using Go<a class="headerlink" href="#option-3-using-go" title="Permanent link">&para;</a></h3>
+<p>If you have Go installed:</p>
+<div class="highlight"><pre><span></span><code>go<span class="w"> </span>install<span class="w"> </span>github.com/nektos/act@latest
+</code></pre></div>
+<h3 id="option-4-docker-no-installation-required">Option 4: Docker (No Installation Required)<a class="headerlink" href="#option-4-docker-no-installation-required" title="Permanent link">&para;</a></h3>
+<p>Run act directly with Docker:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create an alias for easier use</span>
+<span class="nb">alias</span><span class="w"> </span><span class="nv">act</span><span class="o">=</span><span class="s1">&#39;docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v &quot;$PWD&quot;:/workspace -w /workspace nektos/act&#39;</span>
+
+<span class="c1"># Use normally</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-W<span class="w"> </span>.github/workflows/ci.yml<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span>
+</code></pre></div>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
+<p>The workflows are designed to work with act out of the box. When running under act, the <code>ACT</code> environment variable is automatically set to <code>true</code>, which conditionally disables steps that:</p>
+<ul>
+<li>Push artifacts to external services</li>
+<li>Make changes to the repository (tags, releases)</li>
+<li>Require authentication tokens</li>
+<li>Perform Docker registry operations</li>
+</ul>
+<h3 id="repository-actrc-configuration">Repository .actrc Configuration<a class="headerlink" href="#repository-actrc-configuration" title="Permanent link">&para;</a></h3>
+<p>The repository includes a <code>.actrc</code> configuration file with optimal defaults:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Use medium-sized Ubuntu container for better compatibility</span>
+<span class="na">-P ubuntu-latest</span><span class="o">=</span><span class="s">catthehacker/ubuntu:act-latest</span>
+
+<span class="c1"># Set ACT environment variable automatically</span>
+<span class="na">--env ACT</span><span class="o">=</span><span class="s">true</span>
+
+<span class="c1"># Enable artifact server for local artifact handling</span>
+<span class="na">--artifact-server-path /tmp/artifacts</span>
+
+<span class="c1"># Default event for testing</span>
+<span class="na">--eventpath .github/workflows/events/workflow_dispatch.json</span>
+</code></pre></div>
+<p>This configuration ensures consistent behavior across all local testing scenarios and eliminates the need to specify <code>--env ACT=true</code> manually.</p>
+<h2 id="usage-examples">Usage Examples<a class="headerlink" href="#usage-examples" title="Permanent link">&para;</a></h2>
+<h3 id="basic-workflow-testing">Basic Workflow Testing<a class="headerlink" href="#basic-workflow-testing" title="Permanent link">&para;</a></h3>
+<p>Test the CI workflow structure:</p>
+<div class="highlight"><pre><span></span><code>act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-W<span class="w"> </span>.github/workflows/ci.yml<span class="w"> </span>--list
+</code></pre></div>
+<p>Run the CI workflow (using .actrc configuration):</p>
+<div class="highlight"><pre><span></span><code>act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-W<span class="w"> </span>.github/workflows/ci.yml
+</code></pre></div>
+<h3 id="event-specific-testing">Event-Specific Testing<a class="headerlink" href="#event-specific-testing" title="Permanent link">&para;</a></h3>
+<p>Test pull request events:</p>
+<div class="highlight"><pre><span></span><code>act<span class="w"> </span>pull_request
+</code></pre></div>
+<p>Test push events:</p>
+<div class="highlight"><pre><span></span><code>act<span class="w"> </span>push
+</code></pre></div>
+<h3 id="job-specific-testing">Job-Specific Testing<a class="headerlink" href="#job-specific-testing" title="Permanent link">&para;</a></h3>
+<p>Run only the change detection job:</p>
+<div class="highlight"><pre><span></span><code>act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-j<span class="w"> </span>detect-changes
+</code></pre></div>
+<p>Run specific language builds:</p>
+<div class="highlight"><pre><span></span><code>act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-j<span class="w"> </span>python-test
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-j<span class="w"> </span>controller-build
+</code></pre></div>
+<h3 id="reusable-workflow-testing">Reusable Workflow Testing<a class="headerlink" href="#reusable-workflow-testing" title="Permanent link">&para;</a></h3>
+<p>Test reusable workflows:</p>
+<div class="highlight"><pre><span></span><code>act<span class="w"> </span>workflow_call<span class="w"> </span>-W<span class="w"> </span>.github/workflows/reusable-rust-build.yml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--input<span class="w"> </span>working-directory<span class="o">=</span>hardware/dutlink-firmware<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--input<span class="w"> </span><span class="nv">targets</span><span class="o">=</span>thumbv7em-none-eabihf
+</code></pre></div>
+<h2 id="automated-validation">Automated Validation<a class="headerlink" href="#automated-validation" title="Permanent link">&para;</a></h2>
+<p>The repository includes comprehensive validation tools for testing workflows with act:</p>
+<h3 id="validation-script">Validation Script<a class="headerlink" href="#validation-script" title="Permanent link">&para;</a></h3>
+<p>Use the main validation script to test all workflows:</p>
+<div class="highlight"><pre><span></span><code>./scripts/validate-ci-with-act.sh
+</code></pre></div>
+<p>This script performs:</p>
+<ul>
+<li><strong>YAML syntax validation</strong> for all workflow files</li>
+<li><strong>Workflow structure validation</strong> using act's <code>--list</code> mode</li>
+<li><strong>ACT masking condition verification</strong> to ensure proper conditional execution</li>
+<li><strong>Basic workflow execution testing</strong> with dry-run mode</li>
+<li><strong>Summary reporting</strong> of validation results</li>
+</ul>
+<h3 id="act-masking-test">ACT Masking Test<a class="headerlink" href="#act-masking-test" title="Permanent link">&para;</a></h3>
+<p>Test specific masking conditions:</p>
+<div class="highlight"><pre><span></span><code>./scripts/test-act-masking.sh
+</code></pre></div>
+<p>This script validates:</p>
+<ul>
+<li>All steps that should be masked under act have proper <code>if: ${{ !env.ACT }}</code> conditions</li>
+<li>Steps that push artifacts, publish packages, or modify repositories are properly masked</li>
+<li>Local-only debug steps work correctly under act</li>
+</ul>
+<h3 id="manual-validation">Manual Validation<a class="headerlink" href="#manual-validation" title="Permanent link">&para;</a></h3>
+<p>You can also run individual validations:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Validate workflow structure</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-W<span class="w"> </span>.github/workflows/ci.yml<span class="w"> </span>--list
+
+<span class="c1"># Test workflow with act environment</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-W<span class="w"> </span>.github/workflows/ci.yml<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span><span class="w"> </span>--dry-run
+
+<span class="c1"># Validate specific jobs</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-j<span class="w"> </span>detect-changes<span class="w"> </span>--list
+</code></pre></div>
+<h2 id="container-images">Container Images<a class="headerlink" href="#container-images" title="Permanent link">&para;</a></h2>
+<p>Act supports different runner images:</p>
+<ul>
+<li><strong>Micro</strong> (~200MB): Basic NodeJS environment, fastest but limited</li>
+<li><strong>Medium</strong> (~500MB): Includes common tools, good balance</li>
+<li><strong>Large</strong> (~17GB): Full GitHub runner environment, most compatible</li>
+</ul>
+<p>Choose based on your workflow requirements:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Use medium image (recommended)</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>catthehacker/ubuntu:act-latest
+
+<span class="c1"># Use micro image for simple workflows</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>node:16-alpine
+
+<span class="c1"># Use large image for complex workflows</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>catthehacker/ubuntu:full-latest
+</code></pre></div>
+<h2 id="conditional-masking">Conditional Masking<a class="headerlink" href="#conditional-masking" title="Permanent link">&para;</a></h2>
+<p>Steps that should not run under act are masked with:</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Step that pushes artifacts</span>
+<span class="w">  </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ !env.ACT }}</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/upload-artifact@v4</span>
+<span class="w">  </span><span class="c1"># ... rest of step</span>
+</code></pre></div>
+<p>Steps that only run under act:</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Debug step for local testing</span>
+<span class="w">  </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ env.ACT }}</span>
+<span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">echo &quot;Running under act for local testing&quot;</span>
+</code></pre></div>
+<h2 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">&para;</a></h2>
+<p>When running with act:</p>
+<ol>
+<li><strong>No external authentication</strong>: Steps requiring GitHub tokens, PyPI tokens, etc. are masked</li>
+<li><strong>No artifact persistence</strong>: Artifacts are not uploaded to GitHub</li>
+<li><strong>Limited container images</strong>: Some tools may not be available in minimal images</li>
+<li><strong>No real external services</strong>: External API calls may fail</li>
+<li><strong>File system differences</strong>: Container filesystem differs from GitHub runners</li>
+</ol>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<h3 id="common-issues-and-solutions">Common Issues and Solutions<a class="headerlink" href="#common-issues-and-solutions" title="Permanent link">&para;</a></h3>
+<h4 id="1-paths-filter-action-errors">1. Paths-filter Action Errors<a class="headerlink" href="#1-paths-filter-action-errors" title="Permanent link">&para;</a></h4>
+<p><strong>Error</strong>: "This action requires 'base' input to be configured"</p>
+<p><strong>Solution</strong>: The CI workflow now includes automatic base branch configuration for act:</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Check for changes</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dorny/paths-filter@v3</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">base</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ env.ACT &amp;&amp; &#39;main&#39; || &#39;&#39; }}</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no"># ... filters</span>
+</code></pre></div>
+<p>This ensures the paths-filter action works correctly in both GitHub Actions and act environments.</p>
+<h4 id="2-certificatenetwork-issues">2. Certificate/Network Issues<a class="headerlink" href="#2-certificatenetwork-issues" title="Permanent link">&para;</a></h4>
+<p><strong>Error</strong>: "self-signed certificate in certificate chain"</p>
+<p>This is common when using actions that download tools. Solutions:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Option 1: Use pre-built containers with tools included</span>
+act<span class="w"> </span>-P<span class="w"> </span>ubuntu-latest<span class="o">=</span>ghcr.io/catthehacker/ubuntu:full-latest
+
+<span class="c1"># Option 2: Skip problematic jobs during testing</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-j<span class="w"> </span>detect-changes<span class="w">  </span><span class="c1"># Test only specific jobs</span>
+
+<span class="c1"># Option 3: Use dryrun mode for structure validation</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>--dryrun
+</code></pre></div>
+<h4 id="3-container-image-issues">3. Container Image Issues<a class="headerlink" href="#3-container-image-issues" title="Permanent link">&para;</a></h4>
+<p><strong>Error</strong>: Command not found or missing tools</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Use full-featured container for complete tool compatibility</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>ghcr.io/catthehacker/ubuntu:full-latest
+
+<span class="c1"># Or specify different container images per job</span>
+act<span class="w"> </span>-P<span class="w"> </span>ubuntu-latest<span class="o">=</span>ubuntu:22.04<span class="w">  </span><span class="c1"># Official Ubuntu with apt packages</span>
+</code></pre></div>
+<h3 id="network-and-firewall-issues">Network and Firewall Issues<a class="headerlink" href="#network-and-firewall-issues" title="Permanent link">&para;</a></h3>
+<p><strong>DNS Resolution Problems:</strong>
+If you encounter DNS blocks for <code>api.nektosact.com</code> or other act-related domains:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Option 1: Use Docker-based act (bypasses local network issues)</span>
+<span class="nb">alias</span><span class="w"> </span><span class="nv">act</span><span class="o">=</span><span class="s1">&#39;docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v &quot;$PWD&quot;:/workspace -w /workspace nektos/act&#39;</span>
+
+<span class="c1"># Option 2: Download manually and install</span>
+<span class="c1"># See installation options above for manual download instructions</span>
+
+<span class="c1"># Option 3: Use alternative container registries</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>ubuntu:20.04<span class="w">  </span><span class="c1"># Use official Ubuntu instead</span>
+</code></pre></div>
+<p><strong>Corporate Firewall/Proxy Issues:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Configure Docker to use proxy</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">HTTPS_PROXY</span><span class="o">=</span>your-proxy:port
+<span class="nb">export</span><span class="w"> </span><span class="nv">HTTP_PROXY</span><span class="o">=</span>your-proxy:port
+
+<span class="c1"># Or configure act to use different registries</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>registry-1.docker.io/library/ubuntu:20.04
+</code></pre></div>
+<h3 id="common-issues">Common Issues<a class="headerlink" href="#common-issues" title="Permanent link">&para;</a></h3>
+<p><strong>Git not found:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Use a larger image with git installed</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>catthehacker/ubuntu:act-latest
+
+<span class="c1"># Or specify in ~/.actrc</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;--platform ubuntu-latest=catthehacker/ubuntu:act-latest&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.actrc
+</code></pre></div>
+<p><strong>Bash not found:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Use an image with bash</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>ubuntu:20.04
+
+<span class="c1"># For minimal setups, install bash in container</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>node:16-alpine<span class="w"> </span>--env<span class="w"> </span><span class="nv">SETUP_BASH</span><span class="o">=</span><span class="nb">true</span>
+</code></pre></div>
+<p><strong>Action compatibility issues:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Use the full image for maximum compatibility</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>catthehacker/ubuntu:full-latest
+
+<span class="c1"># Check specific action requirements</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>--list<span class="w">  </span><span class="c1"># Shows action compatibility</span>
+</code></pre></div>
+<p><strong>Docker daemon not running:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Start Docker service</span>
+sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>docker
+
+<span class="c1"># Or for Docker Desktop</span>
+open<span class="w"> </span>-a<span class="w"> </span>Docker<span class="w">  </span><span class="c1"># macOS</span>
+<span class="c1"># Windows: Start Docker Desktop from Start Menu</span>
+</code></pre></div>
+<p><strong>Permission denied errors:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Add user to docker group (Linux)</span>
+sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>docker<span class="w"> </span><span class="nv">$USER</span>
+newgrp<span class="w"> </span>docker
+
+<span class="c1"># Or run with sudo (not recommended for security)</span>
+sudo<span class="w"> </span>act<span class="w"> </span>workflow_dispatch<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span>
+</code></pre></div>
+<p><strong>Container image pull failures:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Use smaller images that are more likely to be cached</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>node:16-alpine
+
+<span class="c1"># Pre-pull images manually</span>
+docker<span class="w"> </span>pull<span class="w"> </span>catthehacker/ubuntu:act-latest
+docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/catthehacker/ubuntu:act-latest
+
+<span class="c1"># Use local registry if available</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>localhost:5000/ubuntu:act-latest
+</code></pre></div>
+<h3 id="debug-mode">Debug Mode<a class="headerlink" href="#debug-mode" title="Permanent link">&para;</a></h3>
+<p>Run with verbose output for detailed troubleshooting:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Maximum verbosity</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>--verbose<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span>
+
+<span class="c1"># With Docker debug info</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span><span class="w"> </span>--container-daemon-socket<span class="w"> </span>/var/run/docker.sock<span class="w"> </span>-v
+
+<span class="c1"># Test specific job with debug</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-j<span class="w"> </span>python-test<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span><span class="w"> </span>--verbose
+</code></pre></div>
+<h3 id="environment-specific-issues">Environment-Specific Issues<a class="headerlink" href="#environment-specific-issues" title="Permanent link">&para;</a></h3>
+<p><strong>Resource Constraints:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Use micro image for resource-constrained environments</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>node:16-alpine
+
+<span class="c1"># Limit container resources</span>
+act<span class="w"> </span>--container-options<span class="w"> </span><span class="s2">&quot;--memory=1g --cpus=1&quot;</span>
+
+<span class="c1"># Clean up containers after runs</span>
+act<span class="w"> </span>--rm
+</code></pre></div>
+<p><strong>File System Permissions:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Fix workspace permissions</span>
+act<span class="w"> </span>--userns<span class="w"> </span>host
+
+<span class="c1"># Mount with proper ownership</span>
+act<span class="w"> </span>--env<span class="w"> </span><span class="nv">RUNNER_UID</span><span class="o">=</span><span class="k">$(</span>id<span class="w"> </span>-u<span class="k">)</span><span class="w"> </span>--env<span class="w"> </span><span class="nv">RUNNER_GID</span><span class="o">=</span><span class="k">$(</span>id<span class="w"> </span>-g<span class="k">)</span>
+</code></pre></div>
+<p><strong>Multiple Docker Contexts:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># List available contexts</span>
+docker<span class="w"> </span>context<span class="w"> </span>ls
+
+<span class="c1"># Use specific context</span>
+act<span class="w"> </span>--container-daemon-socket<span class="w"> </span>/var/run/docker.sock
+
+<span class="c1"># Or set specific context</span>
+docker<span class="w"> </span>context<span class="w"> </span>use<span class="w"> </span>desktop-linux<span class="w">  </span><span class="c1"># or your preferred context</span>
+</code></pre></div>
+<h3 id="local-configuration">Local Configuration<a class="headerlink" href="#local-configuration" title="Permanent link">&para;</a></h3>
+<p>Create <code>~/.actrc</code> for persistent configuration:</p>
+<div class="highlight"><pre><span></span><code>--platform ubuntu-latest=catthehacker/ubuntu:act-latest
+--env ACT=true
+--artifact-server-path /tmp/artifacts
+</code></pre></div>
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
+<h3 id="test-python-components">Test Python Components<a class="headerlink" href="#test-python-components" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-j<span class="w"> </span>python-lint<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-j<span class="w"> </span>python-test<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span>
+</code></pre></div>
+<h3 id="test-go-components">Test Go Components<a class="headerlink" href="#test-go-components" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-j<span class="w"> </span>controller-build<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-j<span class="w"> </span>lab-config-build<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span>
+</code></pre></div>
+<h3 id="test-rust-components">Test Rust Components<a class="headerlink" href="#test-rust-components" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-j<span class="w"> </span>rust-build<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span>
+</code></pre></div>
+<h3 id="test-documentation">Test Documentation<a class="headerlink" href="#test-documentation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-j<span class="w"> </span>docs-build<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span>
+</code></pre></div>
+<h2 id="integration-with-development-workflow">Integration with Development Workflow<a class="headerlink" href="#integration-with-development-workflow" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Before committing</strong>: Run act to validate workflow changes</li>
+<li><strong>When debugging CI failures</strong>: Reproduce issues locally with act</li>
+<li><strong>When adding new workflows</strong>: Test locally before pushing</li>
+<li><strong>When modifying reusable workflows</strong>: Validate with different inputs</li>
+</ol>
+<h2 id="performance-considerations">Performance Considerations<a class="headerlink" href="#performance-considerations" title="Permanent link">&para;</a></h2>
+<h3 id="image-selection-strategy">Image Selection Strategy<a class="headerlink" href="#image-selection-strategy" title="Permanent link">&para;</a></h3>
+<p>Choose container images based on your testing needs:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># For quick syntax/structure validation (fastest)</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>node:16-alpine<span class="w"> </span>--list
+
+<span class="c1"># For most development workflows (recommended balance)</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>catthehacker/ubuntu:act-latest
+
+<span class="c1"># For complex workflows with many dependencies (slowest but most compatible)</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>catthehacker/ubuntu:full-latest
+</code></pre></div>
+<h3 id="optimization-tips">Optimization Tips<a class="headerlink" href="#optimization-tips" title="Permanent link">&para;</a></h3>
+<p><strong>Cache Docker Images:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Pre-pull commonly used images</span>
+docker<span class="w"> </span>pull<span class="w"> </span>catthehacker/ubuntu:act-latest
+docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/catthehacker/ubuntu:act-latest
+docker<span class="w"> </span>pull<span class="w"> </span>node:16-alpine
+
+<span class="c1"># Use local images without version tags to avoid pulls</span>
+act<span class="w"> </span>--platform<span class="w"> </span>ubuntu-latest<span class="o">=</span>catthehacker/ubuntu:act-latest
+</code></pre></div>
+<p><strong>Selective Job Execution:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Test only changed components</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-j<span class="w"> </span>detect-changes<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>-j<span class="w"> </span>python-test<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span>
+
+<span class="c1"># Skip jobs that aren&#39;t relevant to your changes</span>
+act<span class="w"> </span>workflow_dispatch<span class="w"> </span>--job<span class="w"> </span>controller-build<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span>
+</code></pre></div>
+<p><strong>Resource Management:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Limit container resources for faster startup</span>
+act<span class="w"> </span>--container-options<span class="w"> </span><span class="s2">&quot;--memory=1g --cpus=2&quot;</span>
+
+<span class="c1"># Clean up containers automatically</span>
+act<span class="w"> </span>--rm
+
+<span class="c1"># Use bind mounts instead of volumes for faster I/O</span>
+act<span class="w"> </span>--bind
+</code></pre></div>
+<p><strong>Parallel Execution:</strong>
+Act supports running multiple jobs in parallel by default, but you can control this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Limit parallelism for resource-constrained systems</span>
+act<span class="w"> </span>--job<span class="w"> </span>python-test<span class="w"> </span>--job<span class="w"> </span>controller-build<span class="w">  </span><span class="c1"># Runs in parallel by default</span>
+
+<span class="c1"># Run jobs sequentially if needed</span>
+act<span class="w"> </span>--job<span class="w"> </span>python-test<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>act<span class="w"> </span>--job<span class="w"> </span>controller-build<span class="w"> </span>--env<span class="w"> </span><span class="nv">ACT</span><span class="o">=</span><span class="nb">true</span>
+</code></pre></div>
+<ul>
+<li><strong>Use appropriate image sizes</strong>: Micro for simple jobs, Medium for most cases</li>
+<li><strong>Cache Docker images</strong>: Reuse images across runs to avoid repeated downloads</li>
+<li><strong>Parallel execution</strong>: Act supports running multiple jobs in parallel when dependencies allow</li>
+<li><strong>Selective job execution</strong>: Use <code>-j</code> flag to run only specific jobs you're working on</li>
+<li><strong>Local artifact storage</strong>: Configure <code>--artifact-server-path</code> for faster artifact handling</li>
+</ul>
+<p>This integration ensures that workflows can be thoroughly tested locally, reducing CI/CD feedback cycles and improving development velocity.</p>
+<h2 id="quick-reference">Quick Reference<a class="headerlink" href="#quick-reference" title="Permanent link">&para;</a></h2>
+<h3 id="essential-commands">Essential Commands<a class="headerlink" href="#essential-commands" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>act workflow_dispatch -W .github/workflows/ci.yml --env ACT=true</code></td>
+<td>Test CI workflow</td>
+</tr>
+<tr>
+<td><code>act pull_request --env ACT=true</code></td>
+<td>Test pull request workflow</td>
+</tr>
+<tr>
+<td><code>act push --env ACT=true</code></td>
+<td>Test push workflow</td>
+</tr>
+<tr>
+<td><code>act workflow_dispatch -j python-test --env ACT=true</code></td>
+<td>Test specific job</td>
+</tr>
+<tr>
+<td><code>./scripts/validate-ci-with-act.sh</code></td>
+<td>Validate all workflows</td>
+</tr>
+<tr>
+<td><code>act --list</code></td>
+<td>List available workflows and jobs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="common-flags">Common Flags<a class="headerlink" href="#common-flags" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--env ACT=true</code></td>
+<td>Set ACT environment variable (masks publish steps)</td>
+</tr>
+<tr>
+<td><code>--list</code></td>
+<td>List workflows/jobs without execution</td>
+</tr>
+<tr>
+<td><code>--dry-run</code></td>
+<td>Show what would run without execution</td>
+</tr>
+<tr>
+<td><code>--verbose</code></td>
+<td>Verbose output for debugging</td>
+</tr>
+<tr>
+<td><code>-j JOB_NAME</code></td>
+<td>Run specific job only</td>
+</tr>
+<tr>
+<td><code>-W WORKFLOW_FILE</code></td>
+<td>Specify workflow file</td>
+</tr>
+<tr>
+<td><code>--platform ubuntu-latest=IMAGE</code></td>
+<td>Use specific container image</td>
+</tr>
+</tbody>
+</table>
+<h3 id="container-images_1">Container Images<a class="headerlink" href="#container-images_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Image</th>
+<th>Size</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>node:16-alpine</code></td>
+<td>~200MB</td>
+<td>Simple Node.js workflows</td>
+</tr>
+<tr>
+<td><code>catthehacker/ubuntu:act-latest</code></td>
+<td>~500MB</td>
+<td>General purpose (recommended)</td>
+</tr>
+<tr>
+<td><code>catthehacker/ubuntu:full-latest</code></td>
+<td>~17GB</td>
+<td>Maximum compatibility</td>
+</tr>
+<tr>
+<td><code>ubuntu:20.04</code></td>
+<td>~200MB</td>
+<td>Basic Ubuntu environment</td>
+</tr>
+</tbody>
+</table>
+<h3 id="masked-operations">Masked Operations<a class="headerlink" href="#masked-operations" title="Permanent link">&para;</a></h3>
+<p>The following operations are automatically skipped when <code>ACT=true</code>:</p>
+<ul>
+<li>✅ Artifact uploads/downloads (<code>actions/upload-artifact</code>, <code>actions/download-artifact</code>)</li>
+<li>✅ Package publishing (PyPI, npm, container registries)</li>
+<li>✅ Repository modifications (creating tags, releases)</li>
+<li>✅ External service deployments</li>
+<li>✅ Marketplace publishing (VSCode extensions)</li>
+<li>✅ Docker registry authentication and pushes</li>
+</ul>
+<h3 id="configuration-files">Configuration Files<a class="headerlink" href="#configuration-files" title="Permanent link">&para;</a></h3>
+<p>Create <code>~/.actrc</code> for persistent configuration:</p>
+<div class="highlight"><pre><span></span><code>--platform ubuntu-latest=catthehacker/ubuntu:act-latest
+--env ACT=true
+--artifact-server-path /tmp/artifacts
+--rm
+</code></pre></div>
+<p>Create <code>.actrc</code> in repository root for project-specific settings:</p>
+<div class="highlight"><pre><span></span><code>--platform ubuntu-latest=catthehacker/ubuntu:act-latest
+--env ACT=true
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.highlight", "search.share"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>
