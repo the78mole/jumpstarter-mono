@@ -4,6 +4,7 @@
     "config:recommended",
     ":dependencyDashboard",
     ":semanticCommits",
+    ":combinePatchMinorReleases",
     "group:monorepos"
   ],
   "dependencyDashboard": true,
@@ -26,65 +27,44 @@
     },
     {
       "description": "Group Go dependencies",
-      "matchManagers": [
-        "gomod"
-      ],
+      "matchManagers": ["gomod"],
       "groupName": "go dependencies"
     },
     {
       "description": "Group Rust dependencies",
-      "matchManagers": [
-        "cargo"
-      ],
+      "matchManagers": ["cargo"],
       "groupName": "rust dependencies"
     },
     {
       "description": "Group Node.js dependencies",
-      "matchManagers": [
-        "npm",
-        "pnpm"
-      ],
+      "matchManagers": ["npm", "pnpm"],
       "groupName": "nodejs dependencies"
     },
     {
       "description": "Group GitHub Actions",
-      "matchManagers": [
-        "github-actions"
-      ],
+      "matchManagers": ["github-actions"],
       "groupName": "github actions"
     },
     {
       "description": "Group pre-commit hooks",
-      "matchManagers": [
-        "pre-commit"
-      ],
+      "matchManagers": ["pre-commit"],
       "groupName": "pre-commit hooks"
     },
     {
       "description": "Group Docker base images",
-      "matchManagers": [
-        "dockerfile"
-      ],
-      "matchDatasources": [
-        "docker"
-      ],
+      "matchManagers": ["dockerfile"],
+      "matchDatasources": ["docker"],
       "groupName": "docker base images"
     },
     {
       "description": "Group CI container tool versions",
-      "matchManagers": [
-        "custom.regex"
-      ],
-      "matchFileNames": [
-        ".github/containers/**"
-      ],
+      "matchManagers": ["custom.regex"],
+      "matchFileNames": [".github/containers/**"],
       "groupName": "ci container tools"
     },
     {
       "description": "Automerge patch updates for stable packages",
-      "matchUpdateTypes": [
-        "patch"
-      ],
+      "matchUpdateTypes": ["patch"],
       "matchCurrentVersion": "!/^0\\./",
       "automerge": true
     }
@@ -99,12 +79,8 @@
     {
       "customType": "regex",
       "description": "Update Go version in Containerfiles",
-      "managerFilePatterns": [
-        "/\\.github/containers/Containerfile\\.ci-.*/"
-      ],
-      "matchStrings": [
-        "ARG GO_VERSION=(?<currentValue>.*?)\\n"
-      ],
+      "managerFilePatterns": ["/\\.github/containers/Containerfile\\.ci-.*/"],
+      "matchStrings": ["ARG GO_VERSION=(?<currentValue>.*?)\\n"],
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "golang/go",
       "extractVersionTemplate": "^go(?<version>.*)$"
@@ -112,36 +88,24 @@
     {
       "customType": "regex",
       "description": "Update Node.js version in Containerfiles",
-      "managerFilePatterns": [
-        "/\\.github/containers/Containerfile\\.ci-.*/"
-      ],
-      "matchStrings": [
-        "ARG NODE_VERSION=(?<currentValue>.*?)\\n"
-      ],
+      "managerFilePatterns": ["/\\.github/containers/Containerfile\\.ci-.*/"],
+      "matchStrings": ["ARG NODE_VERSION=(?<currentValue>.*?)\\n"],
       "datasourceTemplate": "node-version",
       "depNameTemplate": "node"
     },
     {
       "customType": "regex",
       "description": "Update pnpm version in Containerfiles",
-      "managerFilePatterns": [
-        "/\\.github/containers/Containerfile\\.ci-.*/"
-      ],
-      "matchStrings": [
-        "npm install -g pnpm@(?<currentValue>.*?)\\s"
-      ],
+      "managerFilePatterns": ["/\\.github/containers/Containerfile\\.ci-.*/"],
+      "matchStrings": ["npm install -g pnpm@(?<currentValue>.*?)\\s"],
       "datasourceTemplate": "npm",
       "depNameTemplate": "pnpm"
     },
     {
       "customType": "regex",
       "description": "Update Ubuntu base image in Containerfiles",
-      "managerFilePatterns": [
-        "/\\.github/containers/Containerfile\\.ci-.*/"
-      ],
-      "matchStrings": [
-        "FROM ubuntu:(?<currentValue>.*?)\\n"
-      ],
+      "managerFilePatterns": ["/\\.github/containers/Containerfile\\.ci-.*/"],
+      "matchStrings": ["FROM ubuntu:(?<currentValue>.*?)\\n"],
       "datasourceTemplate": "docker",
       "depNameTemplate": "ubuntu"
     }
