@@ -1,19 +1,19 @@
 module github.com/the78mole/jumpstarter-mono/lab-config
 
-go 1.25.0
+go 1.25.5
 
 require (
 	github.com/google/go-cmp v0.7.0
-	github.com/pkg/sftp v1.13.9
-	github.com/spf13/cobra v1.9.1
-	github.com/stretchr/testify v1.10.0
+	github.com/pkg/sftp v1.13.10
+	github.com/spf13/cobra v1.10.1
+	github.com/stretchr/testify v1.11.1
 	github.com/the78mole/jumpstarter-mono/core/controller v0.0.0
-	golang.org/x/crypto v0.41.0
+	golang.org/x/crypto v0.45.0
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.33.4
-	k8s.io/apimachinery v0.33.4
-	k8s.io/client-go v0.33.4
-	sigs.k8s.io/controller-runtime v0.21.0
+	k8s.io/api v0.34.2
+	k8s.io/apimachinery v0.34.2
+	k8s.io/client-go v0.34.2
+	sigs.k8s.io/controller-runtime v0.22.4
 )
 
 replace github.com/the78mole/jumpstarter-mono/core/controller => ../core/controller
