@@ -1,29 +1,29 @@
 module github.com/the78mole/jumpstarter-mono/core/controller
 
-go 1.25.0
+go 1.25.5
 
 require (
 	filippo.io/keygen v0.0.0-20240718133620-7f162efbbd87
-	github.com/gin-gonic/gin v1.10.1
-	github.com/go-jose/go-jose/v4 v4.1.2
+	github.com/gin-gonic/gin v1.11.0
+	github.com/go-jose/go-jose/v4 v4.1.3
 	github.com/go-logr/logr v1.4.3
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/uuid v1.6.0
-	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.2
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.1
-	github.com/onsi/ginkgo/v2 v2.23.4
-	github.com/onsi/gomega v1.38.0
-	github.com/zitadel/oidc/v3 v3.44.0
+	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.3
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.3
+	github.com/onsi/ginkgo/v2 v2.27.2
+	github.com/onsi/gomega v1.38.2
+	github.com/zitadel/oidc/v3 v3.45.1
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
-	golang.org/x/sync v0.16.0
-	google.golang.org/grpc v1.74.2
-	google.golang.org/protobuf v1.36.7
-	k8s.io/api v0.33.4
-	k8s.io/apimachinery v0.33.4
-	k8s.io/apiserver v0.33.4
-	k8s.io/client-go v0.33.4
+	golang.org/x/sync v0.18.0
+	google.golang.org/grpc v1.77.0
+	google.golang.org/protobuf v1.36.10
+	k8s.io/api v0.34.2
+	k8s.io/apimachinery v0.34.2
+	k8s.io/apiserver v0.34.2
+	k8s.io/client-go v0.34.2
 	k8s.io/utils v0.0.0-20241104100929-3ea5e8cea738
-	sigs.k8s.io/controller-runtime v0.21.0
+	sigs.k8s.io/controller-runtime v0.22.4
 )
 
 require (
