@@ -50,6 +50,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Normalize branch name for container tag
+        id: branch-name
+        run: |
+          # Only set normalized branch name for PRs
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            # Normalize branch name same way as in ci.yml
+            NORMALIZED_BRANCH=$(echo "${{ github.head_ref }}" | sed 's/[^a-zA-Z0-9._-]/-/g')
+            echo "normalized=${NORMALIZED_BRANCH}" >> $GITHUB_OUTPUT
+            echo "Normalized branch name: ${NORMALIZED_BRANCH}"
+          else
+            echo "normalized=" >> $GITHUB_OUTPUT
+            echo "Not a PR, no branch normalization needed"
+          fi
+
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -58,6 +72,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
+            type=raw,value=${{ steps.branch-name.outputs.normalized }},enable={{is_pr}}
             type=sha,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
 

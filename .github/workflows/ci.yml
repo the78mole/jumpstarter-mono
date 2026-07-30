@@ -161,7 +161,7 @@ jobs:
               - '*.md'
             ci:
               - '.github/workflows/**'
-              - 'Makefile'
+              - '**/Makefile'
             containers:
               - '.github/containers/**'
               - '.github/workflows/ci-containers.yml'
