@@ -19,7 +19,7 @@ ARG NODE_VERSION=18
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN curl -k -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - && \
     apt-get install -y --no-install-recommends nodejs && \
-    npm install -g pnpm@10.14.0
+    npm install -g pnpm@10.34.5
 
 # Set up workspace
 WORKDIR /workspace
